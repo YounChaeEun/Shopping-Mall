@@ -1,0 +1,60 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/open-market?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: root
+    password: 94668221
+
+  #  servlet:
+  #    multipart:
+  #      max-file-size: 10MB
+  #      max-request-size: 10MB
+
+  # 데이터베이스 커넥션 관련 설정
+
+#
+#  security:
+#    oauth2:
+#      client:
+#        registration:
+#          kakao:
+#            client-id: ENC(1HIZn2QzKn4nRunWgWlDbmi6D948IfN/0vuLeoPwwc8oJxlsWOfoU7/K3pOUWG4v)   # REST API 키
+#            client-secret: ENC(w/Ip7Zu91manw2kqhhRPO6St73p2GOaOhtigoc+qT4pNbH+FKvuALyd7cq9nv1Zt)
+#            redirect-uri: "<https://66challenge-server.store/login/oauth2/code/kakao>"
+#            client-authentication-method: POST
+#            authorization-grant-type: authorization_code
+#            scope: profile_nickname, profile_image, account_email, gender, age_range  # 동의 항목
+#            client-name: Kakao
+#
+#        provider:
+#          kakao:
+#            authorization-uri: <https://kauth.kakao.com/oauth/authorize>
+#            token-uri: <https://kauth.kakao.com/oauth/token>
+#            user-info-uri: <https://kapi.kakao.com/v2/user/me>
+#            user-name-attribute: id
+
+imp:
+  code:
+  api:
+    key: 5751727052103537
+    secretkey: qHXYi8tLaqYHfKZAQBtBPvwfDa6YyauzBn9RHCZsnwpdSVzojDcC5FFIXHPwfwffd6T0Hp8S0kmFi2sC
+
+#cloud:
+#  aws:
+#    s3:
+#      bucket: dachaebucket
+#    credentials:
+#      access-key: AKIASMKRLAGY6RT3SQWQ
+#      secret-key: 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
+#    region:
+#      static: ap-northeast-2
+#      auto: false
+#    stack:
+#      auto: false
