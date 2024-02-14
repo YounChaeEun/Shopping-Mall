@@ -28,8 +28,8 @@ public class Category extends BaseEntity {
         this.categoryName = categoryName;
     }
 
-    public void updateCategory(UpdateCategoryRequest request) {
-        this.categoryName = categoryName;
-    }
+//    public void updateCategory(UpdateCategoryRequest request) {
+//        this.categoryName = categoryName;
+//    }
 }
 
