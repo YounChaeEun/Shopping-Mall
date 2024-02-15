@@ -76,7 +76,7 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberRepository.findByEmail(authentication.getName())
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_MEMBER)); // 수정할 것
 
-        String accessToken = jwtTokenProvider.createAccessToken(authentication); // 3. 인증정보를 기반으로 JWT 토큰 생성
+        String accessToken = jwtTokenProvider.createAccessToken(member); // 3. 인증정보를 기반으로 JWT 토큰 생성
         String refreshToken = jwtTokenProvider.createRefreshToken();
 
         // 해당 멤버의 리프레시 토큰가 이미 있으면 새로운 리프레시 토큰으로 재발급해주고, 없으면 저장해줄것
