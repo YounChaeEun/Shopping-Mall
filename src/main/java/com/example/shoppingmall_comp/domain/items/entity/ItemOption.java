@@ -26,7 +26,7 @@ public class ItemOption extends BaseEntity {
 
     @Column(name = "option_values", columnDefinition = "longtext")
     @Type(type = "json")
-    private Map<String, String> optionValues; // 데이터타입을 jsonString으로
+    private Map<String, String> optionValues;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")

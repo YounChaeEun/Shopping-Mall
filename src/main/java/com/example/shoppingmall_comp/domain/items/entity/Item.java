@@ -49,7 +49,7 @@ public class Item extends BaseEntity {
     private Member member;
 
     @Builder
-    public Item(ItemOption itemOption, String itemName, int itemPrice, String itemDetail, int count, Category category, Member member) {
+    public Item(ItemOption itemOption, String itemName, int itemPrice, String itemDetail, int count, Category category, Member member, SoldOutState soldOutState) {
         this.itemName = itemName;
         this.itemPrice = itemPrice;
         this.itemDetail = itemDetail;
@@ -57,6 +57,7 @@ public class Item extends BaseEntity {
         this.category = category;
         this.itemOption = itemOption;
         this.member = member;
+        this.soldOutState = soldOutState;
     }
 
     //상품 수정할 때 메소드
