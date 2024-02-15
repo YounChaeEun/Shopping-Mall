@@ -56,6 +56,16 @@ public class JwtTokenProvider {
                 .compact();
     }
 
+    // 리프레시 토큰에는 사용자 인증 정보 안 넣을거임
+    public String createRefreshToken() {
+        return Jwts.builder()
+                .setIssuer(issuer)
+                .setIssuedAt(Timestamp.valueOf(LocalDateTime.now()))
+                .signWith(new SecretKeySpec(secretKey.getBytes(), SignatureAlgorithm.HS512.getJcaName()))
+                .setExpiration(Date.from(Instant.now().plus(refreshExpirationDays, ChronoUnit.DAYS)))
+                .compact();
+    }
+
     // jwt 토큰에서 멤버 정보 꺼내서 Authentication 객체를 반환하는 메서드
     public Authentication getAuthentication(String token) {
         Claims claims = getClaims(token); // user의 이메일과 권한을 추출하기 위해 jwt에서 claim을 추출한다.
