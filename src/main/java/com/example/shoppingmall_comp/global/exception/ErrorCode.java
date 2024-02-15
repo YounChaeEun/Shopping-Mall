@@ -61,7 +61,7 @@ public enum ErrorCode {
     NOT_FOUND_ORDERS(HttpStatus.NOT_FOUND, "존재하는 주문이 없습니다."),
     NO_BUY_ORDER(HttpStatus.BAD_REQUEST, "구매한 상품이 아닙니다."),
     NOT_ENOUGH_STOCK(HttpStatus.BAD_REQUEST, "주문하려고 하는 상품 재고가 부족합니다."),
-
+    NOT_FOUND_ORDER_ITEM(HttpStatus.NOT_FOUND, "존재하는 주문 상품이 없습니다."),
 
     // 결제
     NOT_FOUND_PAY(HttpStatus.NOT_FOUND, "존재하는 결제가 없습니다."),
