@@ -1,4 +1,4 @@
-package com.example.shoppingmall_comp.domain.members.service.serviceImpl;
+package com.example.shoppingmall_comp.domain.members.service.Impl;
 
 import com.example.shoppingmall_comp.domain.members.dto.CreateAccessTokenReponse;
 import com.example.shoppingmall_comp.domain.members.dto.CreateAccessTokenRequest;
