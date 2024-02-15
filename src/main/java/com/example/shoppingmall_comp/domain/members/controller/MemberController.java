@@ -9,6 +9,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -33,5 +35,11 @@ public class MemberController {
     @Operation(summary = "로그인 api", description = "사용자가 로그인하는 api 입니다.")
     public MemberSignInResponse signInMember(@RequestBody @Valid MemberSignInRequest request) {
         return memberService.signIn(request);
+    }
+
+    @GetMapping("/members")
+    @ResponseStatus(HttpStatus.OK)
+    public MemberSignUpResponse getOneMember(@AuthenticationPrincipal User user) {
+        return memberService.getOne(user);
     }
 }

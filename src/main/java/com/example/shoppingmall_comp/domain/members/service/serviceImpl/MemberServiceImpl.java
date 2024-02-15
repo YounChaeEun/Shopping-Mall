@@ -20,6 +20,7 @@ import org.springframework.security.authentication.InternalAuthenticationService
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -95,5 +96,17 @@ public class MemberServiceImpl implements MemberService {
                 member.getRole().getRoleName(),
                 accessToken,
                 refreshToken);
+    }
+    @Override
+    public MemberSignUpResponse getOne(User user) {
+        Member member = memberRepository.findByEmail(user.getUsername())
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_MEMBER));
+        return new MemberSignUpResponse(member.getMemberId(),
+                member.getEmail(),
+                member.getPoint(),
+                member.getConsumePrice(),
+                member.getVipState(),
+                member.getDeletedState(),
+                member.getRole().getRoleName());
     }
 }
