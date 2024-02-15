@@ -50,12 +50,11 @@ public class Order extends BaseEntity {
 
     // todo: 결제
     //iamport에서 만들어준 값 두개
-    @Column(nullable = false)
+    @Column(name = "imp_uid",nullable = false)
     private String impUid; //아이엠포트 발급 예)imp_7388992718
 
-    @Column(nullable = false)
+    @Column(name = "merchant_id", nullable = false)
     private String merchantId; //주문번호 예) ORD20301948-0000000
-
 
     @Builder
     public Order(Member member, String receiverName, String receiverPhone, String zipcode, String address, String requestMessage, int totalPrice, String impUid, String merchantId) {

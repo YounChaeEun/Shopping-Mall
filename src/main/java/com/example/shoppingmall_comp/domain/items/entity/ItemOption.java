@@ -29,7 +29,7 @@ public class ItemOption extends BaseEntity {
     private Map<String, String> optionValues; // 데이터타입을 jsonString으로
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "item_id", nullable = false)
+    @JoinColumn(name = "item_id")
     private Item item;
 
     @Builder

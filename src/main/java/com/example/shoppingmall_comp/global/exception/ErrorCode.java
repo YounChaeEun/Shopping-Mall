@@ -20,6 +20,14 @@ public enum ErrorCode {
     DUPLICATED_EMAIL(HttpStatus.BAD_REQUEST, "이미 존재하는 이메일 입니다."),
     OTHER_LOGIN_TYPE(HttpStatus.BAD_REQUEST, "로그인 타입을 확인해주세요"),
     NOT_FOUND_AUTHORITY(HttpStatus.NOT_FOUND, "존재하지 않는 권한입니다."),
+    FORBIDDEN_ERROR(HttpStatus.FORBIDDEN, "권한이 없습니다."),
+
+    EXPIRED_JWT_ERROR(HttpStatus.UNAUTHORIZED, "토큰 만료 기한이 지났습니다."),
+    INVALID_JWT_ERROR(HttpStatus.FORBIDDEN, "토큰 유효성 검사가 실패했습니다."),
+    USER_AUTH_ERROR(HttpStatus.UNAUTHORIZED, "토큰 검사시 사용자 인증에 실패했습니다."),
+    TOKEN_CLAIM_EMPTY(HttpStatus.BAD_REQUEST,"JWT 클레임 문자열이 비어있습니다."),
+    UNSUPPORTED_JWT_TOKEN(HttpStatus.BAD_REQUEST,"지원되지 않는 JWT 토큰입니다."),
+
 
     // 상품
     NOT_FOUND_ITEM(HttpStatus.NOT_FOUND, "존재하지 않는 상품입니다."),
