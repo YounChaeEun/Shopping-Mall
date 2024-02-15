@@ -38,6 +38,7 @@ public class MemberServiceImpl implements MemberService {
     private final RefreshTokenRepository refreshTokenRepository;
 
     @Transactional
+    @Override
     public MemberSignUpResponse saveMember(MemberSignUpRequest request) {
         if (memberRepository.findByEmail(request.email()).isPresent()) {
             throw new BusinessException(ErrorCode.DUPLICATED_EMAIL);
@@ -63,6 +64,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Transactional
+    @Override
     public MemberSignInResponse signIn(MemberSignInRequest request) {
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(request.email(), request.password()); //// 1. username + password 를 기반으로 Authentication 객체 생성. 이때 authentication 은 인증 여부를 확인하는 authenticated 값이 false
