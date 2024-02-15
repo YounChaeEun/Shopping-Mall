@@ -27,6 +27,7 @@ public enum ErrorCode {
     USER_AUTH_ERROR(HttpStatus.UNAUTHORIZED, "토큰 검사시 사용자 인증에 실패했습니다."),
     TOKEN_CLAIM_EMPTY(HttpStatus.BAD_REQUEST,"JWT 클레임 문자열이 비어있습니다."),
     UNSUPPORTED_JWT_TOKEN(HttpStatus.BAD_REQUEST,"지원되지 않는 JWT 토큰입니다."),
+    NOT_FOUND_REFRESH_TOKEN(HttpStatus.NOT_FOUND, "존재하지 않는 리프레시 토큰입니다."),
 
 
     // 상품
