@@ -16,19 +16,13 @@ import com.example.shoppingmall_comp.domain.members.entity.Member;
 import com.example.shoppingmall_comp.domain.members.repository.MemberRepository;
 import com.example.shoppingmall_comp.global.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.example.shoppingmall_comp.global.exception.ErrorCode.*;
@@ -61,10 +55,15 @@ public class ItemServiceImpl implements ItemService {
         Category category = categoryRepository.findById(itemRequest.categoryId()).orElseThrow(
                 () -> new BusinessException(NOT_FOUND_CATEGORY));
 
-        // 옵션 정보 저장
-        Map<String, String> optionValues = itemRequest.optionValue();
-//        List<ItemRequest.Option> optionValues = itemRequest.optionValue();
+        //옵션 정보 저장
+        List<ItemOption.Option> optionValues = itemRequest.optionValue() != null ?
+                itemRequest.optionValue().stream()
+                        .map(option -> new ItemOption.Option(option.key(), option.value()))
+                        .collect(Collectors.toList()) :
+                new ArrayList<>();
+
         ItemOption itemOption = ItemOption.builder()
+                .optionValues(optionValues)
                 .build();
 
         Item item = Item.builder()
@@ -75,13 +74,13 @@ public class ItemServiceImpl implements ItemService {
                 .count(itemRequest.count()) // 적절한 초기값으로 설정, 판매자가 재고수량 입력하게, -> 수정
                 .member(member)
                 .itemOption(itemOption)
+                .soldOutState(itemRequest.soldOutState())
                 .build();
 
         Item savedItem = itemRepository.save(item);
 
         // S3 저장
         System.out.println("S3에 이미지를 업로드합니다.");
-
         List<String> imageUrls = s3Service.upload(multipartFiles);
 
         //이미지 1장 이상 등록 안했을때 에러 처리
@@ -103,7 +102,9 @@ public class ItemServiceImpl implements ItemService {
                 savedItem.getCategory().getCategoryId(),
                 savedItem.getItemPrice(),
                 savedItem.getCount(),
-                optionValues,
+                savedItem.getItemOption().getOptionValues().stream()
+                        .map(option -> new ItemResponse.Option(option.key(), option.value()))
+                        .collect(Collectors.toList()),
                 savedItem.getSoldOutState(),
                 savedItem.getItemDetail()
         );
