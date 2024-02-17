@@ -11,6 +11,9 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -29,5 +32,19 @@ public class MemberServiceImpl implements MemberService {
                 member.getVipState(),
                 member.getDeletedState(),
                 member.getRole().getRoleName());
+    }
+
+    @Override
+    public List<MemberSignUpResponse> getAll() {
+        List<Member> memberList = memberRepository.findAll();
+        return memberList.stream()
+                .map(member -> new MemberSignUpResponse(member.getMemberId(),
+                        member.getEmail(),
+                        member.getPoint(),
+                        member.getConsumePrice(),
+                        member.getVipState(),
+                        member.getDeletedState(),
+                        member.getRole().getRoleName()))
+                .collect(Collectors.toList());
     }
 }
