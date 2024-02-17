@@ -1,5 +1,7 @@
 package com.example.shoppingmall_comp.domain.items.dto;
 
+import com.example.shoppingmall_comp.domain.items.entity.Category;
+import com.example.shoppingmall_comp.domain.items.entity.ItemOption;
 import com.example.shoppingmall_comp.domain.items.entity.SoldOutState;
 import org.springframework.lang.Nullable;
 
@@ -29,7 +31,7 @@ public record ItemRequest(
         int count,
 
         @Nullable
-        Map<String, String> optionValue,
+        List<Option> optionValue,
 
         @NotNull
         SoldOutState soldOutState,
@@ -39,4 +41,9 @@ public record ItemRequest(
 
 
 )  {
+        public record Option (
+                String key,
+                String value) {
+        }
+
 }
