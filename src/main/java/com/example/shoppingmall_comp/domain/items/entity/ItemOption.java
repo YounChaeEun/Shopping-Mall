@@ -1,6 +1,7 @@
 package com.example.shoppingmall_comp.domain.items.entity;
 
 import com.example.shoppingmall_comp.domain.BaseEntity;
+import com.example.shoppingmall_comp.domain.items.dto.ItemRequest;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -10,6 +11,7 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Map;
 
 @Entity
@@ -26,19 +28,23 @@ public class ItemOption extends BaseEntity {
 
     @Column(name = "option_values", columnDefinition = "longtext")
     @Type(type = "json")
-    private Map<String, String> optionValues;
+    private List<Option> optionValues;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "item_id")
+    @OneToOne(mappedBy = "itemOption", fetch = FetchType.LAZY)
     private Item item;
 
     @Builder
-    public ItemOption(Long optionId, Map<String, String> optionValues) {
-        this.optionId = optionId;
+    public ItemOption(List<Option> optionValues) {
         this.optionValues = optionValues;
     }
 
-    public void updateItem(Map<String, String> optionValues) {
+    public void updateItem(List<Option> optionValues) {
         this.optionValues = optionValues;
+    }
+
+    public record Option (
+            String key,
+            String value
+    ) {
     }
 }
