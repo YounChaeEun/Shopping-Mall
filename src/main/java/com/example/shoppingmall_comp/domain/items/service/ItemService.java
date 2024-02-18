@@ -12,4 +12,5 @@ import java.util.List;
 
 public interface ItemService {
     ItemResponse create(ItemRequest itemRequest, List<MultipartFile> multipartFiles, User user);
+    ItemResponse update(ItemRequest itemRequest, List<MultipartFile> multipartFiles, User user);
 }

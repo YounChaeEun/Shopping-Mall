@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.example.shoppingmall_comp.global.exception.ErrorCode.*;
@@ -96,23 +97,95 @@ public class ItemServiceImpl implements ItemService {
 
         itemImageRepository.saveAll(imageList);
 
-        return new ItemResponse(
-                savedItem.getItemId(),
-                savedItem.getItemName(),
-                savedItem.getCategory().getCategoryId(),
-                savedItem.getItemPrice(),
-                savedItem.getCount(),
-                savedItem.getItemOption().getOptionValues().stream()
-                        .map(option -> new ItemResponse.Option(option.key(), option.value()))
-                        .collect(Collectors.toList()),
-                savedItem.getSoldOutState(),
-                savedItem.getItemDetail()
-        );
+        return getItemResponse(savedItem);
 
+    }
+
+    //상품 수정
+    @Override
+    @Transactional
+    public ItemResponse update(ItemRequest itemRequest, List<MultipartFile> multipartFiles, User user) {
+        Member member = getMember(user);
+
+        // 수정할 상품이름이 이미 존재하면 예외처리
+        if (itemRepository.findByItemName(itemRequest.itemName()).isPresent()) {
+            throw new BusinessException(DUPLICATE_ITEM, "이미 존재하는 상품입니다.");
+        }
+
+        //todo:수정할 상품의 회원과 로그인한 회원이 다르면 예외처리 - 로그인하고 등록하는거니까 예외처리 안해도 되나
+
+        // 해당 상품이 없을 경우
+        if(itemRequest.itemId() == null) {
+            //itemRequest의 itemId가 Nullable이기 때문에 itemId가 null인지 검사하는 로직 처리
+            throw new BusinessException(NOT_FOUND_ITEM, "상품 ID가 필요합니다.");
+        }
+        Item item = itemRepository.findById(itemRequest.itemId())
+                .orElseThrow(() -> new BusinessException(NOT_FOUND_ITEM));
+
+        Category category = categoryRepository.findById(itemRequest.categoryId())
+                .orElseThrow(() -> new BusinessException(NOT_FOUND_CATEGORY));
+
+        //상품의 회원(판매자) != 현재 로그인한 회원
+        if (!item.getMember().equals(member)) {
+            throw new BusinessException(NOT_SELLING_ITEM,"판매한 상품이 아닙니다.");
+        }
+
+        // 엔티티 수정
+        item.updateItem(itemRequest.itemName(), itemRequest.price(),
+                itemRequest.count(),itemRequest.description(), category);
+
+        // 상품의 기존 옵션 삭제
+        List<ItemOption> options = itemOptionRepository.findByItem(item); // 아이템 관련해서 아이템 옵션 조회
+        itemOptionRepository.deleteAll(options);
+
+        //새로운 옵션이 주어졌을때(옵션값이 null이 아닐 때) 옵션 DB에 저장
+        if (itemRequest.optionValue() != null && !itemRequest.optionValue().isEmpty()) {
+            //옵션값 -> 엔티티 변환
+            List<ItemOption.Option> optionValues = itemRequest.optionValue().stream()
+                    .map(option -> new ItemOption.Option(option.key(), option.value()))
+                    .collect(Collectors.toList());
+            ItemOption itemOption = ItemOption.builder()
+                    .optionValues(optionValues)
+                    .build();
+            itemOptionRepository.save(itemOption);
+        }
+
+        // S3, 이미지DB 삭제
+        List<ItemImage> imageList = itemImageRepository.findByItem(item);
+        for (ItemImage image : imageList) {
+            String fileName = image.getImageUrl();
+            s3Service.deleteFile(fileName);
+            itemImageRepository.deleteById(image.getItemImageId());
+        }
+        // S3 이미지 저장
+        List<String> imageUrls = s3Service.upload(multipartFiles);
+
+        // 이미지 정보 저장
+        List<ItemImage> images = imageUrls.stream()
+                .map(img -> ItemImage.builder().imageUrl(img).item(item).build())
+                .collect(Collectors.toList());
+        itemImageRepository.saveAll(images);
+
+        return getItemResponse(item);
     }
 
     private Member getMember(User user) {
         return memberRepository.findByEmail(user.getUsername())
                 .orElseThrow(() -> new BusinessException(NOT_FOUND_MEMBER));
+    }
+
+    private ItemResponse getItemResponse(Item item) {
+        return new ItemResponse(
+                item.getItemId(),
+                item.getItemName(),
+                item.getCategory().getCategoryId(),
+                item.getItemPrice(),
+                item.getCount(),
+                item.getItemOption().getOptionValues().stream()
+                        .map(option -> new ItemResponse.Option(option.key(), option.value()))
+                        .collect(Collectors.toList()),
+                item.getSoldOutState(),
+                item.getItemDetail()
+        );
     }
 }

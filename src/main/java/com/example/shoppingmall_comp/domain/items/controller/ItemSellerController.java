@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
@@ -35,4 +36,13 @@ public class ItemSellerController {
         return itemService.create(itemRequest, multipartFiles, user);
     }
 
+    //상품 수정
+    @ResponseStatus(HttpStatus.OK)
+    @PatchMapping("/items")
+    @Operation(summary = "상품 수정 api", description = "상품을 수정하는 api 입니다.")
+    public ItemResponse updateItem(@Valid @RequestPart ItemRequest itemRequest,
+                           @RequestPart List<MultipartFile> multipartFiles,
+                           @AuthenticationPrincipal User user) {
+         return itemService.update(itemRequest, multipartFiles, user);
+    }
 }
