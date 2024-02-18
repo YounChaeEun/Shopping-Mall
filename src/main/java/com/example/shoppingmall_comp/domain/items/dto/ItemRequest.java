@@ -6,6 +6,7 @@ import com.example.shoppingmall_comp.domain.items.entity.SoldOutState;
 import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
@@ -16,7 +17,7 @@ public record ItemRequest(
         @Nullable
         Long itemId, //수정할때 컨트롤러에서 id도 같이 줄거 아니면 필요함!
 
-        @NotNull
+        @NotBlank
         @Size(min = 2, max = 50)
         String itemName,
 
