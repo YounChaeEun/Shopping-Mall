@@ -38,7 +38,7 @@ public class ItemOption extends BaseEntity {
         this.optionValues = optionValues;
     }
 
-    public void updateItem(List<Option> optionValues) {
+    public void updateOption(List<Option> optionValues) {
         this.optionValues = optionValues;
     }
 
