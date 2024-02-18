@@ -45,4 +45,12 @@ public class ItemSellerController {
                            @AuthenticationPrincipal User user) {
          return itemService.update(itemRequest, multipartFiles, user);
     }
+
+    //상품 삭제
+    @ResponseStatus(HttpStatus.OK)
+    @DeleteMapping("/items/{itemId}")
+    @Operation(summary = "상품 삭제 api", description = "상품을 삭제하는 api 입니다.")
+    public void deleteItem(@PathVariable Long itemId, @AuthenticationPrincipal User user) {
+        itemService.delete(itemId, user);
+    }
 }

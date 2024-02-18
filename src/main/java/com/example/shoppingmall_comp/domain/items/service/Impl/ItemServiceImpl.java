@@ -169,11 +169,40 @@ public class ItemServiceImpl implements ItemService {
         return getItemResponse(item);
     }
 
+    // 상품 삭제
+    @Transactional
+    public void delete(Long itemId, User user) {
+        Member member = getMember(user);
+
+        // 해당 상품이 없을 경우
+        Item item = itemRepository.findById(itemId)
+                .orElseThrow(() -> new BusinessException(NOT_FOUND_ITEM,"존재하는 상품이 아닙니다."));
+
+        //현재 로그인한 사용자가 삭제하려는 상품의 소유자가 맞는지
+        if (!item.getMember().equals(member)) {
+            throw new BusinessException(NOT_SELLING_ITEM, "판매하고 있는 상품이 아닙니다.");
+        }
+
+        // S3, 이미지DB 삭제
+        List<ItemImage> imageList = itemImageRepository.findByItem(item);
+        for (ItemImage image : imageList) {
+            String fileName = image.getImageUrl();
+            s3Service.deleteFile(fileName);
+            itemImageRepository.deleteById(image.getItemImageId());
+        }
+
+        // 상품 삭제
+        itemRepository.deleteById(itemId);
+    }
+
+
+
     private Member getMember(User user) {
         return memberRepository.findByEmail(user.getUsername())
                 .orElseThrow(() -> new BusinessException(NOT_FOUND_MEMBER));
     }
 
+    //ItemResponse 코드 중복 방지
     private ItemResponse getItemResponse(Item item) {
         return new ItemResponse(
                 item.getItemId(),
