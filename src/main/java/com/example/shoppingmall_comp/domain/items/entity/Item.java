@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "item")
@@ -61,9 +62,10 @@ public class Item extends BaseEntity {
     }
 
     //상품 수정할 때 메소드
-    public void updateItem(String itemName, int itemPrice, String itemDetail, Category category) {
+    public void updateItem(String itemName, int itemPrice, int count, String itemDetail, Category category) {
         this.itemName = itemName;
         this.itemPrice = itemPrice;
+        this.count = count;
         this.itemDetail = itemDetail;
         this.category = category;
     }
