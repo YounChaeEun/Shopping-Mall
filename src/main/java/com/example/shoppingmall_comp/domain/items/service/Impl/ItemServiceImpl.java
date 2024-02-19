@@ -24,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.example.shoppingmall_comp.global.exception.ErrorCode.*;
 
@@ -59,7 +58,7 @@ public class ItemServiceImpl implements ItemService {
         List<ItemOption.Option> optionValues = itemRequest.optionValue() != null ?
                 itemRequest.optionValue().stream()
                         .map(option -> new ItemOption.Option(option.key(), option.value()))
-                        .collect(Collectors.toList()) :
+                        .toList() :
                 new ArrayList<>();
 
         ItemOption itemOption = ItemOption.builder()
@@ -92,7 +91,7 @@ public class ItemServiceImpl implements ItemService {
         // 이미지 DB 저장
         List<ItemImage> imageList = imageUrls.stream()
                 .map(url -> ItemImage.builder().imageUrl(url).item(savedItem).build())
-                .collect(Collectors.toList());
+                .toList();
 
         itemImageRepository.saveAll(imageList);
 
@@ -141,7 +140,7 @@ public class ItemServiceImpl implements ItemService {
             //옵션값 -> 엔티티 변환
             List<ItemOption.Option> optionValues = itemRequest.optionValue().stream()
                     .map(option -> new ItemOption.Option(option.key(), option.value()))
-                    .collect(Collectors.toList());
+                    .toList();
             ItemOption itemOption = ItemOption.builder()
                     .optionValues(optionValues)
                     .build();
@@ -161,7 +160,7 @@ public class ItemServiceImpl implements ItemService {
         // 이미지 정보 저장
         List<ItemImage> images = imageUrls.stream()
                 .map(img -> ItemImage.builder().imageUrl(img).item(item).build())
-                .collect(Collectors.toList());
+                .toList();
         itemImageRepository.saveAll(images);
 
         return getItemResponse(item);
@@ -231,7 +230,7 @@ public class ItemServiceImpl implements ItemService {
                 item.getCount(),
                 item.getItemOption().getOptionValues().stream()
                         .map(option -> new ItemResponse.Option(option.key(), option.value()))
-                        .collect(Collectors.toList()),
+                        .toList(),
                 item.getSoldOutState(),
                 item.getItemDetail()
         );
