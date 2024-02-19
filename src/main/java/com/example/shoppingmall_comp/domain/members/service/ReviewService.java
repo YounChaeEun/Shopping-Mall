@@ -8,5 +8,5 @@ import org.springframework.security.core.userdetails.User;
 public interface ReviewService {
     ReviewResponse create(ReviewRequest request, User user);
     ReviewResponse update(Long reviewId, ReviewRequest reviewRequest, User user);
-
+    void delete(Long reviewId, User user);
 }

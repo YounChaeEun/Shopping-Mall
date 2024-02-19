@@ -87,4 +87,18 @@ public class ReviewServiceImpl implements ReviewService {
                 review.getReviewContent(),
                 review.getStar());
     }
+
+    @Override
+    @Transactional
+    public void delete(Long reviewId, User user) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_REVIEW));
+
+        // 리뷰를 작성한 회원의 id랑 로그인한 id가 다른지 확인한다.
+        Long reviewWriterId = review.getMember().getMemberId();
+        Member member = getMember(user);
+        checkIfIsForbidden(reviewWriterId, member.getMemberId(), ErrorCode.NOT_MATCH_REVIEW);
+
+        reviewRepository.deleteById(reviewId);
+    }
 }

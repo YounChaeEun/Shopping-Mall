@@ -39,4 +39,13 @@ public class ReviewController {
                                        @AuthenticationPrincipal User user) {
         return reviewService.update(reviewId, reviewRequest, user);
     }
+
+    /* 리뷰 삭제하기 */
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("/reviews/{reviewId}")
+    @Operation(summary = "리뷰 삭제 api", description = "리뷰를 삭제하는 api 입니다.")
+    public void deleteReview(@PathVariable Long reviewId,
+                             @AuthenticationPrincipal User user) {
+        reviewService.delete(reviewId, user);
+    }
 }
