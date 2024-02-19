@@ -1,5 +1,6 @@
 package com.example.shoppingmall_comp.domain.members.repository;
 
+import com.example.shoppingmall_comp.domain.items.entity.Item;
 import com.example.shoppingmall_comp.domain.members.entity.Member;
 import com.example.shoppingmall_comp.domain.members.entity.Review;
 import org.springframework.data.domain.Page;
@@ -10,4 +11,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Long> {
     Page<Review> findAllByMember(Member member, Pageable pageable);
+    Page<Review> findAllByItem(Item item, Pageable pageable);
 }

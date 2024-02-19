@@ -116,4 +116,16 @@ public class ReviewServiceImpl implements ReviewService {
                         review.getStar()))
                 .toList();
     }
+
+    @Override
+    public List<ReviewResponse> getAllByItem(Long itemId, Pageable pageable) {
+        Item item = itemRepository.findById(itemId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_ITEM));
+        Page<Review> reviews = reviewRepository.findAllByItem(item, pageable);
+        return reviews.map(review -> new ReviewResponse(review.getReviewId(),
+                        review.getReviewTitle(),
+                        review.getReviewContent(),
+                        review.getStar()))
+                .toList();
+    }
 }
