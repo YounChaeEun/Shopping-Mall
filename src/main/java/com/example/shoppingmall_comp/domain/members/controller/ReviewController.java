@@ -29,4 +29,14 @@ public class ReviewController {
                                     @AuthenticationPrincipal User user) {
         return reviewService.create(request, user);
     }
+
+    /* 리뷰 수정하기 */
+    @ResponseStatus(HttpStatus.OK)
+    @PatchMapping("/reviews/{reviewId}")
+    @Operation(summary = "리뷰 수정 api", description = "리뷰를 수정하는 api 입니다.")
+    public ReviewResponse updateReview(@PathVariable Long reviewId,
+                                       @Valid @RequestBody ReviewRequest reviewRequest,
+                                       @AuthenticationPrincipal User user) {
+        return reviewService.update(reviewId, reviewRequest, user);
+    }
 }

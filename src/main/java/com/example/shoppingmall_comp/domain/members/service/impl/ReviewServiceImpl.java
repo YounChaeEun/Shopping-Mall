@@ -28,6 +28,17 @@ public class ReviewServiceImpl implements ReviewService {
     private final OrderItemRepository orderItemRepository;
     private final ItemRepository itemRepository;
 
+    public void checkIfIsForbidden(Long id, Long loginId, ErrorCode errorCode) {
+        if (!id.equals(loginId)) {
+            throw new BusinessException(errorCode);
+        }
+    }
+
+    public Member getMember(User user) {
+        return memberRepository.findByEmail(user.getUsername())
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_MEMBER));
+    }
+
     @Transactional
     @Override
     public ReviewResponse create(ReviewRequest request, User user) {
@@ -58,14 +69,22 @@ public class ReviewServiceImpl implements ReviewService {
                 review.getStar());
     }
 
-    public void checkIfIsForbidden(Long id, Long loginId, ErrorCode errorCode) {
-        if (!id.equals(loginId)) {
-            throw new BusinessException(errorCode);
-        }
-    }
+    @Override
+    @Transactional
+    public ReviewResponse update(Long reviewId, ReviewRequest reviewRequest, User user) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_REVIEW));
 
-    public Member getMember(User user) {
-        return memberRepository.findByEmail(user.getUsername())
-                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_MEMBER));
+        // 리뷰를 작성한 회원의 id랑 로그인한 id가 다른지 확인한다.
+        Long reviewWriterId = review.getMember().getMemberId();
+        Member member = getMember(user);
+        checkIfIsForbidden(reviewWriterId, member.getMemberId(), ErrorCode.NOT_MATCH_REVIEW);
+
+        review.updateReview(reviewRequest.title(), reviewRequest.content(), reviewRequest.star());
+
+        return new ReviewResponse(review.getReviewId(),
+                review.getReviewTitle(),
+                review.getReviewContent(),
+                review.getStar());
     }
 }
