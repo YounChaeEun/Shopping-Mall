@@ -71,7 +71,7 @@ public class ItemServiceImpl implements ItemService {
                 .itemPrice(itemRequest.price())
                 .itemDetail(itemRequest.description())
                 .category(category)
-                .count(itemRequest.count()) // 적절한 초기값으로 설정, 판매자가 재고수량 입력하게, -> 수정
+                .count(itemRequest.count())
                 .member(member)
                 .itemOption(itemOption)
                 .soldOutState(itemRequest.soldOutState())
@@ -136,7 +136,7 @@ public class ItemServiceImpl implements ItemService {
         List<ItemOption> options = itemOptionRepository.findByItem(item); // 아이템 관련해서 아이템 옵션 조회
         itemOptionRepository.deleteAll(options);
 
-        //새로운 옵션이 주어졌을때(옵션값이 null이 아닐 때) 옵션 DB에 저장
+        //옵션 DB에 저장
         if (itemRequest.optionValue() != null && !itemRequest.optionValue().isEmpty()) {
             //옵션값 -> 엔티티 변환
             List<ItemOption.Option> optionValues = itemRequest.optionValue().stream()
@@ -200,7 +200,9 @@ public class ItemServiceImpl implements ItemService {
         Member member = getMember(user);
         Page<Item> sellerItems = itemRepository.findByMember(pageable, member);
 
-        //상품 등록한 판매자 == 로그인한 회원 권한 확인 로직
+        if(sellerItems.isEmpty()) {
+            throw new BusinessException(NOT_FOUND_ITEM, "판매한 상품이 없습니다.");
+        }
 
         return sellerItems.stream()
                 .map(item -> new SellerItemsResponse(
