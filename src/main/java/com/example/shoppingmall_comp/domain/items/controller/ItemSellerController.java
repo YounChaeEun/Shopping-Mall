@@ -2,11 +2,13 @@ package com.example.shoppingmall_comp.domain.items.controller;
 
 import com.example.shoppingmall_comp.domain.items.dto.ItemRequest;
 import com.example.shoppingmall_comp.domain.items.dto.ItemResponse;
+import com.example.shoppingmall_comp.domain.items.dto.SellerItemsResponse;
 import com.example.shoppingmall_comp.domain.items.service.Impl.ItemServiceImpl;
 import com.example.shoppingmall_comp.domain.members.entity.Member;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -52,5 +54,13 @@ public class ItemSellerController {
     @Operation(summary = "상품 삭제 api", description = "상품을 삭제하는 api 입니다.")
     public void deleteItem(@PathVariable Long itemId, @AuthenticationPrincipal User user) {
         itemService.delete(itemId, user);
+    }
+
+    //상품 조회(판매자)
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/items")
+    @Operation(summary = "상품 판매자 조회 api", description = "판매자 자신이 등록한 상품을 조회하는 api 입니다.")
+    public List<SellerItemsResponse> getSellerItems(Pageable pageable, @AuthenticationPrincipal User user) {
+        return itemService.getSellerAll(pageable, user);
     }
 }

@@ -1,7 +1,7 @@
 package com.example.shoppingmall_comp.domain.items.service.Impl;
-
 import com.example.shoppingmall_comp.domain.items.dto.ItemRequest;
 import com.example.shoppingmall_comp.domain.items.dto.ItemResponse;
+import com.example.shoppingmall_comp.domain.items.dto.SellerItemsResponse;
 import com.example.shoppingmall_comp.domain.items.entity.Category;
 import com.example.shoppingmall_comp.domain.items.entity.Item;
 import com.example.shoppingmall_comp.domain.items.entity.ItemImage;
@@ -16,18 +16,17 @@ import com.example.shoppingmall_comp.domain.members.entity.Member;
 import com.example.shoppingmall_comp.domain.members.repository.MemberRepository;
 import com.example.shoppingmall_comp.global.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.example.shoppingmall_comp.global.exception.ErrorCode.*;
-
 
 @Service
 @RequiredArgsConstructor
@@ -112,7 +111,7 @@ public class ItemServiceImpl implements ItemService {
             throw new BusinessException(DUPLICATE_ITEM, "이미 존재하는 상품입니다.");
         }
 
-        //todo:수정할 상품의 회원과 로그인한 회원이 다르면 예외처리 - 로그인하고 등록하는거니까 예외처리 안해도 되나
+        //todo: 상품을 등록한 회원과 로그인한 회원이 다르면 예외처리 - 로그인하고 등록하는거니까 예외처리 안해도 되나
 
         // 해당 상품이 없을 경우
         if(itemRequest.itemId() == null) {
@@ -170,6 +169,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     // 상품 삭제
+    @Override
     @Transactional
     public void delete(Long itemId, User user) {
         Member member = getMember(user);
@@ -193,6 +193,22 @@ public class ItemServiceImpl implements ItemService {
 
         // 상품 삭제
         itemRepository.deleteById(itemId);
+    }
+
+    //상품 조회(판매자)
+    @Transactional(readOnly = true)
+    public List<SellerItemsResponse> getSellerAll(Pageable pageable, User user) {
+        Member member = getMember(user);
+        Page<Item> sellerItems = itemRepository.findByMember(pageable, member);
+
+        return sellerItems.stream()
+                .map(item -> new SellerItemsResponse(
+                        item.getItemId(),
+                        item.getItemName(),
+                        item.getItemPrice(),
+                        item.getCount()
+                ))
+                .collect(Collectors.toList());
     }
 
 
