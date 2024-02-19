@@ -6,12 +6,14 @@ import com.example.shoppingmall_comp.domain.members.service.impl.ReviewServiceIm
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -47,5 +49,14 @@ public class ReviewController {
     public void deleteReview(@PathVariable Long reviewId,
                              @AuthenticationPrincipal User user) {
         reviewService.delete(reviewId, user);
+    }
+
+    /* 리뷰 전체 조회 (마이페이지) */
+    @GetMapping("/reviews")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "리뷰 전체 조회 api", description = "마이페이지에서 리뷰를 전체 조회하는 api 입니다.")
+    public List<ReviewResponse> findAllByMember(@AuthenticationPrincipal User user,
+                                                Pageable pageable){
+        return reviewService.getAllByMember(user,pageable);
     }
 }

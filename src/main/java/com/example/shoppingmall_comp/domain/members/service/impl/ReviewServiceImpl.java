@@ -14,9 +14,13 @@ import com.example.shoppingmall_comp.domain.orders.repository.OrderItemRepositor
 import com.example.shoppingmall_comp.global.exception.BusinessException;
 import com.example.shoppingmall_comp.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -100,5 +104,16 @@ public class ReviewServiceImpl implements ReviewService {
         checkIfIsForbidden(reviewWriterId, member.getMemberId(), ErrorCode.NOT_MATCH_REVIEW);
 
         reviewRepository.deleteById(reviewId);
+    }
+
+    @Override
+    public List<ReviewResponse> getAllByMember(User user, Pageable pageable) {
+        Member member = getMember(user);
+        Page<Review> reviews = reviewRepository.findAllByMember(member, pageable);
+        return reviews.map(review -> new ReviewResponse(review.getReviewId(),
+                        review.getReviewTitle(),
+                        review.getReviewContent(),
+                        review.getStar()))
+                .toList();
     }
 }
