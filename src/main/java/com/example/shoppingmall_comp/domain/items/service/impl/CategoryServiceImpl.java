@@ -1,5 +1,6 @@
 package com.example.shoppingmall_comp.domain.items.service.impl;
 
+import com.example.shoppingmall_comp.domain.items.dto.CategoryRequest;
 import com.example.shoppingmall_comp.domain.items.dto.CategoryResponse;
 import com.example.shoppingmall_comp.domain.items.entity.Category;
 import com.example.shoppingmall_comp.domain.items.repository.CategoryRepository;
@@ -24,5 +25,15 @@ public class CategoryServiceImpl implements CategoryService {
         return categories.stream()
                 .map(category -> {return new CategoryResponse(category.getCategoryId(), category.getCategoryName());})
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public CategoryResponse create(CategoryRequest request) {
+        Category category = Category.builder()
+                .categoryName(request.categoryName())
+                .build();
+        Category savedCategory = categoryRepository.save(category);
+        return new CategoryResponse(savedCategory.getCategoryId(), savedCategory.getCategoryName());
     }
 }
