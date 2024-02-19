@@ -5,6 +5,8 @@ import com.example.shoppingmall_comp.domain.items.dto.CategoryResponse;
 import com.example.shoppingmall_comp.domain.items.entity.Category;
 import com.example.shoppingmall_comp.domain.items.repository.CategoryRepository;
 import com.example.shoppingmall_comp.domain.items.service.CategoryService;
+import com.example.shoppingmall_comp.global.exception.BusinessException;
+import com.example.shoppingmall_comp.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,5 +37,13 @@ public class CategoryServiceImpl implements CategoryService {
                 .build();
         Category savedCategory = categoryRepository.save(category);
         return new CategoryResponse(savedCategory.getCategoryId(), savedCategory.getCategoryName());
+    }
+
+    @Override
+    @Transactional
+    public void delete(Long categoryId) {
+        categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_CATEGORY));
+        categoryRepository.deleteById(categoryId);
     }
 }

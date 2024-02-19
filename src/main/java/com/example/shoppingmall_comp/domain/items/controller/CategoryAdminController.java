@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -31,5 +32,13 @@ public class CategoryAdminController {
     public CategoryResponse addCategory(@RequestBody @Valid CategoryRequest request, @AuthenticationPrincipal User user) {
         System.out.println("user.getAuthorities() = " + user.getAuthorities());
         return categoryService.create(request);
+    }
+
+    @DeleteMapping("/categories/{categoryId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "카테고리 삭제 api", description = "관리자가 카테고리를 삭제하는 api 입니다.")
+    @ApiResponse(responseCode = "204", description = "카테고리 삭제 성공", content = @Content(schema = @Schema(implementation = CategoryResponse.class)))
+    public void deleteCategory(@PathVariable Long categoryId) {
+        categoryService.delete(categoryId);
     }
 }
