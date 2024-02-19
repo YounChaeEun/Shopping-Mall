@@ -53,7 +53,8 @@ public enum ErrorCode {
 
     // 리뷰
     NOT_FOUND_REVIEW(HttpStatus.NOT_FOUND, "존재하는 리뷰가 없습니다."),
-    NOT_MATCH_REVIEW(HttpStatus.BAD_REQUEST, "해당 회원이 작성한 리뷰가 아닙니다."),
+    NOT_MATCH_REVIEW(HttpStatus.FORBIDDEN, "해당 회원이 작성한 리뷰가 아닙니다."),
+    CANT_WRITE_REVIEW(HttpStatus.FORBIDDEN, "주문한 상품에 대해서만 리뷰를 작성할 수 있습니다."),
     CANT_DELETE_REVIEW(HttpStatus.BAD_REQUEST, "삭제할 수 없는 리뷰입니다."),
     PASS_POSSIBLE_DATE(HttpStatus.INTERNAL_SERVER_ERROR, "리뷰 작성 가능한 기간이 지났습니다."),
 

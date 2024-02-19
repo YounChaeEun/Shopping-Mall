@@ -38,7 +38,7 @@ public class ReviewServiceImpl implements ReviewService {
 
         // 주문한 회원의 id랑 로그인한 id가 다른지 확인한다.
         Long orderMemberId = orderItem.getOrder().getMember().getMemberId();
-        checkIfIsForbidden(orderMemberId, member.getMemberId());
+        checkIfIsForbidden(orderMemberId, member.getMemberId(), ErrorCode.CANT_WRITE_REVIEW);
 
         Item item = orderItem.getItem();
 
@@ -58,10 +58,9 @@ public class ReviewServiceImpl implements ReviewService {
                 review.getStar());
     }
 
-    // 이것도 오버리이딩 해야하는건가?
-    public void checkIfIsForbidden(Long id, Long loginId) {
+    public void checkIfIsForbidden(Long id, Long loginId, ErrorCode errorCode) {
         if (!id.equals(loginId)) {
-            throw new BusinessException(ErrorCode.FORBIDDEN_ERROR);
+            throw new BusinessException(errorCode);
         }
     }
 
