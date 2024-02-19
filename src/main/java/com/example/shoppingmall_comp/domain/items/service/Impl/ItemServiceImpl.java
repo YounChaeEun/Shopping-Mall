@@ -111,13 +111,12 @@ public class ItemServiceImpl implements ItemService {
             throw new BusinessException(DUPLICATE_ITEM, "이미 존재하는 상품입니다.");
         }
 
-        //todo: 상품을 등록한 회원과 로그인한 회원이 다르면 예외처리 - 로그인하고 등록하는거니까 예외처리 안해도 되나
-
         // 해당 상품이 없을 경우
         if(itemRequest.itemId() == null) {
             //itemRequest의 itemId가 Nullable이기 때문에 itemId가 null인지 검사하는 로직 처리
             throw new BusinessException(NOT_FOUND_ITEM, "상품 ID가 필요합니다.");
         }
+
         Item item = itemRepository.findById(itemRequest.itemId())
                 .orElseThrow(() -> new BusinessException(NOT_FOUND_ITEM));
 
@@ -126,7 +125,7 @@ public class ItemServiceImpl implements ItemService {
 
         //상품의 회원(판매자) != 현재 로그인한 회원
         if (!item.getMember().equals(member)) {
-            throw new BusinessException(NOT_SELLING_ITEM,"판매한 상품이 아닙니다.");
+            throw new BusinessException(FORBIDDEN_ERROR,"수정할 권한이 없습니다.");
         }
 
         // 엔티티 수정
@@ -178,9 +177,9 @@ public class ItemServiceImpl implements ItemService {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new BusinessException(NOT_FOUND_ITEM,"존재하는 상품이 아닙니다."));
 
-        //현재 로그인한 사용자가 삭제하려는 상품의 소유자가 맞는지
+        //현재 로그인한(상품 삭제하려는) 사용자 == 상품 등록했던 회원
         if (!item.getMember().equals(member)) {
-            throw new BusinessException(NOT_SELLING_ITEM, "판매하고 있는 상품이 아닙니다.");
+            throw new BusinessException(FORBIDDEN_ERROR,"삭제할 권한이 없습니다.");
         }
 
         // S3, 이미지DB 삭제
@@ -201,6 +200,8 @@ public class ItemServiceImpl implements ItemService {
         Member member = getMember(user);
         Page<Item> sellerItems = itemRepository.findByMember(pageable, member);
 
+        //상품 등록한 판매자 == 로그인한 회원 권한 확인 로직
+
         return sellerItems.stream()
                 .map(item -> new SellerItemsResponse(
                         item.getItemId(),
@@ -208,7 +209,7 @@ public class ItemServiceImpl implements ItemService {
                         item.getItemPrice(),
                         item.getCount()
                 ))
-                .collect(Collectors.toList());
+                .toList();
     }
 
 
