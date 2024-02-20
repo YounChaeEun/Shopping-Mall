@@ -19,4 +19,10 @@ public class MemberController {
     public MemberSignUpResponse getOneMember(@AuthenticationPrincipal User user) {
         return memberService.getOne(user);
     }
+
+    @DeleteMapping("/members")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteUser(@AuthenticationPrincipal User user) {
+        memberService.deleteUser(user);
+    }
 }
