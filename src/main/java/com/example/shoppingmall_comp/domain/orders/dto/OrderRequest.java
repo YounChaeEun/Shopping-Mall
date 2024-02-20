@@ -1,5 +1,6 @@
 package com.example.shoppingmall_comp.domain.orders.dto;
 
+import com.example.shoppingmall_comp.domain.orders.entity.OrderItem;
 import io.swagger.v3.oas.annotations.media.Schema;
 import javax.validation.constraints.NotNull;
 import org.springframework.lang.Nullable;
@@ -55,6 +56,7 @@ public record OrderRequest (
             Long itemId, //주문할 상품 id
             String name, //주문할 상품 이름
             int count, //주문할 상품 수량
-            int orderPrice //주문할 각 상품 주문 가격
+            int orderPrice, //주문할 각 상품 주문 가격
+            List<OrderItem.Option> optionValues
     ) {}
 }
