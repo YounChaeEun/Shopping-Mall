@@ -53,11 +53,11 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public void deleteUser(User user) {
+    public void deleteUser(User user) { // 이렇게 해주는 게 맞는지? 메서드 하나 만들고 if else if 이렇게 해서 하는 게 더 나은가?
         Member member = memberRepository.findByEmail(user.getUsername())
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_MEMBER));
 
-        // 회원이 판매자거나, 관리자면 예외 처리 해준다. -> 이렇게 해주는 게 맞는지? 메서드 하나 만들고 if else if 이렇게 해서 하는 게 더 나은가?
+        // 회원이 판매자거나, 관리자면 예외 처리 해준다. ->
         // 이것도 코드가 겹치는데 메서드로 따로 빼줘야 하나?
         // 예외처리로 메서드를 빼면 @Override를 붙여주는 게 맞나?
         RoleName roleName = member.getRole().getRoleName();
@@ -76,5 +76,22 @@ public class MemberServiceImpl implements MemberService {
 
         // 구매자를 삭제한다. (role은 casecade option으로 같이 삭제된다.)
         memberRepository.deleteById(member.getMemberId());
+    }
+
+    @Override
+    @Transactional
+    public void deleteSeller(User user) {
+        Member member = memberRepository.findByEmail(user.getUsername())
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_MEMBER));
+
+        RoleName roleName = member.getRole().getRoleName();
+        if(roleName.equals(RoleName.USER) || roleName.equals(RoleName.ADMIN)) {
+            throw new BusinessException(ErrorCode.NOT_SELLER);
+        }
+
+        // 판매자의 판매 상품을 삭제한다.
+
+        // 구매자일때 삭제하는 것들을 삭제한다. (장바구니, 권한, 리프레시, 회원 자체)
+        deleteUser(user);
     }
 }

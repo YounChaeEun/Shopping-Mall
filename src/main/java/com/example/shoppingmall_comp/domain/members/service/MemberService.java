@@ -9,4 +9,5 @@ public interface MemberService {
     MemberSignUpResponse getOne(User user);
     List<MemberSignUpResponse> getAll();
     void deleteUser(User user);
+    void deleteSeller(User user);
 }
