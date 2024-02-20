@@ -7,17 +7,20 @@ import com.example.shoppingmall_comp.domain.members.entity.Cart;
 import com.example.shoppingmall_comp.domain.members.entity.Member;
 import com.example.shoppingmall_comp.domain.members.repository.CartRepository;
 import com.example.shoppingmall_comp.domain.members.repository.MemberRepository;
+import com.example.shoppingmall_comp.domain.orders.dto.OrderPageResponse;
 import com.example.shoppingmall_comp.domain.orders.dto.OrderRequest;
 import com.example.shoppingmall_comp.domain.orders.dto.OrderResponse;
-import com.example.shoppingmall_comp.domain.orders.entity.Order;
-import com.example.shoppingmall_comp.domain.orders.entity.OrderItem;
-import com.example.shoppingmall_comp.domain.orders.entity.Pay;
+import com.example.shoppingmall_comp.domain.orders.dto.PayCancelRequest;
+import com.example.shoppingmall_comp.domain.orders.entity.*;
 import com.example.shoppingmall_comp.domain.orders.repository.OrderItemRepository;
 import com.example.shoppingmall_comp.domain.orders.repository.OrderRepository;
+import com.example.shoppingmall_comp.domain.orders.repository.PayCancelRepository;
 import com.example.shoppingmall_comp.domain.orders.repository.PayRepository;
 import com.example.shoppingmall_comp.domain.orders.service.OrderService;
 import com.example.shoppingmall_comp.global.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static com.example.shoppingmall_comp.global.exception.ErrorCode.*;
+import static java.util.stream.Collectors.toList;
 
 @Service
 @RequiredArgsConstructor
@@ -70,7 +74,7 @@ public class OrderServiceImpl implements OrderService {
             itemRepository.save(item);
 
             //주문된 상품을 주문 상품 DB에 저장
-            OrderItem orderItem = OrderItem.createOrderItem(member, item, item.getItemName(), orderItemCreate.orderPrice(), orderItemCreate.count(), order);
+            OrderItem orderItem = OrderItem.createOrderItem(member, item, item.getItemName(), orderItemCreate.orderPrice(), orderItemCreate.count(), order, orderItemCreate.optionValues());
             orderItemRepository.save(orderItem);
 
             //주문한 상품이 장바구니에 존재할 경우
@@ -97,24 +101,29 @@ public class OrderServiceImpl implements OrderService {
         return getOrderResponse(order, pay);
     }
 
+
     private Member getMember(User user) {
         return memberRepository.findByEmail(user.getUsername())
                 .orElseThrow(() -> new BusinessException(NOT_FOUND_MEMBER));
     }
 
+    private List<OrderResponse.OrderItemInfo> toOrderItemInfo(List<OrderItem> orderItems){
+        return orderItems.stream()
+                .map(orderItem -> new OrderResponse.OrderItemInfo(
+                        orderItem.getItem().getItemId(),
+                        orderItem.getOrderItemName(),
+                        orderItem.getOrderItemCount(),
+                        orderItem.getOrderItemPrice(),
+                        orderItem.getOptionValues()
+                ))
+                .toList();
+    }
     //ItemResponse 코드 중복 방지
     private OrderResponse getOrderResponse(Order order, Pay pay) {
 
         List<OrderItem> orderItems = orderItemRepository.findByOrder(order); //주문에 속한 주문상품들 조회
 
-        List<OrderResponse.orderItemCreate> orderItemCreates = orderItems.stream()
-                .map(orderItem -> new OrderResponse.orderItemCreate(
-                        orderItem.getItem().getItemId(),
-                        orderItem.getOrderItemName(),
-                        orderItem.getOrderItemCount(),
-                        orderItem.getOrderItemPrice()
-                ))
-                .toList();
+        List<OrderResponse.OrderItemInfo> orderItemInfos = toOrderItemInfo(orderItems);
 
         return new OrderResponse(
                 order.getOrderId(),
@@ -128,7 +137,7 @@ public class OrderServiceImpl implements OrderService {
                 order.getOrderState(),
                 pay.getCardCompany(), // Pay 엔티티에서 카드사 정보 가져옴
                 pay.getCardNum(), // Pay 엔티티에서 카드 번호 정보 가져옴
-                orderItemCreates
+                orderItemInfos
                 );
     }
 }
