@@ -44,7 +44,7 @@ public class Member extends BaseEntity implements UserDetails {
     @Column(name = "deleted_state", nullable = false)
     private DeletedState deletedState;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "role_id")
     private Role role;
 
