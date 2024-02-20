@@ -2,7 +2,6 @@ package com.example.shoppingmall_comp.domain.members.service.impl;
 
 import com.example.shoppingmall_comp.domain.members.dto.MemberSignUpResponse;
 import com.example.shoppingmall_comp.domain.members.entity.Member;
-import com.example.shoppingmall_comp.domain.members.entity.RoleName;
 import com.example.shoppingmall_comp.domain.members.repository.MemberRepository;
 import com.example.shoppingmall_comp.domain.members.repository.RefreshTokenRepository;
 import com.example.shoppingmall_comp.domain.members.service.MemberService;
@@ -57,14 +56,6 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberRepository.findByEmail(user.getUsername())
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_MEMBER));
 
-        // 회원이 판매자거나, 관리자면 예외 처리 해준다. ->
-        // 이것도 코드가 겹치는데 메서드로 따로 빼줘야 하나?
-        // 예외처리로 메서드를 빼면 @Override를 붙여주는 게 맞나?
-        RoleName roleName = member.getRole().getRoleName();
-        if(roleName.equals(RoleName.SELLER) || roleName.equals(RoleName.ADMIN)) {
-            throw new BusinessException(ErrorCode.NOT_USER);
-        }
-
         // 구매자의 장바구니를 삭제한다.
 
         // 구매자의 refresh token을 삭제한다. (refresh token도 casecade option으로 수정할 것!)
@@ -83,11 +74,6 @@ public class MemberServiceImpl implements MemberService {
     public void deleteSeller(User user) {
         Member member = memberRepository.findByEmail(user.getUsername())
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_MEMBER));
-
-        RoleName roleName = member.getRole().getRoleName();
-        if(roleName.equals(RoleName.USER) || roleName.equals(RoleName.ADMIN)) {
-            throw new BusinessException(ErrorCode.NOT_SELLER);
-        }
 
         // 판매자의 판매 상품을 삭제한다.
 
