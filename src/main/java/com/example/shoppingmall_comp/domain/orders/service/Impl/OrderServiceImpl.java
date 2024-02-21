@@ -41,6 +41,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderItemRepository orderItemRepository;
     private final CartRepository cartRepository;
     private final PayRepository payRepository;
+    private final PayCancelRepository payCancelRepository;
 
     @Override
     @Transactional
@@ -101,6 +102,55 @@ public class OrderServiceImpl implements OrderService {
         return getOrderResponse(order, pay);
     }
 
+    //결제 취소
+    @Override
+    @Transactional
+    public void payCancel(PayCancelRequest payCancelRequest, User user) {
+        Member member = getMember(user);
+
+        Order order = orderRepository.findByMerchantId(payCancelRequest.merchantId())
+                .orElseThrow(()-> new BusinessException(NOT_EQUAL_MERCHANT_ID,"주문 번호가 같지 않습니다."));
+
+        Pay pay = payRepository.findByOrder(order)
+                .orElseThrow(()-> new BusinessException(NOT_FOUND_PAY));
+
+        //결제 회원과 로그인한 회원이 다를 경우
+        if(!pay.getMemberId().equals(member.getMemberId())) {
+            throw new BusinessException(CAN_NOT_CANCEL_PAY);
+        }
+
+        //이미 취소된 결제를 또 결제 취소하려고 할 경우
+        if(pay.getPayState().equals(PayState.CANCEL)) {
+            throw new BusinessException(ALREADY_CANCEL_PAY, "이미 결제 취소가 되었습니다.");
+        }
+
+        //주문 상태가 배송중일 경우
+        if(order.getOrderState().equals(OrderState.DELIVERY)) {
+            throw new BusinessException(ALREADY_DELIVERY_STATUS, "현재 배송 중이라 결제 취소가 불가능합니다.");
+        }
+
+        PayCancel payCancel = PayCancel.builder()
+                .order(pay.getOrder())
+                .merchantId(payCancelRequest.merchantId())
+                .cancelReason(payCancelRequest.cancelReason())
+                .cancelPrice(pay.getPayPrice())
+                .cardCompany(pay.getCardCompany())
+                .cardNum(pay.getCardNum())
+                .build();
+
+        //주문 상품 DB에서 삭제
+        List<OrderItem> orderItems = orderItemRepository.findAllByOrder(pay.getOrder());//todo:이거 어떻게 가능?
+        orderItemRepository.deleteAll(orderItems);
+
+        //결제취소 DB 저장
+        payCancelRepository.save(payCancel);
+
+        //결제 상태 변경
+        pay.PayStateToCancel();
+        //주문 DB 상태 변경
+        pay.getOrder().orderStateToCancel();
+
+    }
 
     private Member getMember(User user) {
         return memberRepository.findByEmail(user.getUsername())

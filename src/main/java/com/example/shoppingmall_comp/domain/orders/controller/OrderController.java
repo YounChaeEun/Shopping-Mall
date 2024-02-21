@@ -37,7 +37,7 @@ public class OrderController {
         return orderService.create(orderRequest, user);
     }
 
-    //주문 취소
+    //주문(결제) 취소
     @DeleteMapping("/payCancel")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "결제 취소 api", description = "결제를 취소하는 api 입니다.")
