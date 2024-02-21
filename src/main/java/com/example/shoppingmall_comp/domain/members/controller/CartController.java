@@ -56,7 +56,7 @@ public class CartController {
     //체크한 장바구니들 삭제
     @DeleteMapping("/carts")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(summary = "장바구니 전체 조회 api", description = "장바구니를 전체 조회하는 api 입니다.")
+    @Operation(summary = "장바구니 삭제 api", description = "선택한 장바구니들을 삭제하는 api 입니다.")
     public void deleteCart(@Valid @RequestBody DeleteCartRequest cartIdList,
                            @AuthenticationPrincipal User user) {
         cartService.deleteSelectedCarts(cartIdList, user);
