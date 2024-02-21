@@ -25,8 +25,6 @@ import javax.validation.Valid;
 public class CartController {
 
     private final CartServiceImpl cartService;
-    private final MemberServiceImpl memberService;
-    private final ItemServiceImpl itemService;
 
     // 장바구니 등록
     @PostMapping("/carts")
@@ -35,6 +33,15 @@ public class CartController {
     public CartResponse addCart(@Valid @RequestBody CartRequest cartRequest,
                                 @AuthenticationPrincipal User user) {
         return cartService.create(cartRequest, user);
+    }
+
+    //장바구니 수정
+    @PatchMapping("/carts")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "장바구니 수정 api", description = "장바구니를 수정하는 api 입니다.")
+    public CartResponse updateCart(@Valid @RequestBody CartRequest cartRequest,
+                                   @AuthenticationPrincipal User user) {
+        return cartService.update(cartRequest, user);
     }
 
 }

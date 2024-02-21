@@ -11,6 +11,10 @@ import java.util.List;
 public record CartRequest(
 
         @NotNull
+        @Schema(description = "장바구니 id", example = "1")
+        Long cartId,
+
+        @NotNull
         @Schema(description = "장바구니 수량", example = "1")
         int count,
 

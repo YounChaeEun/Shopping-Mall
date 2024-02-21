@@ -73,8 +73,19 @@ public class CartServiceImpl implements CartService {
         return getCartResponse(cart);
     }
 
+    //장바구니 수정
+    @Override
+    @Transactional
+    public CartResponse update(CartRequest cartRequest, User user) {
+        Member member = getMember(user);
+        Cart cart = existMemberCartCheck(cartRequest.cartId(), member);
 
+        cart.updateCart(cartRequest.count());
+        cartRepository.save(cart);
 
+        // 장바구니 수정은 수량만 수정이 가능해서 사실상 count만 바뀐걸 보여줘도 되지 않나? 이럴경우 Response 새로 파는지
+        return getCartResponse(cart);
+    }
 
 
 

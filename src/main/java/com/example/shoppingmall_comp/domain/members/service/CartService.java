@@ -6,4 +6,5 @@ import org.springframework.security.core.userdetails.User;
 
 public interface CartService {
     CartResponse create(CartRequest cartRequest, User user);
+    CartResponse update(CartRequest cartRequest, User user);
 }
