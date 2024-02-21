@@ -5,6 +5,7 @@ import com.example.shoppingmall_comp.domain.items.entity.SoldOutState;
 import com.example.shoppingmall_comp.domain.items.repository.ItemRepository;
 import com.example.shoppingmall_comp.domain.members.dto.CartRequest;
 import com.example.shoppingmall_comp.domain.members.dto.CartResponse;
+import com.example.shoppingmall_comp.domain.members.dto.DeleteCartRequest;
 import com.example.shoppingmall_comp.domain.members.entity.Cart;
 import com.example.shoppingmall_comp.domain.members.entity.Member;
 import com.example.shoppingmall_comp.domain.members.repository.CartRepository;
@@ -99,6 +100,18 @@ public class CartServiceImpl implements CartService {
         Page<Cart> cartList = cartRepository.findAllByMember(member, pageable);
 
         return cartList.map(this::getCartResponse);
+    }
+
+    //체크된 장바구니들 삭제
+    @Override
+    @Transactional
+    public void deleteSelectedCarts(DeleteCartRequest cartRequest, User user) {
+        Member member = getMember(user);
+        List<Long> cartIdList = cartRequest.cartIdList();
+        for (Long cartId : cartIdList) {
+            Cart cart = existMemberCartCheck(cartId, member);
+            cartRepository.delete(cart);
+        }
     }
 
     private Member getMember(User user) {

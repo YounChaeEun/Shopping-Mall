@@ -1,13 +1,9 @@
 package com.example.shoppingmall_comp.domain.members.controller;
 
-import com.example.shoppingmall_comp.domain.items.service.Impl.ItemServiceImpl;
-import com.example.shoppingmall_comp.domain.items.service.ItemService;
 import com.example.shoppingmall_comp.domain.members.dto.CartRequest;
 import com.example.shoppingmall_comp.domain.members.dto.CartResponse;
-import com.example.shoppingmall_comp.domain.members.service.CartService;
+import com.example.shoppingmall_comp.domain.members.dto.DeleteCartRequest;
 import com.example.shoppingmall_comp.domain.members.service.Impl.CartServiceImpl;
-import com.example.shoppingmall_comp.domain.members.service.Impl.MemberServiceImpl;
-import com.example.shoppingmall_comp.domain.members.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +17,6 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -56,6 +51,15 @@ public class CartController {
     public Page<CartResponse> getCart(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
                                       @AuthenticationPrincipal User user) {
         return cartService.getAll(pageable, user);
+    }
+
+    //체크한 장바구니들 삭제
+    @DeleteMapping("/carts")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "장바구니 전체 조회 api", description = "장바구니를 전체 조회하는 api 입니다.")
+    public void deleteCart(@Valid @RequestBody DeleteCartRequest cartIdList,
+                           @AuthenticationPrincipal User user) {
+        cartService.deleteSelectedCarts(cartIdList, user);
     }
 
 }
