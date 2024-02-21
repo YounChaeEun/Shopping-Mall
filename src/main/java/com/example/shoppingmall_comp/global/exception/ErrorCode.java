@@ -37,6 +37,7 @@ public enum ErrorCode {
     REQUIRED_IMAGE(HttpStatus.BAD_REQUEST, "이미지는 필수로 등록해야 합니다."),
     UPLOAD_ERROR_IMAGE(HttpStatus.BAD_REQUEST, "이미지 업로드 에러가 발생했습니다."),
     VALID_ERROR_IMAGE(HttpStatus.BAD_REQUEST, "이미지 형식을 확인해주세요."),
+    SOLD_OUT_STATE_ITEM(HttpStatus.BAD_REQUEST, "상품이 품절되었습니다."),
 
     // 옵션
     NOT_FOUND_OPTION(HttpStatus.NOT_FOUND, "존재하지 않는 옵션입니다."),
