@@ -12,11 +12,14 @@ import com.example.shoppingmall_comp.domain.members.repository.MemberRepository;
 import com.example.shoppingmall_comp.domain.members.service.CartService;
 import com.example.shoppingmall_comp.global.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.example.shoppingmall_comp.global.exception.ErrorCode.*;
 
@@ -87,7 +90,16 @@ public class CartServiceImpl implements CartService {
         return getCartResponse(cart);
     }
 
+    //장바구니 전체 조회
+    @Override
+    @Transactional(readOnly = true)
+    public Page<CartResponse> getAll(Pageable pageable, User user) {
+        Member member = getMember(user);
+        //회원에 해당하는 전체 장바구니
+        Page<Cart> cartList = cartRepository.findAllByMember(member, pageable);
 
+        return cartList.map(this::getCartResponse);
+    }
 
     private Member getMember(User user) {
         return memberRepository.findByEmail(user.getUsername())

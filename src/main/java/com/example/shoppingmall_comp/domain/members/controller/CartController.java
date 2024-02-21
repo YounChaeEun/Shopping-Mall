@@ -11,12 +11,17 @@ import com.example.shoppingmall_comp.domain.members.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -42,6 +47,15 @@ public class CartController {
     public CartResponse updateCart(@Valid @RequestBody CartRequest cartRequest,
                                    @AuthenticationPrincipal User user) {
         return cartService.update(cartRequest, user);
+    }
+
+    // 회원의 장바구니 전체 조회
+    @GetMapping("/carts")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "장바구니 전체 조회 api", description = "장바구니를 전체 조회하는 api 입니다.")
+    public Page<CartResponse> getCart(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+                                      @AuthenticationPrincipal User user) {
+        return cartService.getAll(pageable, user);
     }
 
 }
