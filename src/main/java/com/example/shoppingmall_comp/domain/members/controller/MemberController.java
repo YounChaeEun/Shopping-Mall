@@ -1,6 +1,6 @@
 package com.example.shoppingmall_comp.domain.members.controller;
 
-import com.example.shoppingmall_comp.domain.members.dto.MemberSignUpResponse;
+import com.example.shoppingmall_comp.domain.members.dto.MemberResponse;
 import com.example.shoppingmall_comp.domain.members.service.impl.MemberServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -20,7 +20,7 @@ public class MemberController {
     @GetMapping("/members")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "회원 상세 조회 api", description = "사용자가 자신의 정보를 조회하는 api 입니다.")
-    public MemberSignUpResponse getOneMember(@AuthenticationPrincipal User user) {
+    public MemberResponse getOneMember(@AuthenticationPrincipal User user) {
         return memberService.getOne(user);
     }
 

@@ -6,7 +6,7 @@ import com.example.shoppingmall_comp.domain.members.entity.VipState;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "회원가입 응답 DTO")
-public record MemberSignUpResponse(
+public record MemberResponse(
         @Schema(description = "사용자 ID", example = "1")
         Long memberId,
 

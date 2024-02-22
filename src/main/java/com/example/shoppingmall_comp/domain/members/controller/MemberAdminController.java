@@ -1,6 +1,6 @@
 package com.example.shoppingmall_comp.domain.members.controller;
 
-import com.example.shoppingmall_comp.domain.members.dto.MemberSignUpResponse;
+import com.example.shoppingmall_comp.domain.members.dto.MemberResponse;
 import com.example.shoppingmall_comp.domain.members.service.impl.MemberServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -25,7 +25,7 @@ public class MemberAdminController {
     @GetMapping("/members")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "관리자의 회원 전체 조회 api", description = "관리자가 모든 회원들을 조회하는 api 입니다.")
-    public List<MemberSignUpResponse> getAllMembers() {
+    public List<MemberResponse> getAllMembers() {
         return memberService.getAll();
     }
 }

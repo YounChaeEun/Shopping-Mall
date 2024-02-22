@@ -1,6 +1,6 @@
 package com.example.shoppingmall_comp.domain.members.service.impl;
 
-import com.example.shoppingmall_comp.domain.members.dto.MemberSignUpResponse;
+import com.example.shoppingmall_comp.domain.members.dto.MemberResponse;
 import com.example.shoppingmall_comp.domain.members.entity.Member;
 import com.example.shoppingmall_comp.domain.members.repository.MemberRepository;
 import com.example.shoppingmall_comp.domain.members.repository.RefreshTokenRepository;
@@ -24,10 +24,10 @@ public class MemberServiceImpl implements MemberService {
     private final RefreshTokenRepository refreshTokenRepository;
 
     @Override
-    public MemberSignUpResponse getOne(User user) {
+    public MemberResponse getOne(User user) {
         Member member = memberRepository.findByEmail(user.getUsername())
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_MEMBER));
-        return new MemberSignUpResponse(member.getMemberId(),
+        return new MemberResponse(member.getMemberId(),
                 member.getEmail(),
                 member.getPoint(),
                 member.getConsumePrice(),
@@ -37,10 +37,10 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public List<MemberSignUpResponse> getAll() {
+    public List<MemberResponse> getAll() {
         List<Member> memberList = memberRepository.findAll();
         return memberList.stream()
-                .map(member -> new MemberSignUpResponse(member.getMemberId(),
+                .map(member -> new MemberResponse(member.getMemberId(),
                         member.getEmail(),
                         member.getPoint(),
                         member.getConsumePrice(),
