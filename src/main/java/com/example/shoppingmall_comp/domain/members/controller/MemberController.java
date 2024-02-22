@@ -1,6 +1,7 @@
 package com.example.shoppingmall_comp.domain.members.controller;
 
 import com.example.shoppingmall_comp.domain.members.dto.MemberResponse;
+import com.example.shoppingmall_comp.domain.members.dto.UpdateMemberEmailRequest;
 import com.example.shoppingmall_comp.domain.members.service.impl.MemberServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -9,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
@@ -30,4 +33,13 @@ public class MemberController {
     public void deleteUser(@AuthenticationPrincipal User user) {
         memberService.deleteUser(user);
     }
+
+    @PatchMapping("/members/email")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "회원 이메일 변경 api", description = "사용자가 자신의 이메일을 변경하는 api 입니다.")
+    public void updateMemberEmail(@AuthenticationPrincipal User user, @Valid @RequestBody UpdateMemberEmailRequest request) {
+        memberService.updateEmail(user, request);
+    }
+
+
 }

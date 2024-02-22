@@ -64,6 +64,10 @@ public class Member extends BaseEntity implements UserDetails {
         this.point = point;
     }
 
+    public void updateEmail(String email) {
+        this.email = email;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(String.valueOf(role.getRoleName())));
