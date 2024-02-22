@@ -2,6 +2,7 @@ package com.example.shoppingmall_comp.domain.members.service.impl;
 
 import com.example.shoppingmall_comp.domain.members.dto.MemberResponse;
 import com.example.shoppingmall_comp.domain.members.dto.UpdateMemberEmailRequest;
+import com.example.shoppingmall_comp.domain.members.dto.UpdateMemberPaswordRequest;
 import com.example.shoppingmall_comp.domain.members.entity.Member;
 import com.example.shoppingmall_comp.domain.members.repository.MemberRepository;
 import com.example.shoppingmall_comp.domain.members.repository.RefreshTokenRepository;
@@ -10,6 +11,7 @@ import com.example.shoppingmall_comp.global.exception.BusinessException;
 import com.example.shoppingmall_comp.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +26,7 @@ public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final AuthServiceImpl authService;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public MemberResponse getOne(User user) {
@@ -90,5 +93,18 @@ public class MemberServiceImpl implements MemberService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_MEMBER));
         authService.checkIfIsDuplicated(request.newEmail()); //  이게 맞을까??
         member.updateEmail(request.newEmail());
+    }
+
+    @Override
+    @Transactional
+    public void updatePassword(User user, UpdateMemberPaswordRequest request) {
+        Member member = memberRepository.findByEmail(user.getUsername())
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_MEMBER));
+
+        if(passwordEncoder.matches(request.oldPassword(), member.getPassword())) {
+            member.updatePassword(passwordEncoder.encode(request.newPassword()));
+        } else {
+            throw new BusinessException(ErrorCode.NOT_EQUAL_PASSWORD);
+        }
     }
 }

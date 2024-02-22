@@ -2,6 +2,7 @@ package com.example.shoppingmall_comp.domain.members.controller;
 
 import com.example.shoppingmall_comp.domain.members.dto.MemberResponse;
 import com.example.shoppingmall_comp.domain.members.dto.UpdateMemberEmailRequest;
+import com.example.shoppingmall_comp.domain.members.dto.UpdateMemberPaswordRequest;
 import com.example.shoppingmall_comp.domain.members.service.impl.MemberServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -39,5 +40,12 @@ public class MemberController {
     @Operation(summary = "회원 이메일 변경 api", description = "사용자가 자신의 이메일을 변경하는 api 입니다.")
     public void updateMemberEmail(@AuthenticationPrincipal User user, @Valid @RequestBody UpdateMemberEmailRequest request) {
         memberService.updateEmail(user, request);
+    }
+
+    @PatchMapping("/password")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "회원 비밀번호 api", description = "사용자가 자신의 비밀번호를 변경하는 api 입니다.")
+    public void updateMemberEmail(@AuthenticationPrincipal User user, @Valid @RequestBody UpdateMemberPaswordRequest request) {
+        memberService.updatePassword(user, request);
     }
 }
