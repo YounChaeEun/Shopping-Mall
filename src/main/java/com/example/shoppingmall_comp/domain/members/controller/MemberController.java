@@ -15,31 +15,29 @@ import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/api/mypage")
 @Tag(name = "멤버 관련 api", description = "회원 정보 조회, 삭제 api들입니다.")
 public class MemberController {
 
     private final MemberServiceImpl memberService;
-    @GetMapping("/members")
+    @GetMapping
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "회원 상세 조회 api", description = "사용자가 자신의 정보를 조회하는 api 입니다.")
     public MemberResponse getOneMember(@AuthenticationPrincipal User user) {
         return memberService.getOne(user);
     }
 
-    @DeleteMapping("/members")
+    @DeleteMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "회원 탈퇴 api", description = "일반 사용자가 탈퇴하는 api 입니다.")
     public void deleteUser(@AuthenticationPrincipal User user) {
         memberService.deleteUser(user);
     }
 
-    @PatchMapping("/members/email")
+    @PatchMapping("/email")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "회원 이메일 변경 api", description = "사용자가 자신의 이메일을 변경하는 api 입니다.")
     public void updateMemberEmail(@AuthenticationPrincipal User user, @Valid @RequestBody UpdateMemberEmailRequest request) {
         memberService.updateEmail(user, request);
     }
-
-
 }
