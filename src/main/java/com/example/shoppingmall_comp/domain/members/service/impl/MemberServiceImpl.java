@@ -57,7 +57,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public void deleteUser(User user) { // 이렇게 해주는 게 맞는지? 메서드 하나 만들고 if else if 이렇게 해서 하는 게 더 나은가?
+    public void deleteUser(User user) {
         Member member = memberRepository.findByEmail(user.getUsername())
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_MEMBER));
 
@@ -79,6 +79,8 @@ public class MemberServiceImpl implements MemberService {
     public void deleteSeller(User user) {
         Member member = memberRepository.findByEmail(user.getUsername())
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_MEMBER));
+
+        // 구매자들 장바구니에 판매자의 판매 상품이 들어가있으면 그것을 삭제한다.
 
         // 판매자의 판매 상품을 삭제한다.
 
