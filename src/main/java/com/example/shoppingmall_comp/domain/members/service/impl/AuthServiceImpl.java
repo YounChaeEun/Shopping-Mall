@@ -79,14 +79,6 @@ public class AuthServiceImpl implements AuthService {
                         () -> refreshTokenRepository.save(RefreshToken.builder().refreshToken(refreshToken).member(member).build())
                 );
 
-        return new MemberSignInResponse(member.getMemberId(),
-                member.getEmail(),
-                member.getPoint(),
-                member.getConsumePrice(),
-                member.getVipState(),
-                member.getDeletedState(),
-                member.getRole().getRoleName(),
-                accessToken,
-                refreshToken);
+        return new MemberSignInResponse(accessToken, refreshToken);
     }
 }
