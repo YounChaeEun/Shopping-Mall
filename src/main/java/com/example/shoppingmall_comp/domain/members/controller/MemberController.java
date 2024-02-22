@@ -25,7 +25,7 @@ public class MemberController {
     }
 
     @DeleteMapping("/members")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "회원 탈퇴 api", description = "일반 사용자가 탈퇴하는 api 입니다.")
     public void deleteUser(@AuthenticationPrincipal User user) {
         memberService.deleteUser(user);
