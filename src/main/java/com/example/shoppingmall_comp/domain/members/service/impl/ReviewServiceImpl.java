@@ -115,6 +115,7 @@ public class ReviewServiceImpl implements ReviewService {
                         review.getReviewContent(),
                         review.getStar()))
                 .toList();
+        // 반환값 변경하기
     }
 
     @Override
@@ -127,5 +128,6 @@ public class ReviewServiceImpl implements ReviewService {
                         review.getReviewContent(),
                         review.getStar()))
                 .toList();
+        // 반환값 변경하기
     }
 }
