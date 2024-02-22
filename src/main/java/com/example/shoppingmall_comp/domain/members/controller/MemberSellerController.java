@@ -20,7 +20,7 @@ public class MemberSellerController {
 
     private final MemberServiceImpl memberService;
 
-    @DeleteMapping("/members")
+    @DeleteMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "판매자의 회원 탈퇴 api", description = "판매자가 탈퇴하는 api 입니다.")
     public void deleteSeller(@AuthenticationPrincipal User user) {
