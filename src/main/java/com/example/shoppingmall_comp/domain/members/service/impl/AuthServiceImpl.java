@@ -3,7 +3,6 @@ package com.example.shoppingmall_comp.domain.members.service.impl;
 import com.example.shoppingmall_comp.domain.members.dto.MemberSignInRequest;
 import com.example.shoppingmall_comp.domain.members.dto.MemberSignInResponse;
 import com.example.shoppingmall_comp.domain.members.dto.MemberSignUpRequest;
-import com.example.shoppingmall_comp.domain.members.dto.MemberSignUpResponse;
 import com.example.shoppingmall_comp.domain.members.entity.Member;
 import com.example.shoppingmall_comp.domain.members.entity.RefreshToken;
 import com.example.shoppingmall_comp.domain.members.entity.Role;
@@ -38,7 +37,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Transactional
     @Override
-    public MemberSignUpResponse saveMember(MemberSignUpRequest request) {
+    public void saveMember(MemberSignUpRequest request) {
         if (memberRepository.findByEmail(request.email()).isPresent()) {
             throw new BusinessException(ErrorCode.DUPLICATED_EMAIL);
         }
@@ -52,14 +51,6 @@ public class AuthServiceImpl implements AuthService {
                 .build();
 
         memberRepository.save(member);
-
-        return new MemberSignUpResponse(member.getMemberId(),
-                member.getEmail(),
-                member.getPoint(),
-                member.getConsumePrice(),
-                member.getVipState(),
-                member.getDeletedState(),
-                member.getRole().getRoleName());
     }
 
     @Transactional
