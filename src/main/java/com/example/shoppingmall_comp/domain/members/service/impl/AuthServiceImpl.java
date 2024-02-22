@@ -38,9 +38,7 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     @Override
     public void saveMember(MemberSignUpRequest request) {
-        if (memberRepository.findByEmail(request.email()).isPresent()) {
-            throw new BusinessException(ErrorCode.DUPLICATED_EMAIL);
-        }
+        checkIfIsDuplicated(request.email());
 
         Role role = roleRepository.save(Role.builder().roleName(request.roleName()).build());
 
@@ -51,6 +49,12 @@ public class AuthServiceImpl implements AuthService {
                 .build();
 
         memberRepository.save(member);
+    }
+
+    public void checkIfIsDuplicated(String email) {
+        if (memberRepository.findByEmail(email).isPresent()) {
+            throw new BusinessException(ErrorCode.DUPLICATED_EMAIL);
+        }
     }
 
     @Transactional
