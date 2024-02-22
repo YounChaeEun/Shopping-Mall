@@ -1,6 +1,7 @@
 package com.example.shoppingmall_comp.domain.items.entity;
 
 import com.example.shoppingmall_comp.domain.BaseEntity;
+import com.example.shoppingmall_comp.domain.items.dto.UpdateCategoryRequest;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,8 +29,8 @@ public class Category extends BaseEntity {
         this.categoryName = categoryName;
     }
 
-//    public void updateCategory(UpdateCategoryRequest request) {
-//        this.categoryName = categoryName;
-//    }
+    public void updateCategory(UpdateCategoryRequest request) {
+        this.categoryName = categoryName;
+    }
 }
 
