@@ -15,7 +15,7 @@ import javax.validation.Valid;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
-@Tag(name = "멤버 관련 api", description = "회원가입, 로그인, 회원 정보 조회, 삭제, 수정 api들입니다.")
+@Tag(name = "로그인, 회원가입 관련 api", description = "사용자가 회원가입, 로그인하는 api들입니다.")
 public class AuthController {
 
     private final AuthServiceImpl memberService;

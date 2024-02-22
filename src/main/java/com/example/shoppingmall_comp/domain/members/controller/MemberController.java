@@ -17,7 +17,7 @@ import javax.validation.Valid;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/mypage")
-@Tag(name = "멤버 관련 api", description = "회원 정보 조회, 삭제 api들입니다.")
+@Tag(name = "멤버 관련 api", description = "회원 정보 조회, 삭제, 수정 api들입니다.")
 public class MemberController {
 
     private final MemberServiceImpl memberService;
@@ -44,7 +44,7 @@ public class MemberController {
 
     @PatchMapping("/password")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(summary = "회원 비밀번호 api", description = "사용자가 자신의 비밀번호를 변경하는 api 입니다.")
+    @Operation(summary = "회원 비밀번호 변경 api", description = "사용자가 자신의 비밀번호를 변경하는 api 입니다.")
     public void updateMemberEmail(@AuthenticationPrincipal User user, @Valid @RequestBody UpdateMemberPaswordRequest request) {
         memberService.updatePassword(user, request);
     }
