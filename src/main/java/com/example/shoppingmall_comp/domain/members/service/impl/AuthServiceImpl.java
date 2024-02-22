@@ -14,11 +14,10 @@ import com.example.shoppingmall_comp.global.exception.BusinessException;
 import com.example.shoppingmall_comp.global.exception.ErrorCode;
 import com.example.shoppingmall_comp.global.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -66,13 +65,12 @@ public class AuthServiceImpl implements AuthService {
 
         try {
             authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken); //2. 실제 검증. authenticate() 메서드를 통해 요청된 Member 에 대한 검증 진행// authenticate 메서드가 실행될 때 CustomUserDetailsService 에서 만든 loadUserByUsername 메서드 실행
-        } catch (BadCredentialsException | InternalAuthenticationServiceException e) {
-            throw new BusinessException(ErrorCode.NOT_FOUND_MEMBER); // 수정할 것!!!
+        } catch (AuthenticationException e) {
+            throw new BusinessException(ErrorCode.CHECK_LOGIN_ID_OR_PASSWORD);
         }
 
         Member member = memberRepository.findByEmail(authentication.getName())
-                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_MEMBER)); // 수정할 것
-
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_MEMBER));
         String accessToken = jwtTokenProvider.createAccessToken(member); // 3. 인증정보를 기반으로 JWT 토큰 생성
         String refreshToken = jwtTokenProvider.createRefreshToken();
 
