@@ -15,14 +15,12 @@ import com.example.shoppingmall_comp.domain.members.service.CartService;
 import com.example.shoppingmall_comp.global.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.example.shoppingmall_comp.global.exception.ErrorCode.*;
 
@@ -82,15 +80,12 @@ public class CartServiceImpl implements CartService {
     //장바구니 수정
     @Override
     @Transactional
-    public CartResponse update(CartRequest cartRequest, User user) {
+    public void update(Long cartId, CartRequest cartRequest, User user) {
         Member member = getMember(user);
-        Cart cart = existMemberCartCheck(cartRequest.cartId(), member);
+        Cart cart = existMemberCartCheck(cartId, member);
 
         cart.updateCart(cartRequest.count());
         cartRepository.save(cart);
-
-        // 장바구니 수정은 수량만 수정이 가능해서 사실상 count만 바뀐걸 보여줘도 되지 않나? 이럴경우 Response 새로 파는지
-        return getCartResponse(cart);
     }
 
     //장바구니 전체 조회
