@@ -19,7 +19,6 @@ public class ItemImage extends BaseEntity {
     @Column(name = "item_image_id")
     private Long itemImageId;
 
-    //경로로 바꿔줘야 하는 건지, 파일명으로 해야하는지
     @Column(name = "item_url", nullable = false)
     private String imageUrl;
 

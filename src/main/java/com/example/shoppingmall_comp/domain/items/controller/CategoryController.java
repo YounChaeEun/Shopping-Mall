@@ -25,7 +25,6 @@ public class CategoryController {
     @GetMapping("/categories")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "카테고리 전체 조회 api", description = "모든 카테고리를 조회하는 api 입니다.")
-    @ApiResponse(responseCode = "200", description = "카테고리 전체 조회 성공", content = @Content(schema = @Schema(implementation = CategoryResponse.class)))
     public List<CategoryResponse> getAllCategories() {
         return categoryService.getAll();
     }
