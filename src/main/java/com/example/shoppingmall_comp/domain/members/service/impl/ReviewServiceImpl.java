@@ -75,7 +75,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     @Transactional
-    public ReviewResponse update(Long reviewId, ReviewRequest reviewRequest, User user) {
+    public void update(Long reviewId, ReviewRequest reviewRequest, User user) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_REVIEW));
 
@@ -84,12 +84,9 @@ public class ReviewServiceImpl implements ReviewService {
         Member member = getMember(user);
         checkIfIsForbidden(reviewWriterId, member.getMemberId(), ErrorCode.NOT_MATCH_REVIEW);
 
-        review.updateReview(reviewRequest.title(), reviewRequest.content(), reviewRequest.star());
-
-        return new ReviewResponse(review.getReviewId(),
-                review.getReviewTitle(),
-                review.getReviewContent(),
-                review.getStar());
+        review.updateReview(reviewRequest.title(),
+                reviewRequest.content(),
+                reviewRequest.star());
     }
 
     @Override
