@@ -50,10 +50,9 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional
-    public CategoryResponse update(UpdateCategoryRequest request) {
+    public void update(UpdateCategoryRequest request) {
         Category category = categoryRepository.findById(request.categoryId())
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_CATEGORY));
         category.updateCategory(request);
-        return new CategoryResponse(category.getCategoryId(), category.getCategoryName());
     }
 }

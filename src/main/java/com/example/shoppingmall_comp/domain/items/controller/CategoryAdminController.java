@@ -43,10 +43,10 @@ public class CategoryAdminController {
     }
 
     @PatchMapping("/categories")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "카테고리 수정 api", description = "관리자가 카테고리를 수정하는 api 입니다.")
-    @ApiResponse(responseCode = "200", description = "카테고리 수정 성공", content = @Content(schema = @Schema(implementation = CategoryResponse.class)))
-    public CategoryResponse updateCategory(@Valid @RequestBody UpdateCategoryRequest request) {
-        return categoryService.update(request);
+    @ApiResponse(responseCode = "204", description = "카테고리 수정 성공", content = @Content(schema = @Schema(implementation = CategoryResponse.class)))
+    public void updateCategory(@Valid @RequestBody UpdateCategoryRequest request) {
+        categoryService.update(request);
     }
 }

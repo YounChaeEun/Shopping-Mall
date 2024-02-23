@@ -30,7 +30,7 @@ public class Category extends BaseEntity {
     }
 
     public void updateCategory(UpdateCategoryRequest request) {
-        this.categoryName = categoryName;
+        this.categoryName = request.categoryName();
     }
 }
 
