@@ -1,4 +1,4 @@
-package com.example.shoppingmall_comp.domain.orders.service.Impl;
+package com.example.shoppingmall_comp.domain.orders.service.impl;
 
 import com.example.shoppingmall_comp.domain.items.entity.Item;
 import com.example.shoppingmall_comp.domain.items.entity.SoldOutState;
@@ -7,7 +7,6 @@ import com.example.shoppingmall_comp.domain.members.entity.Cart;
 import com.example.shoppingmall_comp.domain.members.entity.Member;
 import com.example.shoppingmall_comp.domain.members.repository.CartRepository;
 import com.example.shoppingmall_comp.domain.members.repository.MemberRepository;
-import com.example.shoppingmall_comp.domain.orders.dto.OrderPageResponse;
 import com.example.shoppingmall_comp.domain.orders.dto.OrderRequest;
 import com.example.shoppingmall_comp.domain.orders.dto.OrderResponse;
 import com.example.shoppingmall_comp.domain.orders.dto.PayCancelRequest;
@@ -19,8 +18,6 @@ import com.example.shoppingmall_comp.domain.orders.repository.PayRepository;
 import com.example.shoppingmall_comp.domain.orders.service.OrderService;
 import com.example.shoppingmall_comp.global.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static com.example.shoppingmall_comp.global.exception.ErrorCode.*;
-import static java.util.stream.Collectors.toList;
 
 @Service
 @RequiredArgsConstructor
