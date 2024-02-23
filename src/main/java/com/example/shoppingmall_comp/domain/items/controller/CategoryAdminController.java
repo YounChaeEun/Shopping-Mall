@@ -2,7 +2,6 @@ package com.example.shoppingmall_comp.domain.items.controller;
 
 import com.example.shoppingmall_comp.domain.items.dto.CategoryRequest;
 import com.example.shoppingmall_comp.domain.items.dto.CategoryResponse;
-import com.example.shoppingmall_comp.domain.items.dto.UpdateCategoryRequest;
 import com.example.shoppingmall_comp.domain.items.service.impl.CategoryServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -42,11 +41,12 @@ public class CategoryAdminController {
         categoryService.delete(categoryId);
     }
 
-    @PatchMapping("/categories")
+    @PatchMapping("/categories/{categoryId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "카테고리 수정 api", description = "관리자가 카테고리를 수정하는 api 입니다.")
     @ApiResponse(responseCode = "204", description = "카테고리 수정 성공", content = @Content(schema = @Schema(implementation = CategoryResponse.class)))
-    public void updateCategory(@Valid @RequestBody UpdateCategoryRequest request) {
-        categoryService.update(request);
+    public void updateCategory(@Valid @RequestBody CategoryRequest request,
+                               @PathVariable Long categoryId) {
+        categoryService.update(request, categoryId);
     }
 }

@@ -2,7 +2,6 @@ package com.example.shoppingmall_comp.domain.items.service.impl;
 
 import com.example.shoppingmall_comp.domain.items.dto.CategoryRequest;
 import com.example.shoppingmall_comp.domain.items.dto.CategoryResponse;
-import com.example.shoppingmall_comp.domain.items.dto.UpdateCategoryRequest;
 import com.example.shoppingmall_comp.domain.items.entity.Category;
 import com.example.shoppingmall_comp.domain.items.repository.CategoryRepository;
 import com.example.shoppingmall_comp.domain.items.service.CategoryService;
@@ -50,8 +49,8 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional
-    public void update(UpdateCategoryRequest request) {
-        Category category = categoryRepository.findById(request.categoryId())
+    public void update(CategoryRequest request, Long categoryId) {
+        Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_CATEGORY));
         category.updateCategory(request);
     }
