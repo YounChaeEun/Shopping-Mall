@@ -1,8 +1,9 @@
-package com.example.shoppingmall_comp.domain.members.service.Impl;
+package com.example.shoppingmall_comp.domain.members.service.impl;
 
 import com.example.shoppingmall_comp.domain.items.entity.Item;
 import com.example.shoppingmall_comp.domain.items.entity.SoldOutState;
 import com.example.shoppingmall_comp.domain.items.repository.ItemRepository;
+import com.example.shoppingmall_comp.domain.members.dto.CartPageResponse;
 import com.example.shoppingmall_comp.domain.members.dto.CartRequest;
 import com.example.shoppingmall_comp.domain.members.dto.CartResponse;
 import com.example.shoppingmall_comp.domain.members.dto.DeleteCartRequest;
@@ -14,6 +15,7 @@ import com.example.shoppingmall_comp.domain.members.service.CartService;
 import com.example.shoppingmall_comp.global.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
@@ -94,12 +96,32 @@ public class CartServiceImpl implements CartService {
     //장바구니 전체 조회
     @Override
     @Transactional(readOnly = true)
-    public Page<CartResponse> getAll(Pageable pageable, User user) {
+    public CartPageResponse getAll(Pageable pageable, User user) {
         Member member = getMember(user);
         //회원에 해당하는 전체 장바구니
         Page<Cart> cartList = cartRepository.findAllByMember(member, pageable);
 
-        return cartList.map(this::getCartResponse);
+        List<CartResponse> cartItems = cartList.getContent().stream()
+                .map(cart -> new CartResponse(
+                        cart.getCartId(),
+                        cart.getCount(),
+                        cart.getItem().getItemId(),
+                        cart.getItem().getItemName(),
+                        cart.getItem().getItemPrice(),
+                        cart.getSoldOutState(),
+                        cart.getItem().getItemOption().getOptionValues().stream()
+                                .map(option -> new CartResponse.Option(option.key(), option.value()))
+                                .toList()
+                ))
+                .toList();
+
+        return new CartPageResponse(
+                cartList.getTotalPages(),
+                (int) cartList.getTotalElements(),
+                cartList.getNumber(),
+                cartList.getSize(),
+                cartItems
+        );
     }
 
     //체크된 장바구니들 삭제

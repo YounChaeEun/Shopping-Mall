@@ -1,9 +1,10 @@
 package com.example.shoppingmall_comp.domain.members.controller;
 
+import com.example.shoppingmall_comp.domain.members.dto.CartPageResponse;
 import com.example.shoppingmall_comp.domain.members.dto.CartRequest;
 import com.example.shoppingmall_comp.domain.members.dto.CartResponse;
 import com.example.shoppingmall_comp.domain.members.dto.DeleteCartRequest;
-import com.example.shoppingmall_comp.domain.members.service.Impl.CartServiceImpl;
+import com.example.shoppingmall_comp.domain.members.service.impl.CartServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -48,8 +49,8 @@ public class CartController {
     @GetMapping("/carts")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "장바구니 전체 조회 api", description = "장바구니를 전체 조회하는 api 입니다.")
-    public Page<CartResponse> getCart(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
-                                      @AuthenticationPrincipal User user) {
+    public CartPageResponse getCart(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+                                          @AuthenticationPrincipal User user) {
         return cartService.getAll(pageable, user);
     }
 
