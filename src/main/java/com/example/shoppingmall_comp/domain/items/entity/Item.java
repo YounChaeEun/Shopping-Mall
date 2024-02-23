@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "item")
@@ -40,7 +41,7 @@ public class Item extends BaseEntity {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "option_id", nullable = false)
     private ItemOption itemOption;
 
@@ -49,7 +50,7 @@ public class Item extends BaseEntity {
     private Member member;
 
     @Builder
-    public Item(ItemOption itemOption, String itemName, int itemPrice, String itemDetail, int count, Category category, Member member) {
+    public Item(ItemOption itemOption, String itemName, int itemPrice, String itemDetail, int count, Category category, Member member, SoldOutState soldOutState) {
         this.itemName = itemName;
         this.itemPrice = itemPrice;
         this.itemDetail = itemDetail;
@@ -57,12 +58,14 @@ public class Item extends BaseEntity {
         this.category = category;
         this.itemOption = itemOption;
         this.member = member;
+        this.soldOutState = soldOutState;
     }
 
     //상품 수정할 때 메소드
-    public void updateItem(String itemName, int itemPrice, String itemDetail, Category category) {
+    public void updateItem(String itemName, int itemPrice, int count, String itemDetail, Category category) {
         this.itemName = itemName;
         this.itemPrice = itemPrice;
+        this.count = count;
         this.itemDetail = itemDetail;
         this.category = category;
     }
