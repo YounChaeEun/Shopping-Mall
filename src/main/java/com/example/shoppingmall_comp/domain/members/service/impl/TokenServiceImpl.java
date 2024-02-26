@@ -4,21 +4,24 @@ import com.example.shoppingmall_comp.domain.members.dto.CreateAccessTokenReponse
 import com.example.shoppingmall_comp.domain.members.dto.CreateAccessTokenRequest;
 import com.example.shoppingmall_comp.domain.members.entity.RefreshToken;
 import com.example.shoppingmall_comp.domain.members.repository.RefreshTokenRepository;
+import com.example.shoppingmall_comp.domain.members.service.TokenService;
 import com.example.shoppingmall_comp.global.exception.BusinessException;
 import com.example.shoppingmall_comp.global.exception.ErrorCode;
 import com.example.shoppingmall_comp.global.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
-public class TokenServiceImpl {
+@Transactional(readOnly = true)
+public class TokenServiceImpl implements TokenService {
 
     private final JwtTokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
 
+    @Override
+    @Transactional
     public CreateAccessTokenReponse createNewAccessToken(CreateAccessTokenRequest request) {
         String refreshToken = request.refreshToken();
 

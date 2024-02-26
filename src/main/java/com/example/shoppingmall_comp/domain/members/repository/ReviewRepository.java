@@ -1,17 +1,15 @@
-package com.example.shoppingmall_comp.domain.items.repository;
+package com.example.shoppingmall_comp.domain.members.repository;
 
 import com.example.shoppingmall_comp.domain.items.entity.Item;
 import com.example.shoppingmall_comp.domain.members.entity.Member;
+import com.example.shoppingmall_comp.domain.members.entity.Review;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Optional;
-
 @Repository
-public interface ItemRepository extends JpaRepository<Item, Long> {
-    Optional<Item> findByItemName(String itemName);
-    Page<Item> findByMember(Pageable pageable, Member member);
+public interface ReviewRepository extends JpaRepository<Review, Long> {
+    Page<Review> findAllByMember(Member member, Pageable pageable);
+    Page<Review> findAllByItem(Item item, Pageable pageable);
 }

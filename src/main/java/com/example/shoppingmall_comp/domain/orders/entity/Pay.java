@@ -18,7 +18,7 @@ public class Pay extends BaseEntity {
     @Column(name = "pay_id")
     private Long payId;
 
-    @Column
+    @Column(name = "member_id")
     private Long memberId;
 
     @Column(name = "company", nullable = false)
@@ -36,7 +36,7 @@ public class Pay extends BaseEntity {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
-    private Order order; //원투원으로 하는게 맞을지?
+    private Order order;
 
     @Builder
     public Pay(String cardCompany, String cardNum, int payPrice, Order order) {

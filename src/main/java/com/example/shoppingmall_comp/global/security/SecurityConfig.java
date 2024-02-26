@@ -20,7 +20,7 @@ public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final UserDetailsService userDetailsService;
-    private final String[] allowedUrls = {"/", "/swagger-ui/**", "/v3/**", "/api/signup", "/api/signin", "/api/items/**", "/api/categories"};
+    private final String[] allowedUrls = {"/", "/swagger-ui/**", "/v3/**", "/api/signup", "/api/signin", "/api/items/**", "/api/categories", "/api/seller/**"};
 
     // 특정 http 요청에 대한 웹 기반 보안을 구성한다.
     @Bean
@@ -30,8 +30,8 @@ public class SecurityConfig {
         http.authorizeHttpRequests((auth) ->
                 auth.mvcMatchers(allowedUrls).permitAll()
                         .mvcMatchers("/api/admin/**").hasAuthority("ADMIN")
-                        .mvcMatchers("/api/seller/**").hasAuthority("SELLER")
-                        .anyRequest().authenticated());
+//                        .mvcMatchers("/api/seller/**").hasAuthority("SELLER")
+                        .anyRequest().authenticated()); //위에 제외하고는 다 로그인되어야 한다. (카테고리, 회원가입, 로그인.... -> 로그인 안해도 가능)
         http.exceptionHandling()
                 .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
                 .accessDeniedHandler(new CustomAccessDeniedHandler());
