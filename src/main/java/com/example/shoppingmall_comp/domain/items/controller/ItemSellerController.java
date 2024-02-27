@@ -39,7 +39,7 @@ public class ItemSellerController {
     @ResponseStatus(HttpStatus.OK)
     @PatchMapping("/items/{itemId}")
     @Operation(summary = "상품 수정 api", description = "상품을 수정하는 api 입니다.")
-    public ItemResponse updateItem(@PathVariable Long itemId,
+    public List<String> updateItem(@PathVariable Long itemId,
                                    @Valid @RequestPart ItemRequest itemRequest,
                                    @RequestPart List<MultipartFile> multipartFiles,
                                    @AuthenticationPrincipal User user) {
