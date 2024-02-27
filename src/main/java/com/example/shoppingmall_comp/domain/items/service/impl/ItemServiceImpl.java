@@ -95,14 +95,14 @@ public class ItemServiceImpl implements ItemService {
 
         itemImageRepository.saveAll(imageList);
 
-        return getItemResponse(savedItem);
+        return getItemResponse(savedItem, imageUrls);
 
     }
 
     //상품 수정
     @Override
     @Transactional
-    public ItemResponse update(Long itemId, ItemRequest itemRequest, List<MultipartFile> multipartFiles, User user) {
+    public List<String> update(Long itemId, ItemRequest itemRequest, List<MultipartFile> multipartFiles, User user) {
         Member member = getMember(user);
 
         // 수정할 상품이름이 이미 존재하면 예외처리
@@ -157,7 +157,7 @@ public class ItemServiceImpl implements ItemService {
                 .toList();
         itemImageRepository.saveAll(images);
 
-        return getItemResponse(item);
+        return imageUrls;
     }
 
     // 상품 삭제
@@ -215,7 +215,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     //ItemResponse 코드 중복 방지
-    private ItemResponse getItemResponse(Item item) {
+    private ItemResponse getItemResponse(Item item, List<String> imgUrls) {
         return new ItemResponse(
                 item.getItemId(),
                 item.getItemName(),
@@ -226,7 +226,8 @@ public class ItemServiceImpl implements ItemService {
                         .map(option -> new ItemResponse.Option(option.key(), option.value()))
                         .toList(),
                 item.getSoldOutState(),
-                item.getItemDetail()
+                item.getItemDetail(),
+                imgUrls
         );
     }
 }
