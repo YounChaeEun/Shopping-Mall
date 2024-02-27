@@ -23,7 +23,7 @@ public record ItemResponse (
         @Schema(description = "상품 수량", example = "1000")
         int count,
 
-        @Schema(description = "상품 옵션", example = "색상: WHITE")
+        @Schema(description = "상품 옵션", example = "{색상: WHITE}")
         List<Option> optionValue,
 
         @Schema(description = "상품 품절상태", example = "품절")

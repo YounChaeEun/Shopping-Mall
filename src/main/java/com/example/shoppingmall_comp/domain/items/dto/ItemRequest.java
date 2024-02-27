@@ -32,7 +32,7 @@ public record ItemRequest(
         int count,
 
         @Nullable
-        @Schema(description = "상품 옵션", example = "색상: WHITE")
+        @Schema(description = "상품 옵션", example = "{색상: WHITE}")
         List<Option> optionValue,
 
         @NotNull
