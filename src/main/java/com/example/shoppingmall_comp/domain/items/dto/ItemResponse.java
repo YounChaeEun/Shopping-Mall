@@ -1,12 +1,9 @@
 package com.example.shoppingmall_comp.domain.items.dto;
 
-import com.example.shoppingmall_comp.domain.items.entity.Category;
-import com.example.shoppingmall_comp.domain.items.entity.ItemOption;
 import com.example.shoppingmall_comp.domain.items.entity.SoldOutState;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.List;
-import java.util.Map;
 
 @Schema(description = "상품 응답 DTO")
 public record ItemResponse (

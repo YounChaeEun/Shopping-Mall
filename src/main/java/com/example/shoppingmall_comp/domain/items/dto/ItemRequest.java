@@ -1,7 +1,5 @@
 package com.example.shoppingmall_comp.domain.items.dto;
 
-import com.example.shoppingmall_comp.domain.items.entity.Category;
-import com.example.shoppingmall_comp.domain.items.entity.ItemOption;
 import com.example.shoppingmall_comp.domain.items.entity.SoldOutState;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.lang.Nullable;
@@ -11,14 +9,9 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
-import java.util.Map;
 
 @Schema(description = "상품 요청 DTO")
 public record ItemRequest(
-
-        @Nullable
-        @Schema(description = "상품 id", example = "1")
-        Long itemId, //수정할때 컨트롤러에서 id도 같이 줄거 아니면 필요함!
 
         @NotBlank
         @Schema(description = "상품 이름", example = "노트북")
