@@ -4,6 +4,8 @@ import com.example.shoppingmall_comp.domain.orders.entity.OrderItem;
 import com.example.shoppingmall_comp.domain.orders.entity.OrderState;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
+import java.util.UUID;
+
 @Schema(description = "주문 응답 DTO")
 public record OrderResponse(
 
@@ -29,7 +31,7 @@ public record OrderResponse(
         int totalPrice,
 
         @Schema(description = "주문번호", example = "ORD20301948-0000000")
-        String merchantId,
+        UUID merchantId,
 
         @Schema(description = "주문상태", example = "주문 완료")
         OrderState orderState,
@@ -41,9 +43,9 @@ public record OrderResponse(
         String cardNum,
 
         @Schema(description = "주문 상품 정보")
-        List<OrderItemInfo> orderItemInfos
+        List<OrderedItem> orderedItems
 ) {
-        public record OrderItemInfo (
+        public record OrderedItem (
                 Long itemId, //주문할 상품 id
                 String name, //주문할 상품 이름
                 int count, //주문할 상품 수량
