@@ -2,6 +2,7 @@ package com.example.shoppingmall_comp.domain.members.service.impl;
 
 import com.example.shoppingmall_comp.domain.items.entity.Item;
 import com.example.shoppingmall_comp.domain.items.repository.ItemRepository;
+import com.example.shoppingmall_comp.domain.members.dto.ReviewPageResponse;
 import com.example.shoppingmall_comp.domain.members.dto.ReviewRequest;
 import com.example.shoppingmall_comp.domain.members.dto.ReviewResponse;
 import com.example.shoppingmall_comp.domain.members.entity.Member;
@@ -14,7 +15,9 @@ import com.example.shoppingmall_comp.domain.orders.repository.OrderItemRepositor
 import com.example.shoppingmall_comp.global.exception.BusinessException;
 import com.example.shoppingmall_comp.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
@@ -22,10 +25,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static org.springframework.data.domain.Sort.Direction.fromString;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ReviewServiceImpl implements ReviewService {
+
+    @Value("${application.paging.size}")
+    private int size;
+    @Value("${application.paging.direction}")
+    private String direction;
 
     private final ReviewRepository reviewRepository;
     private final MemberRepository memberRepository;
@@ -104,27 +114,41 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public List<ReviewResponse> getAllByMember(User user, Pageable pageable) {
-        Member member = getMember(user);
-        Page<Review> reviews = reviewRepository.findAllByMember(member, pageable);
-        return reviews.map(review -> new ReviewResponse(review.getReviewId(),
-                        review.getReviewTitle(),
-                        review.getReviewContent(),
-                        review.getStar()))
-                .toList();
-        // 반환값 변경하기
-    }
-
-    @Override
-    public List<ReviewResponse> getAllByItem(Long itemId, Pageable pageable) {
+    public ReviewPageResponse getAllByItem(Long itemId, Pageable pageable) {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_ITEM));
         Page<Review> reviews = reviewRepository.findAllByItem(item, pageable);
-        return reviews.map(review -> new ReviewResponse(review.getReviewId(),
+        List<ReviewResponse> reviewsList = reviews.getContent().stream()
+                .map(review -> new ReviewResponse(review.getReviewId(),
                         review.getReviewTitle(),
                         review.getReviewContent(),
                         review.getStar()))
                 .toList();
-        // 반환값 변경하기
+        return new ReviewPageResponse(reviews.getTotalPages(),
+                (int) reviews.getTotalElements(),
+                reviews.getNumber(),
+                reviews.getSize(),
+                reviewsList);
+    }
+
+    @Override
+    public ReviewPageResponse getAllByMember(User user, int page, Pageable pageable) {
+        Member member = getMember(user);
+
+        PageRequest pageRequest = PageRequest.of(page, size, fromString(direction), "reviewId");
+        Page<Review> reviews = reviewRepository.findAllByMember(member, pageRequest); // pageRequest가 pageable의 구현체 중 하나여서 가능햇던 것 같음 더 찾아보기
+        List<ReviewResponse> reviewsList = reviews.getContent().stream()
+                .map(review -> new ReviewResponse(review.getReviewId(),
+                        review.getReviewTitle(),
+                        review.getReviewContent(),
+                        review.getStar()))
+                .toList();
+
+        return new ReviewPageResponse(reviews.getTotalPages(),
+                (int) reviews.getTotalElements(),
+                reviews.getNumber(),
+                reviews.getSize(),
+                reviewsList);
     }
 }
+
