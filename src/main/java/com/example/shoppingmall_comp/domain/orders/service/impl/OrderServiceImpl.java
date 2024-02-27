@@ -1,4 +1,4 @@
-package com.example.shoppingmall_comp.domain.orders.service.Impl;
+package com.example.shoppingmall_comp.domain.orders.service.impl;
 
 import com.example.shoppingmall_comp.domain.items.entity.Item;
 import com.example.shoppingmall_comp.domain.items.entity.SoldOutState;
@@ -7,7 +7,6 @@ import com.example.shoppingmall_comp.domain.members.entity.Cart;
 import com.example.shoppingmall_comp.domain.members.entity.Member;
 import com.example.shoppingmall_comp.domain.members.repository.CartRepository;
 import com.example.shoppingmall_comp.domain.members.repository.MemberRepository;
-import com.example.shoppingmall_comp.domain.orders.dto.OrderPageResponse;
 import com.example.shoppingmall_comp.domain.orders.dto.OrderRequest;
 import com.example.shoppingmall_comp.domain.orders.dto.OrderResponse;
 import com.example.shoppingmall_comp.domain.orders.dto.PayCancelRequest;
@@ -19,8 +18,6 @@ import com.example.shoppingmall_comp.domain.orders.repository.PayRepository;
 import com.example.shoppingmall_comp.domain.orders.service.OrderService;
 import com.example.shoppingmall_comp.global.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static com.example.shoppingmall_comp.global.exception.ErrorCode.*;
-import static java.util.stream.Collectors.toList;
 
 @Service
 @RequiredArgsConstructor
@@ -41,6 +37,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderItemRepository orderItemRepository;
     private final CartRepository cartRepository;
     private final PayRepository payRepository;
+    private final PayCancelRepository payCancelRepository;
 
     @Override
     @Transactional
@@ -101,15 +98,64 @@ public class OrderServiceImpl implements OrderService {
         return getOrderResponse(order, pay);
     }
 
+    //결제 취소
+    @Override
+    @Transactional
+    public void payCancel(PayCancelRequest payCancelRequest, User user) {
+        Member member = getMember(user);
+
+        Order order = orderRepository.findByMerchantId(payCancelRequest.merchantId())
+                .orElseThrow(()-> new BusinessException(NOT_EQUAL_MERCHANT_ID,"주문 번호가 같지 않습니다."));
+
+        Pay pay = payRepository.findByOrder(order)
+                .orElseThrow(()-> new BusinessException(NOT_FOUND_PAY));
+
+        //결제 회원과 로그인한 회원이 다를 경우
+        if(!pay.getMemberId().equals(member.getMemberId())) {
+            throw new BusinessException(CAN_NOT_CANCEL_PAY);
+        }
+
+        //이미 취소된 결제를 또 결제 취소하려고 할 경우
+        if(pay.getPayState().equals(PayState.CANCEL)) {
+            throw new BusinessException(ALREADY_CANCEL_PAY, "이미 결제 취소가 되었습니다.");
+        }
+
+        //주문 상태가 배송중일 경우
+        if(order.getOrderState().equals(OrderState.DELIVERY)) {
+            throw new BusinessException(ALREADY_DELIVERY_STATUS, "현재 배송 중이라 결제 취소가 불가능합니다.");
+        }
+
+        PayCancel payCancel = PayCancel.builder()
+                .order(pay.getOrder())
+                .merchantId(payCancelRequest.merchantId())
+                .cancelReason(payCancelRequest.cancelReason())
+                .cancelPrice(pay.getPayPrice())
+                .cardCompany(pay.getCardCompany())
+                .cardNum(pay.getCardNum())
+                .build();
+
+        //주문 상품 DB에서 삭제
+        List<OrderItem> orderItems = orderItemRepository.findAllByOrder(pay.getOrder());//todo:이거 어떻게 가능?
+        orderItemRepository.deleteAll(orderItems);
+
+        //결제취소 DB 저장
+        payCancelRepository.save(payCancel);
+
+        //결제 상태 변경
+        pay.PayStateToCancel();
+        //주문 DB 상태 변경
+        pay.getOrder().orderStateToCancel();
+
+    }
 
     private Member getMember(User user) {
         return memberRepository.findByEmail(user.getUsername())
                 .orElseThrow(() -> new BusinessException(NOT_FOUND_MEMBER));
     }
 
-    private List<OrderResponse.OrderItemInfo> toOrderItemInfo(List<OrderItem> orderItems){
+    private List<OrderResponse.OrderedItem> toOrderedItem(List<OrderItem> orderItems){
         return orderItems.stream()
-                .map(orderItem -> new OrderResponse.OrderItemInfo(
+                .map(orderItem -> new OrderResponse.OrderedItem(
                         orderItem.getItem().getItemId(),
                         orderItem.getOrderItemName(),
                         orderItem.getOrderItemCount(),
@@ -123,7 +169,7 @@ public class OrderServiceImpl implements OrderService {
 
         List<OrderItem> orderItems = orderItemRepository.findByOrder(order); //주문에 속한 주문상품들 조회
 
-        List<OrderResponse.OrderItemInfo> orderItemInfos = toOrderItemInfo(orderItems);
+        List<OrderResponse.OrderedItem> orderedItems = toOrderedItem(orderItems);
 
         return new OrderResponse(
                 order.getOrderId(),
@@ -137,7 +183,7 @@ public class OrderServiceImpl implements OrderService {
                 order.getOrderState(),
                 pay.getCardCompany(), // Pay 엔티티에서 카드사 정보 가져옴
                 pay.getCardNum(), // Pay 엔티티에서 카드 번호 정보 가져옴
-                orderItemInfos
+                orderedItems
                 );
     }
 }

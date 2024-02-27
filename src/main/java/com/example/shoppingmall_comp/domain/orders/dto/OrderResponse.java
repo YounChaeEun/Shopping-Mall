@@ -1,13 +1,10 @@
 package com.example.shoppingmall_comp.domain.orders.dto;
 
-import com.example.shoppingmall_comp.domain.items.entity.SoldOutState;
+import com.example.shoppingmall_comp.domain.orders.entity.OrderItem;
 import com.example.shoppingmall_comp.domain.orders.entity.OrderState;
 import io.swagger.v3.oas.annotations.media.Schema;
-import org.springframework.lang.Nullable;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.UUID;
 
 @Schema(description = "주문 응답 DTO")
 public record OrderResponse(
@@ -34,7 +31,7 @@ public record OrderResponse(
         int totalPrice,
 
         @Schema(description = "주문번호", example = "ORD20301948-0000000")
-        String merchantId,
+        UUID merchantId,
 
         @Schema(description = "주문상태", example = "주문 완료")
         OrderState orderState,
@@ -45,12 +42,14 @@ public record OrderResponse(
         @Schema(description = "카드 번호", example = "1234 5678 9012 3456")
         String cardNum,
 
-        List<orderItemCreate> orderItemCreates //주문할 상품 리스트
+        @Schema(description = "주문 상품 정보")
+        List<OrderedItem> orderedItems
 ) {
-        public record orderItemCreate (
+        public record OrderedItem (
                 Long itemId, //주문할 상품 id
                 String name, //주문할 상품 이름
                 int count, //주문할 상품 수량
-                int orderPrice //주문할 각 상품 주문 가격
+                int orderPrice, //주문할 각 상품 주문 가격
+                List<OrderItem.Option> optionValues
         ) {}
 }

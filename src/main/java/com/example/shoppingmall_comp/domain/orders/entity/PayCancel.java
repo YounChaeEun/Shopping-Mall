@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.UUID;
 
 @Entity
 @Table(name = "pay_cancel")
@@ -24,7 +25,7 @@ public class PayCancel extends BaseEntity {
     private Order order;
 
     @Column(nullable = false)
-    private String merchantId;   //주문번호
+    private UUID merchantId;   //주문번호
 
     @Column(nullable = false)
     private String cancelReason; //주문 취소 사유
@@ -39,7 +40,7 @@ public class PayCancel extends BaseEntity {
     private String cardNum;      //카드일련번호
 
     @Builder
-    public PayCancel(Order order, String merchantId, String cancelReason, int cancelPrice, String cardCompany, String cardNum) {
+    public PayCancel(Order order, UUID merchantId, String cancelReason, int cancelPrice, String cardCompany, String cardNum) {
         this.order = order;
         this.merchantId = merchantId;
         this.cancelReason = cancelReason;

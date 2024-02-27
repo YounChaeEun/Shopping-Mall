@@ -27,6 +27,7 @@ public enum ErrorCode {
     USER_AUTH_ERROR(HttpStatus.UNAUTHORIZED, "토큰 검사시 사용자 인증에 실패했습니다."),
     TOKEN_CLAIM_EMPTY(HttpStatus.BAD_REQUEST,"JWT 클레임 문자열이 비어있습니다."),
     UNSUPPORTED_JWT_TOKEN(HttpStatus.BAD_REQUEST,"지원되지 않는 JWT 토큰입니다."),
+    NOT_FOUND_REFRESH_TOKEN(HttpStatus.NOT_FOUND, "존재하지 않는 리프레시 토큰입니다."),
 
 
     // 상품
@@ -37,6 +38,7 @@ public enum ErrorCode {
     REQUIRED_IMAGE(HttpStatus.BAD_REQUEST, "이미지는 필수로 등록해야 합니다."),
     UPLOAD_ERROR_IMAGE(HttpStatus.BAD_REQUEST, "이미지 업로드 에러가 발생했습니다."),
     VALID_ERROR_IMAGE(HttpStatus.BAD_REQUEST, "이미지 형식을 확인해주세요."),
+    SOLD_OUT_STATE_ITEM(HttpStatus.BAD_REQUEST, "상품이 품절되었습니다."),
 
     // 옵션
     NOT_FOUND_OPTION(HttpStatus.NOT_FOUND, "존재하지 않는 옵션입니다."),
@@ -53,7 +55,8 @@ public enum ErrorCode {
 
     // 리뷰
     NOT_FOUND_REVIEW(HttpStatus.NOT_FOUND, "존재하는 리뷰가 없습니다."),
-    NOT_MATCH_REVIEW(HttpStatus.BAD_REQUEST, "해당 회원이 작성한 리뷰가 아닙니다."),
+    NOT_MATCH_REVIEW(HttpStatus.FORBIDDEN, "해당 회원이 작성한 리뷰가 아닙니다."),
+    CANT_WRITE_REVIEW(HttpStatus.FORBIDDEN, "주문한 상품에 대해서만 리뷰를 작성할 수 있습니다."),
     CANT_DELETE_REVIEW(HttpStatus.BAD_REQUEST, "삭제할 수 없는 리뷰입니다."),
     PASS_POSSIBLE_DATE(HttpStatus.INTERNAL_SERVER_ERROR, "리뷰 작성 가능한 기간이 지났습니다."),
 
@@ -61,7 +64,7 @@ public enum ErrorCode {
     NOT_FOUND_ORDERS(HttpStatus.NOT_FOUND, "존재하는 주문이 없습니다."),
     NO_BUY_ORDER(HttpStatus.BAD_REQUEST, "구매한 상품이 아닙니다."),
     NOT_ENOUGH_STOCK(HttpStatus.BAD_REQUEST, "주문하려고 하는 상품 재고가 부족합니다."),
-
+    NOT_FOUND_ORDER_ITEM(HttpStatus.NOT_FOUND, "존재하는 주문 상품이 없습니다."),
 
     // 결제
     NOT_FOUND_PAY(HttpStatus.NOT_FOUND, "존재하는 결제가 없습니다."),

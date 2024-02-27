@@ -29,6 +29,9 @@ public record MemberSignInResponse(
         RoleName roleName,
 
         @Schema(description = "사용자의 엑세스 토큰", example = "Uecjdjfldksjfdnsldkljs")
-        String accessToken
+        String accessToken,
+
+        @Schema(description = "사용자의 리프레시 토큰", example = "sdfUecjdjfldksjfdnsldkljs")
+        String refreshToken
 ) {
 }

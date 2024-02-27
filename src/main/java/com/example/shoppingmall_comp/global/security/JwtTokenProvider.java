@@ -1,5 +1,6 @@
 package com.example.shoppingmall_comp.global.security;
 
+import com.example.shoppingmall_comp.domain.members.entity.Member;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,21 +39,29 @@ public class JwtTokenProvider {
     @Value("${jwt.refresh-expiration-days}")
     private int refreshExpirationDays;
 
-    private String getAuthorities(Authentication authentication) {
-        return authentication.getAuthorities().stream()
+    private String getAuthorities(Member member) {
+        return member.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
     }
 
-    // Authentication 객체로 엑세스 토큰을 생성하는 메서드
-    public String createAccessToken(Authentication authentication) {
+    public String createAccessToken(Member member) {
         return Jwts.builder()
                 .setIssuer(issuer)
-                .setSubject(authentication.getName())
-                .claim("auth", getAuthorities(authentication))
+                .setSubject(member.getEmail())
+                .claim("auth", getAuthorities(member))
                 .setIssuedAt(Timestamp.valueOf(LocalDateTime.now()))
                 .signWith(new SecretKeySpec(secretKey.getBytes(), SignatureAlgorithm.HS512.getJcaName()))
                 .setExpiration(Date.from(Instant.now().plus(expirationMinutes, ChronoUnit.MINUTES)))
+                .compact();
+    }
+
+    public String createRefreshToken() {
+        return Jwts.builder()
+                .setIssuer(issuer)
+                .setIssuedAt(Timestamp.valueOf(LocalDateTime.now()))
+                .signWith(new SecretKeySpec(secretKey.getBytes(), SignatureAlgorithm.HS512.getJcaName()))
+                .setExpiration(Date.from(Instant.now().plus(refreshExpirationDays, ChronoUnit.DAYS)))
                 .compact();
     }
 

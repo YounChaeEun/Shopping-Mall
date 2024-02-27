@@ -5,8 +5,10 @@ import com.example.shoppingmall_comp.domain.members.dto.MemberSignInResponse;
 import com.example.shoppingmall_comp.domain.members.dto.MemberSignUpRequest;
 import com.example.shoppingmall_comp.domain.members.dto.MemberSignUpResponse;
 import com.example.shoppingmall_comp.domain.members.entity.Member;
+import com.example.shoppingmall_comp.domain.members.entity.RefreshToken;
 import com.example.shoppingmall_comp.domain.members.entity.Role;
 import com.example.shoppingmall_comp.domain.members.repository.MemberRepository;
+import com.example.shoppingmall_comp.domain.members.repository.RefreshTokenRepository;
 import com.example.shoppingmall_comp.domain.members.repository.RoleRepository;
 import com.example.shoppingmall_comp.domain.members.service.MemberService;
 import com.example.shoppingmall_comp.global.exception.BusinessException;
@@ -32,6 +34,7 @@ public class MemberServiceImpl implements MemberService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Transactional
     public MemberSignUpResponse saveMember(MemberSignUpRequest request) {
@@ -49,7 +52,13 @@ public class MemberServiceImpl implements MemberService {
 
         memberRepository.save(member);
 
-        return new MemberSignUpResponse(member.getMemberId(), member.getEmail(), member.getPoint(), member.getConsumePrice(), member.getVipState(), member.getDeletedState(), member.getRole().getRoleName());
+        return new MemberSignUpResponse(member.getMemberId(),
+                member.getEmail(),
+                member.getPoint(),
+                member.getConsumePrice(),
+                member.getVipState(),
+                member.getDeletedState(),
+                member.getRole().getRoleName());
     }
 
     @Transactional
@@ -61,13 +70,30 @@ public class MemberServiceImpl implements MemberService {
         try {
             authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken); //2. 실제 검증. authenticate() 메서드를 통해 요청된 Member 에 대한 검증 진행// authenticate 메서드가 실행될 때 CustomUserDetailsService 에서 만든 loadUserByUsername 메서드 실행
         } catch (BadCredentialsException | InternalAuthenticationServiceException e) {
-            throw new BusinessException(ErrorCode.NOT_FOUND_MEMBER);
+            throw new BusinessException(ErrorCode.NOT_FOUND_MEMBER); // 수정할 것!!!
         }
 
-        String accessToken = jwtTokenProvider.createAccessToken(authentication); // 3. 인증정보를 기반으로 JWT 토큰 생성
         Member member = memberRepository.findByEmail(authentication.getName())
-                .orElseThrow(()-> new BusinessException(ErrorCode.NOT_FOUND_MEMBER));
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_MEMBER)); // 수정할 것
 
-        return new MemberSignInResponse(member.getMemberId(), member.getEmail(), member.getPoint(), member.getConsumePrice(), member.getVipState(), member.getDeletedState(), member.getRole().getRoleName(), accessToken);
+        String accessToken = jwtTokenProvider.createAccessToken(member); // 3. 인증정보를 기반으로 JWT 토큰 생성
+        String refreshToken = jwtTokenProvider.createRefreshToken();
+
+        // 해당 멤버의 리프레시 토큰가 이미 있으면 새로운 리프레시 토큰으로 재발급해주고, 없으면 저장해줄것
+        refreshTokenRepository.findByMember(member)
+                .ifPresentOrElse(
+                        token -> token.updateRefreshToken(refreshToken),
+                        () -> refreshTokenRepository.save(RefreshToken.builder().refreshToken(refreshToken).member(member).build())
+                );
+
+        return new MemberSignInResponse(member.getMemberId(),
+                member.getEmail(),
+                member.getPoint(),
+                member.getConsumePrice(),
+                member.getVipState(),
+                member.getDeletedState(),
+                member.getRole().getRoleName(),
+                accessToken,
+                refreshToken);
     }
 }
