@@ -30,7 +30,10 @@ public record ItemResponse (
         SoldOutState soldOutState,
 
         @Schema(description = "상품 상세 설명", example = "가볍고 화질이 선명해요.")
-        String description
+        String description,
+
+        @Schema(description = "상품 이미지 url들", example = "https://dachaebucket.s3.ap-northeast-2.amazonaws.com/123.jpg")
+        List<String> imgUrls
 
 ) {
     public record Option (
