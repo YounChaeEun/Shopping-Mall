@@ -43,9 +43,9 @@ public record OrderResponse(
         String cardNum,
 
         @Schema(description = "주문 상품 정보")
-        List<OrderItemInfo> orderItemInfos
+        List<OrderedItem> orderedItems
 ) {
-        public record OrderItemInfo (
+        public record OrderedItem (
                 Long itemId, //주문할 상품 id
                 String name, //주문할 상품 이름
                 int count, //주문할 상품 수량
