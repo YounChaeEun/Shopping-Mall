@@ -4,6 +4,7 @@ import com.example.shoppingmall_comp.global.exception.ErrorCode;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -29,15 +30,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String authorizationHeader = request.getHeader(HEADER_AUTHORIZATION);
         String accessToken = getAccessToken(authorizationHeader);
 
-        if (accessToken != null && jwtTokenProvider.validate(accessToken)) {
+        try {
             Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);// 인증 객체 가져와서 SecurityContext에 저장
             SecurityContextHolder.getContext().setAuthentication(authentication);
-        }
-        try {
-            filterChain.doFilter(request, response); //doFilter()를 호출하여 다음 필터로 요청을 전달
         } catch (ExpiredJwtException e) {
             request.setAttribute("exception", ErrorCode.EXPIRED_JWT_ERROR.getMessage());
-        } catch (SecurityException | MalformedJwtException e) {
+        } catch (MalformedJwtException | SignatureException e) {
             request.setAttribute("exception", ErrorCode.INVALID_JWT_ERROR.getMessage());
         } catch (UnsupportedJwtException e) {
             request.setAttribute("exception", ErrorCode.UNSUPPORTED_JWT_TOKEN.getMessage());
@@ -46,6 +44,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } catch (AuthenticationException | NullPointerException e) {
             request.setAttribute("exception", ErrorCode.USER_AUTH_ERROR.getMessage());
         }
+        filterChain.doFilter(request, response); //doFilter()를 호출하여 다음 필터로 요청을 전달
+        // 이거 넘어가고 나서 인증 실패 필터가 등장함
     }
 
     private String getAccessToken(String authorizationHeader) {
