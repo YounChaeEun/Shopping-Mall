@@ -114,16 +114,23 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public ReviewPageResponse getAllByItem(Long itemId, Pageable pageable) {
+    public ReviewPageResponse getAllByItem(Long itemId, int page, Pageable pageable) {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_ITEM));
-        Page<Review> reviews = reviewRepository.findAllByItem(item, pageable);
+
+        // paging 정보들을 담은 pageRequest 생성 -> 파라미터(원하는 페이지, 한페이지당요소, 정렬방법, 정렬기준) 
+        PageRequest pageRequest = PageRequest.of(page, size, fromString(direction), "reviewId");
+        
+        // paging 정보들을 담은 pageRequest를 기준으로, reviews들을 가져옴 
+        Page<Review> reviews = reviewRepository.findAllByItem(item, pageRequest);
+        
         List<ReviewResponse> reviewsList = reviews.getContent().stream()
                 .map(review -> new ReviewResponse(review.getReviewId(),
                         review.getReviewTitle(),
                         review.getReviewContent(),
                         review.getStar()))
                 .toList();
+
         return new ReviewPageResponse(reviews.getTotalPages(),
                 (int) reviews.getTotalElements(),
                 reviews.getNumber(),
