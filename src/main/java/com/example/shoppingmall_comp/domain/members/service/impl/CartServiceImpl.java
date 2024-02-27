@@ -1,8 +1,9 @@
-package com.example.shoppingmall_comp.domain.members.service.Impl;
+package com.example.shoppingmall_comp.domain.members.service.impl;
 
 import com.example.shoppingmall_comp.domain.items.entity.Item;
 import com.example.shoppingmall_comp.domain.items.entity.SoldOutState;
 import com.example.shoppingmall_comp.domain.items.repository.ItemRepository;
+import com.example.shoppingmall_comp.domain.members.dto.CartPageResponse;
 import com.example.shoppingmall_comp.domain.members.dto.CartRequest;
 import com.example.shoppingmall_comp.domain.members.dto.CartResponse;
 import com.example.shoppingmall_comp.domain.members.dto.DeleteCartRequest;
@@ -20,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.example.shoppingmall_comp.global.exception.ErrorCode.*;
 
@@ -80,26 +80,43 @@ public class CartServiceImpl implements CartService {
     //장바구니 수정
     @Override
     @Transactional
-    public CartResponse update(CartRequest cartRequest, User user) {
+    public void update(Long cartId, CartRequest cartRequest, User user) {
         Member member = getMember(user);
-        Cart cart = existMemberCartCheck(cartRequest.cartId(), member);
+        Cart cart = existMemberCartCheck(cartId, member);
 
         cart.updateCart(cartRequest.count());
         cartRepository.save(cart);
-
-        // 장바구니 수정은 수량만 수정이 가능해서 사실상 count만 바뀐걸 보여줘도 되지 않나? 이럴경우 Response 새로 파는지
-        return getCartResponse(cart);
     }
 
     //장바구니 전체 조회
     @Override
     @Transactional(readOnly = true)
-    public Page<CartResponse> getAll(Pageable pageable, User user) {
+    public CartPageResponse getAll(Pageable pageable, User user) {
         Member member = getMember(user);
         //회원에 해당하는 전체 장바구니
         Page<Cart> cartList = cartRepository.findAllByMember(member, pageable);
 
-        return cartList.map(this::getCartResponse);
+        List<CartResponse> cartItems = cartList.getContent().stream()
+                .map(cart -> new CartResponse(
+                        cart.getCartId(),
+                        cart.getCount(),
+                        cart.getItem().getItemId(),
+                        cart.getItem().getItemName(),
+                        cart.getItem().getItemPrice(),
+                        cart.getSoldOutState(),
+                        cart.getItem().getItemOption().getOptionValues().stream()
+                                .map(option -> new CartResponse.Option(option.key(), option.value()))
+                                .toList()
+                ))
+                .toList();
+
+        return new CartPageResponse(
+                cartList.getTotalPages(),
+                (int) cartList.getTotalElements(),
+                cartList.getNumber(),
+                cartList.getSize(),
+                cartItems
+        );
     }
 
     //체크된 장바구니들 삭제

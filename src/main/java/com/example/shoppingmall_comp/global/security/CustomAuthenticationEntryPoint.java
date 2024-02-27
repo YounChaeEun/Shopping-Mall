@@ -19,7 +19,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         String exception = (String) request.getAttribute("exception");
 
-        if (exception == null) {
+        if(exception == null) {
             setResponse(response, ErrorCode.SERVER_ERROR);
         } else if (exception.equals(ErrorCode.INVALID_JWT_ERROR.getMessage())) {
             setResponse(response, ErrorCode.INVALID_JWT_ERROR);
@@ -29,7 +29,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
             setResponse(response, ErrorCode.UNSUPPORTED_JWT_TOKEN);
         } else if (exception.equals(ErrorCode.TOKEN_CLAIM_EMPTY.getMessage())) {
             setResponse(response, ErrorCode.TOKEN_CLAIM_EMPTY);
-        } else if (exception.equals(ErrorCode.USER_AUTH_ERROR.getMessage())){
+        } else if (exception.equals(ErrorCode.USER_AUTH_ERROR.getMessage())) {
             setResponse(response, ErrorCode.USER_AUTH_ERROR);
         }
     }

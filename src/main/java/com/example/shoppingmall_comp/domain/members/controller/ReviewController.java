@@ -33,13 +33,13 @@ public class ReviewController {
     }
 
     /* 리뷰 수정하기 */
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @PatchMapping("/reviews/{reviewId}")
     @Operation(summary = "리뷰 수정 api", description = "리뷰를 수정하는 api 입니다.")
-    public ReviewResponse updateReview(@PathVariable Long reviewId,
-                                       @Valid @RequestBody ReviewRequest reviewRequest,
-                                       @AuthenticationPrincipal User user) {
-        return reviewService.update(reviewId, reviewRequest, user);
+    public void updateReview(@PathVariable Long reviewId,
+                             @Valid @RequestBody ReviewRequest reviewRequest,
+                             @AuthenticationPrincipal User user) {
+        reviewService.update(reviewId, reviewRequest, user);
     }
 
     /* 리뷰 삭제하기 */
@@ -56,8 +56,8 @@ public class ReviewController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "리뷰 전체 조회 api", description = "마이페이지에서 리뷰를 전체 조회하는 api 입니다.")
     public List<ReviewResponse> findAllByMember(@AuthenticationPrincipal User user,
-                                                Pageable pageable){
-        return reviewService.getAllByMember(user,pageable);
+                                                Pageable pageable) {
+        return reviewService.getAllByMember(user, pageable);
     }
 
     /* 리뷰 전체 조회 (아이템 상세 페이지) */
