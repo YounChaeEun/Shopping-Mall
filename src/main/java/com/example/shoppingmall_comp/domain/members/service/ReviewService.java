@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface ReviewService {
     ReviewResponse create(ReviewRequest request, User user);
-    ReviewResponse update(Long reviewId, ReviewRequest reviewRequest, User user);
+    void update(Long reviewId, ReviewRequest reviewRequest, User user);
     void delete(Long reviewId, User user);
     List<ReviewResponse> getAllByMember(User user, Pageable pageable);
     List<ReviewResponse> getAllByItem(Long itemId, Pageable pageable);
