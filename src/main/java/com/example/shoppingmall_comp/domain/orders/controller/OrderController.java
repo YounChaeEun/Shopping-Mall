@@ -42,7 +42,7 @@ public class OrderController {
     }
 
     //주문(결제) 취소
-    @DeleteMapping("/payCancel")
+    @DeleteMapping("/orders")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "결제 취소 api", description = "결제를 취소하는 api 입니다.")
     public void deleteOrder(@RequestBody PayCancelRequest payCancelRequest,
