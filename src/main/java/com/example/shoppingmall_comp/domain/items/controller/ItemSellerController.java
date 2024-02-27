@@ -47,7 +47,7 @@ public class ItemSellerController {
     }
 
     //상품 삭제
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/items/{itemId}")
     @Operation(summary = "상품 삭제 api", description = "상품을 삭제하는 api 입니다.")
     public void deleteItem(@PathVariable Long itemId, @AuthenticationPrincipal User user) {
