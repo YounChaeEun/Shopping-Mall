@@ -3,7 +3,7 @@ package com.example.shoppingmall_comp.domain.members.controller;
 import com.example.shoppingmall_comp.domain.members.dto.CartRequest;
 import com.example.shoppingmall_comp.domain.members.dto.CartResponse;
 import com.example.shoppingmall_comp.domain.members.dto.DeleteCartRequest;
-import com.example.shoppingmall_comp.domain.members.service.Impl.CartServiceImpl;
+import com.example.shoppingmall_comp.domain.members.service.impl.CartServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

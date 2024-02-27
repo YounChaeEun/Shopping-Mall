@@ -3,7 +3,7 @@ package com.example.shoppingmall_comp.domain.items.controller;
 import com.example.shoppingmall_comp.domain.items.dto.ItemRequest;
 import com.example.shoppingmall_comp.domain.items.dto.ItemResponse;
 import com.example.shoppingmall_comp.domain.items.dto.SellerItemsResponse;
-import com.example.shoppingmall_comp.domain.items.service.Impl.ItemServiceImpl;
+import com.example.shoppingmall_comp.domain.items.service.impl.ItemServiceImpl;
 import com.example.shoppingmall_comp.domain.members.entity.Member;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
