@@ -5,6 +5,7 @@ import com.example.shoppingmall_comp.domain.members.dto.UpdateMemberEmailRequest
 import com.example.shoppingmall_comp.domain.members.dto.UpdateMemberPaswordRequest;
 import com.example.shoppingmall_comp.domain.members.entity.Member;
 import com.example.shoppingmall_comp.domain.members.entity.Review;
+import com.example.shoppingmall_comp.domain.members.repository.CartRepository;
 import com.example.shoppingmall_comp.domain.members.repository.MemberRepository;
 import com.example.shoppingmall_comp.domain.members.repository.RefreshTokenRepository;
 import com.example.shoppingmall_comp.domain.members.repository.ReviewRepository;
@@ -32,6 +33,7 @@ public class MemberServiceImpl implements MemberService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final ReviewRepository reviewRepository;
     private final OrderRepository orderRepository;
+    private final CartRepository cartRepository;
     private final AuthServiceImpl authService;
 
     @Override
@@ -67,7 +69,6 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberRepository.findByEmail(user.getUsername())
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_MEMBER));
 
-        // 이 오류 메시지는 외래키 제약 조건 때문에 부모 행(여기서는 member 테이블의 행)을 삭제하거나 업데이트할 수 없을 때 발생합니다. orders 테이블에는 member_id 칼럼이 있고, 이 칼럼은 member 테이블의 member_id를 참조하는 외래 키입니다. // 따라서 Member 테이블의 member_id가 삭제되면, 그 member_id를 참조하는 Order 테이블의 행들이 외래 키 제약 조건에 어긋나게 됩니다.//따라서 member 테이블의 특정 행을 삭제하거나 member_id를 업데이트하려 할 때, 그 member_id를 참조하는 orders 테이블의 행이 있으면 외래키 제약 조건에 의해 해당 작업이 실패하게 됩니다. 이렇게 하면 데이터의 무결성이 유지됩니다.
         // 리뷰의 member를 null로 바꾼다. (member를 삭제할 것이기때문에 삭제할 member를 참조하고 있는 리뷰가 있으면 에러가 남)
         reviewRepository.findAllByMember(member)
                 .stream()
@@ -80,6 +81,9 @@ public class MemberServiceImpl implements MemberService {
                 .forEach(Order::changeMemberToNull);
 
         // 구매자의 장바구니를 삭제한다.
+        cartRepository.findAllByMember(member)
+                .stream()
+                .forEach(cart -> cartRepository.deleteById(cart.getCartId()));
 
         // 구매자의 refresh token을 삭제한다. (refresh token도 casecade option으로 수정할 것!)
         refreshTokenRepository.findByMember(member)
