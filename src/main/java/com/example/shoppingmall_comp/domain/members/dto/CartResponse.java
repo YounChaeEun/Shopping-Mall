@@ -26,7 +26,7 @@ public record CartResponse(
         @Schema(description = "상품 품절상태", example = "ON_SALE")
         SoldOutState itemSoldOutState,
 
-        @Schema(description = "상품 옵션", example = "색상: WHITE")
+        @Schema(description = "상품 옵션", example = "{색상: WHITE}")
         List<Option> optionValue
 ) {
     public record Option (

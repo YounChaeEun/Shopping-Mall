@@ -8,6 +8,7 @@ import org.springframework.lang.Nullable;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.SimpleTimeZone;
+import java.util.UUID;
 
 @Schema(description = "주문 요청 DTO")
 public record OrderRequest (
@@ -38,7 +39,7 @@ public record OrderRequest (
 
         @NotNull
         @Schema(description = "주문번호", example = "ORD20301948-0000000")
-        String merchantId,
+        UUID merchantId,
 
         @NotBlank
         @Schema(description = "카드사", example = "카드사 이름")

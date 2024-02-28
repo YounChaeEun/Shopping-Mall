@@ -7,8 +7,11 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
     Optional<Order> findByMerchantId(String merchantId);
     List<Order> findAllByMember(Member member);
+    Optional<Order> findByMerchantId(UUID merchantId);
 }

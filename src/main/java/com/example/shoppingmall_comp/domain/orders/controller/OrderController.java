@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,6 +23,14 @@ import javax.validation.Valid;
 public class OrderController {
 
     private final OrderServiceImpl orderService;
+
+    //주문번호 UUID 생성
+    @PostMapping("/order-uuid")
+    @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "주문번호(UUID) 생성 api", description = "주문 관련 주문번호(UUID)를 생성하는 api입니다.")
+    public UUID generateOrderUUID() {
+        return UUID.randomUUID();
+    }
 
     //주문 생성
     @PostMapping("/orders")
@@ -33,7 +42,7 @@ public class OrderController {
     }
 
     //주문(결제) 취소
-    @DeleteMapping("/payCancel")
+    @DeleteMapping("/orders")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "결제 취소 api", description = "결제를 취소하는 api 입니다.")
     public void deleteOrder(@RequestBody PayCancelRequest payCancelRequest,

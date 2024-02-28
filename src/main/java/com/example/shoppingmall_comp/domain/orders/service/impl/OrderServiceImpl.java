@@ -153,9 +153,9 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new BusinessException(NOT_FOUND_MEMBER));
     }
 
-    private List<OrderResponse.OrderItemInfo> toOrderItemInfo(List<OrderItem> orderItems){
+    private List<OrderResponse.OrderedItem> toOrderedItem(List<OrderItem> orderItems){
         return orderItems.stream()
-                .map(orderItem -> new OrderResponse.OrderItemInfo(
+                .map(orderItem -> new OrderResponse.OrderedItem(
                         orderItem.getItem().getItemId(),
                         orderItem.getOrderItemName(),
                         orderItem.getOrderItemCount(),
@@ -169,7 +169,7 @@ public class OrderServiceImpl implements OrderService {
 
         List<OrderItem> orderItems = orderItemRepository.findByOrder(order); //주문에 속한 주문상품들 조회
 
-        List<OrderResponse.OrderItemInfo> orderItemInfos = toOrderItemInfo(orderItems);
+        List<OrderResponse.OrderedItem> orderedItems = toOrderedItem(orderItems);
 
         return new OrderResponse(
                 order.getOrderId(),
@@ -183,7 +183,7 @@ public class OrderServiceImpl implements OrderService {
                 order.getOrderState(),
                 pay.getCardCompany(), // Pay 엔티티에서 카드사 정보 가져옴
                 pay.getCardNum(), // Pay 엔티티에서 카드 번호 정보 가져옴
-                orderItemInfos
+                orderedItems
                 );
     }
 }
