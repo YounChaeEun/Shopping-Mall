@@ -4,9 +4,14 @@ import com.example.shoppingmall_comp.domain.members.dto.MemberResponse;
 import com.example.shoppingmall_comp.domain.members.dto.UpdateMemberEmailRequest;
 import com.example.shoppingmall_comp.domain.members.dto.UpdateMemberPaswordRequest;
 import com.example.shoppingmall_comp.domain.members.entity.Member;
+import com.example.shoppingmall_comp.domain.members.entity.Review;
+import com.example.shoppingmall_comp.domain.members.repository.CartRepository;
 import com.example.shoppingmall_comp.domain.members.repository.MemberRepository;
 import com.example.shoppingmall_comp.domain.members.repository.RefreshTokenRepository;
+import com.example.shoppingmall_comp.domain.members.repository.ReviewRepository;
 import com.example.shoppingmall_comp.domain.members.service.MemberService;
+import com.example.shoppingmall_comp.domain.orders.entity.Order;
+import com.example.shoppingmall_comp.domain.orders.repository.OrderRepository;
 import com.example.shoppingmall_comp.global.exception.BusinessException;
 import com.example.shoppingmall_comp.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -23,10 +28,13 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class MemberServiceImpl implements MemberService {
 
+    private final PasswordEncoder passwordEncoder;
     private final MemberRepository memberRepository;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final ReviewRepository reviewRepository;
+    private final OrderRepository orderRepository;
+    private final CartRepository cartRepository;
     private final AuthServiceImpl authService;
-    private final PasswordEncoder passwordEncoder;
 
     @Override
     public MemberResponse getOne(User user) {
@@ -61,7 +69,21 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberRepository.findByEmail(user.getUsername())
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_MEMBER));
 
+        // 리뷰의 member를 null로 바꾼다. (member를 삭제할 것이기때문에 삭제할 member를 참조하고 있는 리뷰가 있으면 에러가 남)
+        reviewRepository.findAllByMember(member)
+                .stream()
+                .forEach(Review::changeMemberToNull);
+
+        // 나중에 orderItem의 memberId 수정하기
+        // 주문의 member를 null로 바꾼다. (member를 삭제할 것이기때문에 삭제할 member를 참조하고 있는 주문이 있으면 에러가 남)
+        orderRepository.findAllByMember(member)
+                .stream()
+                .forEach(Order::changeMemberToNull);
+
         // 구매자의 장바구니를 삭제한다.
+        cartRepository.findAllByMember(member)
+                .stream()
+                .forEach(cart -> cartRepository.deleteById(cart.getCartId()));
 
         // 구매자의 refresh token을 삭제한다. (refresh token도 casecade option으로 수정할 것!)
         refreshTokenRepository.findByMember(member)
