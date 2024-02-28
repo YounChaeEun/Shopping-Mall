@@ -107,10 +107,13 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberRepository.findByEmail(user.getUsername())
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_MEMBER));
 
-        // 구매자들 장바구니에 판매자의 판매 상품이 들어가있으면 그것을 삭제한다.
-
         List<Item> itemList = itemRepository.findAllByMember(member);
         itemList.forEach(item -> {
+            // 구매자들 장바구니에 판매자의 판매 상품을 삭제한다.
+            cartRepository.findAllByItem(item)
+                    .stream()
+                    .forEach(cart -> cartRepository.deleteById(cart.getCartId()));
+
             // 판매자의 판매상품에 달린 리뷰들을 삭제한다.
             reviewRepository.findAllByItem(item)
                     .stream()
