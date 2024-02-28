@@ -1,5 +1,6 @@
 package com.example.shoppingmall_comp.domain.members.service.impl;
 
+import com.example.shoppingmall_comp.domain.items.service.impl.ItemServiceImpl;
 import com.example.shoppingmall_comp.domain.members.dto.MemberResponse;
 import com.example.shoppingmall_comp.domain.members.dto.UpdateMemberEmailRequest;
 import com.example.shoppingmall_comp.domain.members.dto.UpdateMemberPaswordRequest;
@@ -35,6 +36,7 @@ public class MemberServiceImpl implements MemberService {
     private final OrderRepository orderRepository;
     private final CartRepository cartRepository;
     private final AuthServiceImpl authService;
+    private final ItemServiceImpl itemService;
 
     @Override
     public MemberResponse getOne(User user) {
@@ -104,7 +106,10 @@ public class MemberServiceImpl implements MemberService {
 
         // 구매자들 장바구니에 판매자의 판매 상품이 들어가있으면 그것을 삭제한다.
 
+        // 판매자의 판매상품에 달린 리뷰들을 삭제한다.
+
         // 판매자의 판매 상품을 삭제한다.
+        itemService.deleteAll(user);
 
         // 구매자일때 삭제하는 것들을 삭제한다. (장바구니, 권한, 리프레시, 회원 자체)
         deleteUser(user);
