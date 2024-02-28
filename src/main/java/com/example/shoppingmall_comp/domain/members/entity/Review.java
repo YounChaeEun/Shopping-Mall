@@ -51,5 +51,9 @@ public class Review extends BaseEntity {
         this.reviewContent = reviewContent;
         this.star = star;
     }
+
+    public void changeMemberToNull() {
+        this.member = null;
+    }
 }
 
