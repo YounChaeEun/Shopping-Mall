@@ -106,13 +106,15 @@ public class MemberServiceImpl implements MemberService {
 
         List<Item> itemList = itemRepository.findAllByMember(member);
         itemList.forEach(item -> {
+            // 판매자의 판매 상품의 리뷰의 item을 null로 바꾼다.
+            reviewRepository.findAllByItem(item)
+                    .forEach(Review::changeItemToNull);
+
+            // 주문의
+
             // 구매자들 장바구니에 판매자의 판매 상품을 삭제한다.
             cartRepository.findAllByItem(item)
                     .forEach(cart -> cartRepository.deleteById(cart.getCartId()));
-
-            // 판매자의 판매상품에 달린 리뷰들을 삭제한다.
-            reviewRepository.findAllByItem(item)
-                    .forEach(review -> reviewRepository.deleteById(review.getReviewId()));
 
             // 판매자의 판매 상품을 삭제한다.
             itemService.delete(item.getItemId(), user);
