@@ -187,16 +187,6 @@ public class ItemServiceImpl implements ItemService {
         itemRepository.deleteById(itemId);
     }
 
-    @Override
-    @Transactional
-    public void deleteAll(User user) {
-        Member member = getMember(user);
-        itemRepository.findAllByMember(member)
-                .stream()
-                .forEach(item -> delete(item.getItemId(), user));
-        // -> 같은 회원인데 getMember가 2번 호출되는 문제가 발생함
-    }
-
     //상품 조회(판매자)
     @Transactional(readOnly = true)
     public List<SellerItemsResponse> getSellerAll(Pageable pageable, User user) {
