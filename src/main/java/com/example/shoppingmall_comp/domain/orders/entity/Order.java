@@ -43,7 +43,7 @@ public class Order extends BaseEntity {
     private OrderState orderState;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
+    @JoinColumn(name = "member_id")
     private Member member;
 
     //결제
