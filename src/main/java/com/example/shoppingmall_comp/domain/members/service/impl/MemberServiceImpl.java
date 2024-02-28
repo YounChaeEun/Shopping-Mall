@@ -76,18 +76,15 @@ public class MemberServiceImpl implements MemberService {
 
         // 리뷰의 member를 null로 바꾼다. (member를 삭제할 것이기때문에 삭제할 member를 참조하고 있는 리뷰가 있으면 에러가 남)
         reviewRepository.findAllByMember(member)
-                .stream()
                 .forEach(Review::changeMemberToNull);
 
         // 나중에 orderItem의 memberId 수정하기
         // 주문의 member를 null로 바꾼다. (member를 삭제할 것이기때문에 삭제할 member를 참조하고 있는 주문이 있으면 에러가 남)
         orderRepository.findAllByMember(member)
-                .stream()
                 .forEach(Order::changeMemberToNull);
 
         // 구매자의 장바구니를 삭제한다.
         cartRepository.findAllByMember(member)
-                .stream()
                 .forEach(cart -> cartRepository.deleteById(cart.getCartId()));
 
         // 구매자의 refresh token을 삭제한다. (refresh token도 casecade option으로 수정할 것!)
@@ -111,12 +108,10 @@ public class MemberServiceImpl implements MemberService {
         itemList.forEach(item -> {
             // 구매자들 장바구니에 판매자의 판매 상품을 삭제한다.
             cartRepository.findAllByItem(item)
-                    .stream()
                     .forEach(cart -> cartRepository.deleteById(cart.getCartId()));
 
             // 판매자의 판매상품에 달린 리뷰들을 삭제한다.
             reviewRepository.findAllByItem(item)
-                    .stream()
                     .forEach(review -> reviewRepository.deleteById(review.getReviewId()));
 
             // 판매자의 판매 상품을 삭제한다.
