@@ -88,4 +88,8 @@ public class Order extends BaseEntity {
     public void orderStateToCancel() {
         this.orderState = OrderState.CANCEL;
     }
+
+    public void changeMemberToNull() {
+        this.member = null;
+    }
 }
