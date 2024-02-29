@@ -34,7 +34,7 @@ public class Review extends BaseEntity {
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "item_id", nullable = false)
+    @JoinColumn(name = "item_id")
     private Item item;
 
     @Builder
@@ -55,5 +55,9 @@ public class Review extends BaseEntity {
     public void changeMemberToNull() {
         this.member = null;
     }
+    public void changeItemToNull() {
+        this.item = null;
+    }
+
 }
 
