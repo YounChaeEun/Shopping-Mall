@@ -19,12 +19,7 @@ public record OrderPageResponse(
         LocalDateTime orderTime, //주문 시간
 
         @Schema(description = "주문상품 정보")
-        List<OrderItemInfo> orderItemCreates,
-
-        int totalPage,
-        int totalCount,
-        int pageNumber,
-        int currentPageSize
+        List<OrderItemInfo> orderItemCreates
 ) {
     public record OrderItemInfo (
             @Schema(description = "주문상품 id", example = "1")

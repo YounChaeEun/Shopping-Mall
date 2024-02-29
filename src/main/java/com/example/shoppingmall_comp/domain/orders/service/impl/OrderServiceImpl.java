@@ -7,6 +7,7 @@ import com.example.shoppingmall_comp.domain.members.entity.Cart;
 import com.example.shoppingmall_comp.domain.members.entity.Member;
 import com.example.shoppingmall_comp.domain.members.repository.CartRepository;
 import com.example.shoppingmall_comp.domain.members.repository.MemberRepository;
+import com.example.shoppingmall_comp.domain.orders.dto.OrderPageResponse;
 import com.example.shoppingmall_comp.domain.orders.dto.OrderRequest;
 import com.example.shoppingmall_comp.domain.orders.dto.OrderResponse;
 import com.example.shoppingmall_comp.domain.orders.dto.PayCancelRequest;
@@ -19,11 +20,14 @@ import com.example.shoppingmall_comp.domain.orders.service.OrderService;
 import com.example.shoppingmall_comp.global.exception.BusinessException;
 import com.example.shoppingmall_comp.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.example.shoppingmall_comp.global.exception.ErrorCode.*;
 
@@ -196,5 +200,33 @@ public class OrderServiceImpl implements OrderService {
         Pay pay = payRepository.findByOrder(order)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_PAY));
         return getOrderResponse(order, pay);
+    }
+
+    @Override
+    public List<OrderPageResponse> getAll(User user, Pageable pageable) {
+        Member member = getMember(user);
+        List<Order> orders = orderRepository.findAllByMember(member);
+
+        List<OrderPageResponse> responses = new ArrayList<>();
+
+        for (Order order : orders) {
+            List<OrderItem> orderItems = orderItemRepository.findByOrder(order);
+
+            List<OrderPageResponse.OrderItemInfo> orderItemInfos = orderItems.stream()
+                    .map(orderItem -> new OrderPageResponse.OrderItemInfo(
+                            orderItem.getItem().getItemId(),
+                            orderItem.getOrderItemName(),
+                            orderItem.getOrderItemCount(),
+                            orderItem.getOrderItemPrice(),
+                            orderItem.getOptionValues()))
+                    .collect(Collectors.toList());
+
+            OrderPageResponse response = new OrderPageResponse(order.getOrderId(),
+                    order.getOrderState(),
+                    order.getCreatedAt(),
+                    orderItemInfos);
+            responses.add(response);
+        }
+        return responses;
     }
 }
