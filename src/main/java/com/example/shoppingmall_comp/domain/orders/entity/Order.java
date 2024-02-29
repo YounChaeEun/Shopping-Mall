@@ -45,7 +45,7 @@ public class Order extends BaseEntity {
     private OrderState orderState;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
+    @JoinColumn(name = "member_id")
     private Member member;
 
     //결제
@@ -89,5 +89,9 @@ public class Order extends BaseEntity {
     //주문 상태 취소로 변경
     public void orderStateToCancel() {
         this.orderState = OrderState.CANCEL;
+    }
+
+    public void changeMemberToNull() {
+        this.member = null;
     }
 }

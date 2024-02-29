@@ -1,4 +1,4 @@
-package com.example.shoppingmall_comp.domain.items.service.Impl;
+package com.example.shoppingmall_comp.domain.items.service.impl;
 import com.example.shoppingmall_comp.domain.items.dto.ItemRequest;
 import com.example.shoppingmall_comp.domain.items.dto.ItemResponse;
 import com.example.shoppingmall_comp.domain.items.dto.SellerItemsResponse;
@@ -95,14 +95,14 @@ public class ItemServiceImpl implements ItemService {
 
         itemImageRepository.saveAll(imageList);
 
-        return getItemResponse(savedItem);
+        return getItemResponse(savedItem, imageUrls);
 
     }
 
     //상품 수정
     @Override
     @Transactional
-    public ItemResponse update(ItemRequest itemRequest, List<MultipartFile> multipartFiles, User user) {
+    public List<String> update(Long itemId, ItemRequest itemRequest, List<MultipartFile> multipartFiles, User user) {
         Member member = getMember(user);
 
         // 수정할 상품이름이 이미 존재하면 예외처리
@@ -110,13 +110,7 @@ public class ItemServiceImpl implements ItemService {
             throw new BusinessException(DUPLICATE_ITEM, "이미 존재하는 상품입니다.");
         }
 
-        // 해당 상품이 없을 경우
-        if(itemRequest.itemId() == null) {
-            //itemRequest의 itemId가 Nullable이기 때문에 itemId가 null인지 검사하는 로직 처리
-            throw new BusinessException(NOT_FOUND_ITEM, "상품 ID가 필요합니다.");
-        }
-
-        Item item = itemRepository.findById(itemRequest.itemId())
+        Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new BusinessException(NOT_FOUND_ITEM));
 
         Category category = categoryRepository.findById(itemRequest.categoryId())
@@ -163,7 +157,7 @@ public class ItemServiceImpl implements ItemService {
                 .toList();
         itemImageRepository.saveAll(images);
 
-        return getItemResponse(item);
+        return imageUrls;
     }
 
     // 상품 삭제
@@ -221,7 +215,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     //ItemResponse 코드 중복 방지
-    private ItemResponse getItemResponse(Item item) {
+    private ItemResponse getItemResponse(Item item, List<String> imgUrls) {
         return new ItemResponse(
                 item.getItemId(),
                 item.getItemName(),
@@ -232,7 +226,8 @@ public class ItemServiceImpl implements ItemService {
                         .map(option -> new ItemResponse.Option(option.key(), option.value()))
                         .toList(),
                 item.getSoldOutState(),
-                item.getItemDetail()
+                item.getItemDetail(),
+                imgUrls
         );
     }
 }

@@ -25,7 +25,7 @@ public class OrderController {
     private final OrderServiceImpl orderService;
 
     //주문번호 UUID 생성
-    @PostMapping("/orders")
+    @PostMapping("/order-uuid")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "주문번호(UUID) 생성 api", description = "주문 관련 주문번호(UUID)를 생성하는 api입니다.")
     public UUID generateOrderUUID() {

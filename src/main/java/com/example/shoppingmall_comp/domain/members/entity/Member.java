@@ -44,7 +44,7 @@ public class Member extends BaseEntity implements UserDetails {
     @Column(name = "deleted_state", nullable = false)
     private DeletedState deletedState;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "role_id")
     private Role role;
 
@@ -62,6 +62,14 @@ public class Member extends BaseEntity implements UserDetails {
     //적립금 메소드
     public void updatePoints(int point) {
         this.point = point;
+    }
+
+    public void updateEmail(String email) {
+        this.email = email;
+    }
+
+    public void updatePassword(String password) {
+        this.password = password;
     }
 
     @Override
