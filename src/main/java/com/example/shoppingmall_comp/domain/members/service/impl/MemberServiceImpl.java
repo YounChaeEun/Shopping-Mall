@@ -110,7 +110,8 @@ public class MemberServiceImpl implements MemberService {
             reviewRepository.findAllByItem(item)
                     .forEach(Review::changeItemToNull);
 
-            // 주문의
+            // 판매자의 판매 상품을 시킨 주문의 item을 null로 바꾼다.
+
 
             // 구매자들 장바구니에 판매자의 판매 상품을 삭제한다.
             cartRepository.findAllByItem(item)
