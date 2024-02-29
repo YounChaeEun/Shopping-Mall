@@ -188,6 +188,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     //상품 조회(판매자)
+    @Override
     @Transactional(readOnly = true)
     public List<SellerItemsResponse> getSellerAll(Pageable pageable, User user) {
         Member member = getMember(user);
@@ -207,7 +208,21 @@ public class ItemServiceImpl implements ItemService {
                 .toList();
     }
 
+    //상품 상세 조회(전체 사용자)
+    @Override
+    @Transactional(readOnly = true)
+    public ItemResponse getOne(Long itemId) {
+        //해당 상품이 없을 경우
+        Item item = itemRepository.findById(itemId)
+                .orElseThrow(() -> new BusinessException(NOT_FOUND_ITEM,"존재하는 상품이 아닙니다."));
 
+        // 이미지 URL 조회
+        List<String> imgUrls = itemImageRepository.findByItem(item).stream()
+                .map(ItemImage::getImageUrl)
+                .toList();
+
+        return getItemResponse(item, imgUrls);
+    }
 
     private Member getMember(User user) {
         return memberRepository.findByEmail(user.getUsername())

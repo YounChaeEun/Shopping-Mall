@@ -20,7 +20,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/seller")
-@Tag(name = "상품 관련 api", description = "상품 등록, 수정, 조회, 삭제 관련 api입니다.")
+@Tag(name = "(판매자 권한) 상품 관련 api", description = "판매자의 상품 등록, 수정, 조회, 삭제 api입니다.")
 public class ItemSellerController {
 
     private final ItemServiceImpl itemService;
