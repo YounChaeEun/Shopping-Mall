@@ -50,4 +50,11 @@ public class OrderController {
         orderService.payCancel(payCancelRequest, user);
     }
 
+    @GetMapping("/orders/{orderId}")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "주문 상세 조회 api", description = "주문을 상세 조회하는 api 입니다.")
+    public OrderResponse getOneOrders(@AuthenticationPrincipal User user,
+                                      @PathVariable Long orderId) {
+        return orderService.getOne(user, orderId);
+    }
 }

@@ -17,6 +17,7 @@ import com.example.shoppingmall_comp.domain.orders.repository.PayCancelRepositor
 import com.example.shoppingmall_comp.domain.orders.repository.PayRepository;
 import com.example.shoppingmall_comp.domain.orders.service.OrderService;
 import com.example.shoppingmall_comp.global.exception.BusinessException;
+import com.example.shoppingmall_comp.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
@@ -185,5 +186,15 @@ public class OrderServiceImpl implements OrderService {
                 pay.getCardNum(), // Pay 엔티티에서 카드 번호 정보 가져옴
                 orderedItems
                 );
+    }
+
+    @Override
+    public OrderResponse getOne(User user, Long orderId) {
+        getMember(user);
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_ORDERS));
+        Pay pay = payRepository.findByOrder(order)
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_PAY));
+        return getOrderResponse(order, pay);
     }
 }

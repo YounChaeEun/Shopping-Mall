@@ -14,4 +14,6 @@ import java.util.List;
 public interface OrderService {
     OrderResponse create(OrderRequest orderRequest, User user);
     void payCancel(PayCancelRequest payCancelRequest, User user);
+    OrderResponse getOne(User user, Long orderId);
+
 }
