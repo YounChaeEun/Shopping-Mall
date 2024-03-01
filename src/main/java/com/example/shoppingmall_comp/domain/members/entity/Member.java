@@ -55,7 +55,7 @@ public class Member extends BaseEntity implements UserDetails {
         this.role = role;
         this.point = 0;
         this.totalConsumePrice = 0;
-        this.grade = Grade.NOT_VIP;
+        this.grade = Grade.ORDINARY_MEMBER;
         this.deletedState = DeletedState.NOT_DELETED;
     }
 
