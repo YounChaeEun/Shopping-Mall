@@ -4,7 +4,6 @@ import com.example.shoppingmall_comp.domain.items.entity.Item;
 import com.example.shoppingmall_comp.domain.items.repository.ItemRepository;
 import com.example.shoppingmall_comp.domain.items.service.impl.ItemServiceImpl;
 import com.example.shoppingmall_comp.domain.members.dto.MemberResponse;
-import com.example.shoppingmall_comp.domain.members.dto.UpdateMemberEmailRequest;
 import com.example.shoppingmall_comp.domain.members.dto.UpdateMemberPaswordRequest;
 import com.example.shoppingmall_comp.domain.members.entity.Member;
 import com.example.shoppingmall_comp.domain.members.entity.Review;
@@ -123,15 +122,6 @@ public class MemberServiceImpl implements MemberService {
 
         // 구매자일때 삭제하는 것들을 삭제한다. (장바구니, 권한, 리프레시, 회원 자체)
         deleteUser(user);
-    }
-
-    @Override
-    @Transactional
-    public void updateEmail(User user, UpdateMemberEmailRequest request) {
-        Member member = memberRepository.findByEmail(user.getUsername())
-                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_MEMBER));
-        authService.checkIfIsDuplicated(request.newEmail()); //  이게 맞을까??
-        member.updateEmail(request.newEmail());
     }
 
     @Override
