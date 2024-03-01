@@ -1,4 +1,6 @@
 package com.example.shoppingmall_comp.domain.items.service.impl;
+
+import com.example.shoppingmall_comp.domain.items.dto.ItemPageResponse;
 import com.example.shoppingmall_comp.domain.items.dto.ItemRequest;
 import com.example.shoppingmall_comp.domain.items.dto.ItemResponse;
 import com.example.shoppingmall_comp.domain.items.dto.SellerItemsResponse;
@@ -17,11 +19,13 @@ import com.example.shoppingmall_comp.domain.members.repository.MemberRepository;
 import com.example.shoppingmall_comp.global.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -84,7 +88,7 @@ public class ItemServiceImpl implements ItemService {
 
         //이미지 1장 이상 등록 안했을때 에러 처리
         if (imageUrls.isEmpty()) {
-            throw new BusinessException(REQUIRED_IMAGE,"이미지는 필수로 등록해야합니다.");
+            throw new BusinessException(REQUIRED_IMAGE, "이미지는 필수로 등록해야합니다.");
         }
         System.out.println("업로드된 이미지 URL: {}" + imageUrls);
 
@@ -118,12 +122,12 @@ public class ItemServiceImpl implements ItemService {
 
         //상품의 회원(판매자) != 현재 로그인한 회원
         if (!item.getMember().equals(member)) {
-            throw new BusinessException(FORBIDDEN_ERROR,"수정할 권한이 없습니다.");
+            throw new BusinessException(FORBIDDEN_ERROR, "수정할 권한이 없습니다.");
         }
 
         // 엔티티 수정
         item.updateItem(itemRequest.itemName(), itemRequest.price(),
-                itemRequest.count(),itemRequest.description(), category);
+                itemRequest.count(), itemRequest.description(), category);
 
         // 상품의 기존 옵션 삭제
         List<ItemOption> options = itemOptionRepository.findByItem(item); // 아이템 관련해서 아이템 옵션 조회
@@ -168,11 +172,11 @@ public class ItemServiceImpl implements ItemService {
 
         // 해당 상품이 없을 경우
         Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new BusinessException(NOT_FOUND_ITEM,"존재하는 상품이 아닙니다."));
+                .orElseThrow(() -> new BusinessException(NOT_FOUND_ITEM, "존재하는 상품이 아닙니다."));
 
         //현재 로그인한(상품 삭제하려는) 사용자 == 상품 등록했던 회원
         if (!item.getMember().equals(member)) {
-            throw new BusinessException(FORBIDDEN_ERROR,"삭제할 권한이 없습니다.");
+            throw new BusinessException(FORBIDDEN_ERROR, "삭제할 권한이 없습니다.");
         }
 
         // S3, 이미지DB 삭제
@@ -194,7 +198,7 @@ public class ItemServiceImpl implements ItemService {
         Member member = getMember(user);
         Page<Item> sellerItems = itemRepository.findByMember(pageable, member);
 
-        if(sellerItems.isEmpty()) {
+        if (sellerItems.isEmpty()) {
             throw new BusinessException(NOT_FOUND_ITEM, "판매한 상품이 없습니다.");
         }
 
@@ -214,7 +218,7 @@ public class ItemServiceImpl implements ItemService {
     public ItemResponse getOne(Long itemId) {
         //해당 상품이 없을 경우
         Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new BusinessException(NOT_FOUND_ITEM,"존재하는 상품이 아닙니다."));
+                .orElseThrow(() -> new BusinessException(NOT_FOUND_ITEM, "존재하는 상품이 아닙니다."));
 
         // 이미지 URL 조회
         List<String> imgUrls = itemImageRepository.findByItem(item).stream()
@@ -244,5 +248,33 @@ public class ItemServiceImpl implements ItemService {
                 item.getItemDetail(),
                 imgUrls
         );
+    }
+
+    //상품 전체 조회(전체 사용자)
+    @Override
+    public ItemPageResponse getAll(Pageable pageable, Long categoryId) {
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new BusinessException(NOT_FOUND_CATEGORY));
+
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort());
+        Page<Item> items = itemRepository.findByCategory(pageRequest, category);
+
+        if (items.isEmpty()) {
+            throw new BusinessException(NOT_FOUND_ITEM, "해당 카테고리에 속한 상품이 없습니다.");
+        }
+
+        List<ItemPageResponse.ItemList> itemList = items.stream()
+                .map(item -> new ItemPageResponse.ItemList(
+                        item.getItemId(),
+                        item.getItemName(),
+                        item.getItemPrice()
+                ))
+                .toList();
+
+        return new ItemPageResponse(items.getTotalPages(),
+                (int) items.getTotalElements(),
+                items.getNumber(),
+                items.getSize(),
+                itemList);
     }
 }
