@@ -22,9 +22,6 @@ public record MemberResponse(
         @Schema(description = "사용자의 VIP 여부", example = "VIP")
         Grade grade,
 
-        @Schema(description = "사용자의 삭제 여부", example = "DELETED")
-        DeletedState deletedState,
-
         @Schema(description = "사용자의 권한", example = "USER")
         RoleName roleName
 ) {

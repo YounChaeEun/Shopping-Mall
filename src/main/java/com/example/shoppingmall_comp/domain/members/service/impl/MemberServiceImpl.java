@@ -36,7 +36,6 @@ public class MemberServiceImpl implements MemberService {
     private final ReviewRepository reviewRepository;
     private final OrderRepository orderRepository;
     private final CartRepository cartRepository;
-    private final AuthServiceImpl authService;
     private final ItemServiceImpl itemService;
     private final ItemRepository itemRepository;
 
@@ -49,7 +48,6 @@ public class MemberServiceImpl implements MemberService {
                 member.getPoint(),
                 member.getTotalConsumePrice(),
                 member.getGrade(),
-                member.getDeletedState(),
                 member.getRole().getRoleName());
     }
 
@@ -62,7 +60,6 @@ public class MemberServiceImpl implements MemberService {
                         member.getPoint(),
                         member.getTotalConsumePrice(),
                         member.getGrade(),
-                        member.getDeletedState(),
                         member.getRole().getRoleName()))
                 .collect(Collectors.toList());
     }
