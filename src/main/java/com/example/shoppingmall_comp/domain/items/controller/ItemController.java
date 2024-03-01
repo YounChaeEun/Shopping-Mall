@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
-@Tag(name = "상품 조회 api", description = "전체 사용자가 볼 수 있는 상품 조회 api 입니다.")
+@Tag(name = "상품 관련 api", description = "전체 사용자가 볼 수 있는 상품 조회 api 입니다.")
 public class ItemController {
 
     private final ItemServiceImpl itemService;
