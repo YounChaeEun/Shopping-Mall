@@ -1,8 +1,6 @@
 package com.example.shoppingmall_comp.domain.members.service.impl;
 
-import com.example.shoppingmall_comp.domain.items.entity.Item;
 import com.example.shoppingmall_comp.domain.items.repository.ItemRepository;
-import com.example.shoppingmall_comp.domain.items.service.impl.ItemServiceImpl;
 import com.example.shoppingmall_comp.domain.members.dto.MemberResponse;
 import com.example.shoppingmall_comp.domain.members.dto.UpdateMemberPaswordRequest;
 import com.example.shoppingmall_comp.domain.members.entity.Member;
@@ -36,7 +34,6 @@ public class MemberServiceImpl implements MemberService {
     private final ReviewRepository reviewRepository;
     private final OrderRepository orderRepository;
     private final CartRepository cartRepository;
-    private final ItemServiceImpl itemService;
     private final ItemRepository itemRepository;
 
     @Override
@@ -100,21 +97,10 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberRepository.findByEmail(user.getUsername())
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_MEMBER));
 
-        List<Item> itemList = itemRepository.findAllByMember(member);
-        itemList.forEach(item -> {
-            // 판매자의 판매 상품의 리뷰의 item을 null로 바꾼다.
-            reviewRepository.findAllByItem(item)
-                    .forEach(Review::changeItemToNull);
-
-            // 판매자의 판매 상품을 시킨 주문의 item을 null로 바꾼다.
-
-
-            // 구매자들 장바구니에 판매자의 판매 상품을 삭제한다.
+        // 구매자들 장바구니에 판매자의 판매 상품을 삭제한다.
+        itemRepository.findAllByMember(member).forEach(item -> {
             cartRepository.findAllByItem(item)
                     .forEach(cart -> cartRepository.deleteById(cart.getCartId()));
-
-            // 판매자의 판매 상품을 삭제한다.
-            itemService.delete(item.getItemId(), user);
         });
 
         // 구매자일때 삭제하는 것들을 삭제한다. (장바구니, 권한, 리프레시, 회원 자체)
