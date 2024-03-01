@@ -15,7 +15,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/mypage")
+@RequestMapping("/api/members")
 @Tag(name = "멤버 관련 api", description = "회원 정보 조회, 삭제, 수정 api들입니다.")
 public class MemberController {
 
