@@ -56,7 +56,7 @@ public class ReviewController {
     }
 
     /* 리뷰 전체 조회 (마이페이지) */
-    @GetMapping("/reviews")
+    @GetMapping("/members/reviews")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "리뷰 전체 조회 api", description = "마이페이지에서 리뷰를 전체 조회하는 api 입니다.")
     public ReviewPageResponse findAllByMember(@AuthenticationPrincipal User user,
