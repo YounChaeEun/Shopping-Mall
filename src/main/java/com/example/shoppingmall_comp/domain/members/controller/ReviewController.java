@@ -75,8 +75,7 @@ public class ReviewController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "리뷰 전체 조회 api", description = "아이템 상세 페이지에서 리뷰를 전체 조회하는 api 입니다.")
     public ReviewPageResponse findAllByItem(@PathVariable Long itemId,
-                                            @RequestParam int page,
                                             Pageable pageable) { // PageImpl: Spring Data에서 페이징된 데이터를 표현하기 위한 객체. Page 인터페이스 구현체
-        return reviewService.getAllByItem(itemId, page, pageable);
+        return reviewService.getAllByItem(itemId, pageable);
     }
 }
