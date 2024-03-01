@@ -34,11 +34,11 @@ public class Member extends BaseEntity implements UserDetails {
     private int point;
 
     @Column(name = "consume_price", nullable = false)
-    private int consumePrice;
+    private int totalConsumePrice;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "vip_state", nullable = false)
-    private VipState vipState;
+    private Grade grade;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "deleted_state", nullable = false)
@@ -54,8 +54,8 @@ public class Member extends BaseEntity implements UserDetails {
         this.password = password;
         this.role = role;
         this.point = 0;
-        this.consumePrice = 0;
-        this.vipState = VipState.NOT_VIP;
+        this.totalConsumePrice = 0;
+        this.grade = Grade.ORDINARY_MEMBER;
         this.deletedState = DeletedState.NOT_DELETED;
     }
 

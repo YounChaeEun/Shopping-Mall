@@ -48,8 +48,8 @@ public class MemberServiceImpl implements MemberService {
         return new MemberResponse(member.getMemberId(),
                 member.getEmail(),
                 member.getPoint(),
-                member.getConsumePrice(),
-                member.getVipState(),
+                member.getTotalConsumePrice(),
+                member.getGrade(),
                 member.getDeletedState(),
                 member.getRole().getRoleName());
     }
@@ -61,8 +61,8 @@ public class MemberServiceImpl implements MemberService {
                 .map(member -> new MemberResponse(member.getMemberId(),
                         member.getEmail(),
                         member.getPoint(),
-                        member.getConsumePrice(),
-                        member.getVipState(),
+                        member.getTotalConsumePrice(),
+                        member.getGrade(),
                         member.getDeletedState(),
                         member.getRole().getRoleName()))
                 .collect(Collectors.toList());

@@ -1,5 +1,5 @@
 package com.example.shoppingmall_comp.domain.members.entity;
 
-public enum VipState {
-    VIP, NOT_VIP
+public enum Grade {
+    VIP_MEMBER, ORDINARY_MEMBER
 }
