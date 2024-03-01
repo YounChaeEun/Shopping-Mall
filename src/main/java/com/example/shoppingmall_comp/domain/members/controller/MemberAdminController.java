@@ -16,7 +16,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/admin")
-@Tag(name = "관리자의 멤버 관련 api", description = "관리자의 멤버 관련 api들입니다.")
+@Tag(name = "(관리자 권한) 멤버 관련 api", description = "관리자의 멤버 관련 api들입니다.")
 public class MemberAdminController {
 
     private final MemberServiceImpl memberService;

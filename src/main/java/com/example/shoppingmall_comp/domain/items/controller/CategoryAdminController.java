@@ -16,7 +16,7 @@ import javax.validation.Valid;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/admin")
-@Tag(name = "관리자의 카테고리 관련 api", description = "관리자만 접근 가능한 카테고리 관련 api입니다.")
+@Tag(name = "(관리자 권한) 카테고리 관련 api", description = "관리자만 접근 가능한 카테고리 관련 api입니다.")
 public class CategoryAdminController {
 
     private final CategoryServiceImpl categoryService;
