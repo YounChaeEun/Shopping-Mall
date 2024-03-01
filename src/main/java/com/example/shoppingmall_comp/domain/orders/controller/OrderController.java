@@ -5,7 +5,6 @@ import com.example.shoppingmall_comp.domain.orders.dto.OrderRequest;
 import com.example.shoppingmall_comp.domain.orders.dto.OrderResponse;
 import com.example.shoppingmall_comp.domain.orders.dto.PayCancelRequest;
 import com.example.shoppingmall_comp.domain.orders.service.impl.OrderServiceImpl;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +15,6 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -64,8 +62,8 @@ public class OrderController {
     @GetMapping("/orders")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "주문 목록 전체 조회 api", description = "자신의 주문 목록을 전체 조회하는 api 입니다.")
-    public List<OrderPageResponse> getAllOrders(@AuthenticationPrincipal User user,
-                                                Pageable pageable) {
+    public OrderPageResponse getAllOrders(@AuthenticationPrincipal User user,
+                                          Pageable pageable) {
         return orderService.getAll(user, pageable);
     }
 }
