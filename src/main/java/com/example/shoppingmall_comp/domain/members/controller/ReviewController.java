@@ -60,13 +60,14 @@ public class ReviewController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "리뷰 전체 조회 api", description = "마이페이지에서 리뷰를 전체 조회하는 api 입니다.")
     public ReviewPageResponse findAllByMember(@AuthenticationPrincipal User user,
-                                              @RequestParam int page,
                                               Pageable pageable) {
-        return reviewService.getAllByMember(user, page, pageable);
+        return reviewService.getAllByMember(user, pageable);
         // 파라미터로 Pagable만 주면 PageRequest.of(0,20)으로 만들어진다. page=0, size(한페이지당크기)=20, 정렬의 기본은 오름차순,
         // 최근에 등록된 상품부터 보이게 하고 싶어서 내림차순으로 바꿈, 사이즈는 15로 통일
         // @PageableDefault(size = 15, sort = "reviewId", direction = Sort.Direction.DESC)
         // -> application.yml에서 페이징 default를 통일함 -> 이렇게 하면 매번 @PageDefault 써서 페이징 디폴트 설정 안해줘도 됨
+
+        // pagable을 파라미터로 주면 알아서 page, size, sort등을 줄 수 있음
     }
 
     /* 리뷰 전체 조회 (아이템 상세 페이지) */

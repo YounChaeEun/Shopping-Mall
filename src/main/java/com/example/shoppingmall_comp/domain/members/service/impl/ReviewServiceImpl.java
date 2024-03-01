@@ -139,10 +139,10 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public ReviewPageResponse getAllByMember(User user, int page, Pageable pageable) {
+    public ReviewPageResponse getAllByMember(User user, Pageable pageable) {
         Member member = getMember(user);
 
-        PageRequest pageRequest = PageRequest.of(page, size, fromString(direction), "reviewId");
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort());
         Page<Review> reviews = reviewRepository.findAllByMember(member, pageRequest); // pageRequest가 pageable의 구현체 중 하나여서 가능햇던 것 같음 더 찾아보기
         List<ReviewResponse> reviewsList = reviews.getContent().stream()
                 .map(review -> new ReviewResponse(review.getReviewId(),
