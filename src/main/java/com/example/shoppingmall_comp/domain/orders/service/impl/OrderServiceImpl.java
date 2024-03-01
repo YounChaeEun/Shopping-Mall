@@ -27,7 +27,6 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -211,28 +210,26 @@ public class OrderServiceImpl implements OrderService {
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort());
         Page<Order> orders = orderRepository.findAllByMember(member, pageRequest);
 
-        List<OrderPageResponse.OrderList> orderListResponse = new ArrayList<>();
+        List<OrderPageResponse.OrderList> orderList = orders.stream()
+                .map(order -> {
+                    // 주문 상품 리스트
+                    List<OrderItem> orderItems = orderItemRepository.findByOrder(order);
+                    List<OrderResponse.OrderedItem> orderedItem = toOrderedItem(orderItems);
 
-        for (Order order : orders) {
-            // 주문 상품 리스트
-            List<OrderItem> orderItems = orderItemRepository.findByOrder(order);
-            List<OrderResponse.OrderedItem> orderedItem = toOrderedItem(orderItems);
-
-            // 주문 리스트
-            OrderPageResponse.OrderList orderList = new OrderPageResponse.OrderList(
-                    order.getOrderId(),
-                    order.getOrderState(),
-                    order.getCreatedAt(),
-                    orderedItem);
-
-            orderListResponse.add(orderList);
-        }
+                    // 주문 리스트
+                    return new OrderPageResponse.OrderList(
+                            order.getOrderId(),
+                            order.getOrderState(),
+                            order.getCreatedAt(),
+                            orderedItem);
+                })
+                .collect(Collectors.toList());
 
         return new OrderPageResponse(
                 orders.getTotalPages(),
                 (int) orders.getTotalElements(),
                 orders.getNumber(),
                 orders.getSize(),
-                orderListResponse);
+                orderList);
     }
 }
