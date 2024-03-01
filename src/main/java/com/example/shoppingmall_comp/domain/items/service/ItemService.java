@@ -1,5 +1,6 @@
 package com.example.shoppingmall_comp.domain.items.service;
 
+import com.example.shoppingmall_comp.domain.items.dto.ItemPageResponse;
 import com.example.shoppingmall_comp.domain.items.dto.ItemRequest;
 import com.example.shoppingmall_comp.domain.items.dto.ItemResponse;
 import com.example.shoppingmall_comp.domain.items.dto.SellerItemsResponse;
@@ -15,5 +16,5 @@ public interface ItemService {
     void delete(Long itemId, User user);
     List<SellerItemsResponse> getSellerAll(Pageable pageable, User user);
     ItemResponse getOne(Long itemId);
-
+    ItemPageResponse getAll(Pageable pageable, Long categoryId);
 }
