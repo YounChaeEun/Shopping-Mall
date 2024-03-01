@@ -49,7 +49,7 @@ public class MemberServiceImpl implements MemberService {
                 member.getEmail(),
                 member.getPoint(),
                 member.getTotalConsumePrice(),
-                member.getVipState(),
+                member.getGrade(),
                 member.getDeletedState(),
                 member.getRole().getRoleName());
     }
@@ -62,7 +62,7 @@ public class MemberServiceImpl implements MemberService {
                         member.getEmail(),
                         member.getPoint(),
                         member.getTotalConsumePrice(),
-                        member.getVipState(),
+                        member.getGrade(),
                         member.getDeletedState(),
                         member.getRole().getRoleName()))
                 .collect(Collectors.toList());
