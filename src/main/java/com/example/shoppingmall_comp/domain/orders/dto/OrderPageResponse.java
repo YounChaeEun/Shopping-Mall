@@ -36,7 +36,7 @@ public record OrderPageResponse(
             LocalDateTime orderTime, //주문 시간
 
             @Schema(description = "주문상품 정보")
-            List<OrderResponse.OrderedItem> orderItemCreates
+            List<OrderResponse.OrderedItem> orderItemList
     ) {
     }
 }
