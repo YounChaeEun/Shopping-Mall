@@ -3,15 +3,12 @@ package com.example.shoppingmall_comp.domain.items.controller;
 import com.example.shoppingmall_comp.domain.items.dto.ItemRequest;
 import com.example.shoppingmall_comp.domain.items.dto.ItemResponse;
 import com.example.shoppingmall_comp.domain.items.dto.SellerItemsResponse;
-import com.example.shoppingmall_comp.domain.items.service.Impl.ItemServiceImpl;
-import com.example.shoppingmall_comp.domain.members.entity.Member;
+import com.example.shoppingmall_comp.domain.items.service.impl.ItemServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +20,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/seller")
-@Tag(name = "상품 관련 api", description = "상품 관련 api입니다.")
+@Tag(name = "(판매자 권한) 상품 관련 api", description = "판매자의 상품 등록, 수정, 조회, 삭제 api입니다.")
 public class ItemSellerController {
 
     private final ItemServiceImpl itemService;
@@ -40,16 +37,17 @@ public class ItemSellerController {
 
     //상품 수정
     @ResponseStatus(HttpStatus.OK)
-    @PatchMapping("/items")
+    @PatchMapping("/items/{itemId}")
     @Operation(summary = "상품 수정 api", description = "상품을 수정하는 api 입니다.")
-    public ItemResponse updateItem(@Valid @RequestPart ItemRequest itemRequest,
-                           @RequestPart List<MultipartFile> multipartFiles,
-                           @AuthenticationPrincipal User user) {
-         return itemService.update(itemRequest, multipartFiles, user);
+    public List<String> updateItem(@PathVariable Long itemId,
+                                   @Valid @RequestPart ItemRequest itemRequest,
+                                   @RequestPart List<MultipartFile> multipartFiles,
+                                   @AuthenticationPrincipal User user) {
+         return itemService.update(itemId, itemRequest, multipartFiles, user);
     }
 
     //상품 삭제
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/items/{itemId}")
     @Operation(summary = "상품 삭제 api", description = "상품을 삭제하는 api 입니다.")
     public void deleteItem(@PathVariable Long itemId, @AuthenticationPrincipal User user) {

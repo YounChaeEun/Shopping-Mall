@@ -11,10 +11,6 @@ import java.util.List;
 public record CartRequest(
 
         @NotNull
-        @Schema(description = "장바구니 id", example = "1")
-        Long cartId,
-
-        @NotNull
         @Schema(description = "장바구니 수량", example = "1")
         int count,
 
@@ -33,7 +29,7 @@ public record CartRequest(
         @Schema(description = "상품 품절상태", example = "ON_SALE")
         SoldOutState itemSoldOutState,
 
-        @Schema(description = "상품 옵션", example = "색상: WHITE")
+        @Schema(description = "상품 옵션", example = "{색상: WHITE}")
         List<Option> optionValue
 
 ) {

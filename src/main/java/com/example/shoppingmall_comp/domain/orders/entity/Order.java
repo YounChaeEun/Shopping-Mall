@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.UUID;
+
 @Entity
 @Table(name = "orders")
 @Getter
@@ -43,15 +45,15 @@ public class Order extends BaseEntity {
     private OrderState orderState;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
+    @JoinColumn(name = "member_id")
     private Member member;
 
     //결제
     @Column(name = "merchant_id", nullable = false)
-    private String merchantId; //주문번호 예) ORD20301948-0000000
+    private UUID merchantId; //주문번호 예) ORD20301948-0000000
 
     @Builder
-    public Order(Member member, String receiverName, String receiverPhone, String zipcode, String address, String requestMessage, int totalPrice, String impUid, String merchantId) {
+    public Order(Member member, String receiverName, String receiverPhone, String zipcode, String address, String requestMessage, int totalPrice, UUID merchantId) {
         this.member = member;
         this.receiverName = receiverName;
         this.receiverPhone = receiverPhone;
@@ -87,5 +89,9 @@ public class Order extends BaseEntity {
     //주문 상태 취소로 변경
     public void orderStateToCancel() {
         this.orderState = OrderState.CANCEL;
+    }
+
+    public void changeMemberToNull() {
+        this.member = null;
     }
 }

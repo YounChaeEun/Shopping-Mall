@@ -1,13 +1,13 @@
 package com.example.shoppingmall_comp.domain.members.controller;
 
+import com.example.shoppingmall_comp.domain.members.dto.CartPageResponse;
 import com.example.shoppingmall_comp.domain.members.dto.CartRequest;
 import com.example.shoppingmall_comp.domain.members.dto.CartResponse;
 import com.example.shoppingmall_comp.domain.members.dto.DeleteCartRequest;
-import com.example.shoppingmall_comp.domain.members.service.Impl.CartServiceImpl;
+import com.example.shoppingmall_comp.domain.members.service.impl.CartServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -36,20 +36,21 @@ public class CartController {
     }
 
     //장바구니 수정
-    @PatchMapping("/carts")
-    @ResponseStatus(HttpStatus.OK)
+    @PatchMapping("/carts/{cartId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "장바구니 수정 api", description = "장바구니를 수정하는 api 입니다.")
-    public CartResponse updateCart(@Valid @RequestBody CartRequest cartRequest,
-                                   @AuthenticationPrincipal User user) {
-        return cartService.update(cartRequest, user);
+    public void updateCart(@PathVariable Long cartId,
+                           @Valid @RequestBody CartRequest cartRequest,
+                           @AuthenticationPrincipal User user) {
+        cartService.update(cartId, cartRequest, user);
     }
 
     // 회원의 장바구니 전체 조회
     @GetMapping("/carts")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "장바구니 전체 조회 api", description = "장바구니를 전체 조회하는 api 입니다.")
-    public Page<CartResponse> getCart(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
-                                      @AuthenticationPrincipal User user) {
+    public CartPageResponse getCart(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+                                    @AuthenticationPrincipal User user) {
         return cartService.getAll(pageable, user);
     }
 

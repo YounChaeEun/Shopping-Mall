@@ -1,8 +1,17 @@
 package com.example.shoppingmall_comp.domain.members.service;
 
-import com.example.shoppingmall_comp.domain.members.dto.MemberSignUpRequest;
-import com.example.shoppingmall_comp.domain.members.dto.MemberSignUpResponse;
+import com.example.shoppingmall_comp.domain.members.dto.MemberResponse;
+import com.example.shoppingmall_comp.domain.members.dto.UpdateMemberEmailRequest;
+import com.example.shoppingmall_comp.domain.members.dto.UpdateMemberPaswordRequest;
+import org.springframework.security.core.userdetails.User;
+
+import java.util.List;
 
 public interface MemberService {
-    MemberSignUpResponse saveMember(MemberSignUpRequest request);
+    MemberResponse getOne(User user);
+    List<MemberResponse> getAll();
+    void deleteUser(User user);
+    void deleteSeller(User user);
+    void updateEmail(User user, UpdateMemberEmailRequest request);
+    void updatePassword(User user, UpdateMemberPaswordRequest request);
 }
