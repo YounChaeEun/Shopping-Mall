@@ -17,9 +17,9 @@ public record MemberResponse(
         int point,
 
         @Schema(description = "사용자의 한달간 총 구매 금액", example = "100000")
-        int consumePrice,
+        int totalConsumePrice,
 
-        @Schema(description = "사용자의 VIP 여부", example = "VIP")
+        @Schema(description = "사용자의 등급", example = "VIP")
         Grade grade,
 
         @Schema(description = "사용자의 권한", example = "USER")
