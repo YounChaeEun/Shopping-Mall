@@ -14,8 +14,6 @@ import com.example.shoppingmall_comp.domain.items.repository.ItemOptionRepositor
 import com.example.shoppingmall_comp.domain.items.repository.ItemRepository;
 import com.example.shoppingmall_comp.domain.items.service.ItemService;
 import com.example.shoppingmall_comp.domain.items.service.S3Service;
-import com.example.shoppingmall_comp.domain.members.dto.CartPageResponse;
-import com.example.shoppingmall_comp.domain.members.dto.CartResponse;
 import com.example.shoppingmall_comp.domain.members.entity.Member;
 import com.example.shoppingmall_comp.domain.members.repository.MemberRepository;
 import com.example.shoppingmall_comp.global.exception.BusinessException;
@@ -79,7 +77,7 @@ public class ItemServiceImpl implements ItemService {
                 .count(itemRequest.count())
                 .member(member)
                 .itemOption(itemOption)
-                .soldOutState(itemRequest.soldOutState())
+                .itemState(itemRequest.itemState())
                 .build();
 
         Item savedItem = itemRepository.save(item);
@@ -111,7 +109,7 @@ public class ItemServiceImpl implements ItemService {
     public List<String> update(Long itemId, ItemRequest itemRequest, List<MultipartFile> multipartFiles, User user) {
         Member member = getMember(user);
 
-        // 수정할 상품이름이 이미 존재하면 예외처리
+        // 수정할 상품 이름이 이미 존재하면 예외처리
         if (itemRepository.findByItemName(itemRequest.itemName()).isPresent()) {
             throw new BusinessException(DUPLICATE_ITEM, "이미 존재하는 상품입니다.");
         }
@@ -129,7 +127,7 @@ public class ItemServiceImpl implements ItemService {
 
         // 엔티티 수정
         item.updateItem(itemRequest.itemName(), itemRequest.price(),
-                itemRequest.count(), itemRequest.description(), category);
+                itemRequest.count(), itemRequest.description(), category, itemRequest.itemState());
 
         // 상품의 기존 옵션 삭제
         List<ItemOption> options = itemOptionRepository.findByItem(item); // 아이템 관련해서 아이템 옵션 조회
@@ -204,7 +202,8 @@ public class ItemServiceImpl implements ItemService {
                         sellerItem.getItemId(),
                         sellerItem.getItemName(),
                         sellerItem.getItemPrice(),
-                        sellerItem.getCount()
+                        sellerItem.getCount(),
+                        sellerItem.getItemState()
                 ))
                 .toList();
 
@@ -249,7 +248,7 @@ public class ItemServiceImpl implements ItemService {
                 item.getItemOption().getOptionValues().stream()
                         .map(option -> new ItemResponse.Option(option.key(), option.value()))
                         .toList(),
-                item.getSoldOutState(),
+                item.getItemState(),
                 item.getItemDetail(),
                 imgUrls
         );
