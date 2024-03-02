@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Table(name = "item")
@@ -35,7 +34,7 @@ public class Item extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "sold_out_state", nullable = false)
-    private SoldOutState soldOutState;
+    private ItemState itemState;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
@@ -50,7 +49,7 @@ public class Item extends BaseEntity {
     private Member member;
 
     @Builder
-    public Item(ItemOption itemOption, String itemName, int itemPrice, String itemDetail, int count, Category category, Member member, SoldOutState soldOutState) {
+    public Item(ItemOption itemOption, String itemName, int itemPrice, String itemDetail, int count, Category category, Member member, ItemState itemState) {
         this.itemName = itemName;
         this.itemPrice = itemPrice;
         this.itemDetail = itemDetail;
@@ -58,16 +57,17 @@ public class Item extends BaseEntity {
         this.category = category;
         this.itemOption = itemOption;
         this.member = member;
-        this.soldOutState = soldOutState;
+        this.itemState = itemState;
     }
 
     //상품 수정할 때 메소드
-    public void updateItem(String itemName, int itemPrice, int count, String itemDetail, Category category) {
+    public void updateItem(String itemName, int itemPrice, int count, String itemDetail, Category category, ItemState itemState) {
         this.itemName = itemName;
         this.itemPrice = itemPrice;
         this.count = count;
         this.itemDetail = itemDetail;
         this.category = category;
+        this.itemState = itemState;
     }
 
     //재고 수량 변경
@@ -78,7 +78,7 @@ public class Item extends BaseEntity {
     //상품 재고가 0이 되면 품절 상태로
     public void ToSoldOutState() {
         if(this.count == 0) {
-            this.soldOutState = SoldOutState.SOLD_OUT;
+            this.itemState = ItemState.SOLD_OUT;
         }
     }
 }
