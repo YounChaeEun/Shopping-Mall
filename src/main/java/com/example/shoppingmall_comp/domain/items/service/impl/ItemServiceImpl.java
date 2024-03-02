@@ -193,16 +193,11 @@ public class ItemServiceImpl implements ItemService {
         itemRepository.deleteById(itemId);
     }
 
-    //상품 조회(판매자)
+    //상품 전체 조회(판매자)
     @Override
-    @Transactional(readOnly = true)
     public SellerItemsResponse getSellerAll(Pageable pageable, User user) {
         Member member = getMember(user);
         Page<Item> sellerItems = itemRepository.findByMember(pageable, member);
-
-        if (sellerItems.isEmpty()) {
-            throw new BusinessException(NOT_FOUND_ITEM, "판매한 상품이 없습니다.");
-        }
 
         List<SellerItemsResponse.sellerItem> sellerItemList = sellerItems.stream()
                 .map(sellerItem -> new SellerItemsResponse.sellerItem(
