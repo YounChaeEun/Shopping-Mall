@@ -1,7 +1,7 @@
 package com.example.shoppingmall_comp.domain.orders.service.impl;
 
 import com.example.shoppingmall_comp.domain.items.entity.Item;
-import com.example.shoppingmall_comp.domain.items.entity.SoldOutState;
+import com.example.shoppingmall_comp.domain.items.entity.ItemState;
 import com.example.shoppingmall_comp.domain.items.repository.ItemRepository;
 import com.example.shoppingmall_comp.domain.members.entity.Cart;
 import com.example.shoppingmall_comp.domain.members.entity.Member;
@@ -55,7 +55,7 @@ public class OrderServiceImpl implements OrderService {
                     .orElseThrow(()-> new BusinessException(NOT_FOUND_ITEM));
 
             //상품 재고가 품절일 경우 주문 불가
-            if(item.getSoldOutState() == SoldOutState.SOLD_OUT) {
+            if(item.getItemState() == ItemState.SOLD_OUT) {
                 throw new BusinessException(NOT_SELLING_ITEM);
             }
 

@@ -1,6 +1,6 @@
 package com.example.shoppingmall_comp.domain.members.dto;
 
-import com.example.shoppingmall_comp.domain.items.entity.SoldOutState;
+import com.example.shoppingmall_comp.domain.items.entity.ItemState;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.NotBlank;
@@ -27,7 +27,7 @@ public record CartRequest(
         int itemPrice,
 
         @Schema(description = "상품 품절상태", example = "ON_SALE")
-        SoldOutState itemSoldOutState,
+        ItemState itemState,
 
         @Schema(description = "상품 옵션", example = "{색상: WHITE}")
         List<Option> optionValue

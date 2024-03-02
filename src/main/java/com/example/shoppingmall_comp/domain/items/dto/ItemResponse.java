@@ -1,6 +1,6 @@
 package com.example.shoppingmall_comp.domain.items.dto;
 
-import com.example.shoppingmall_comp.domain.items.entity.SoldOutState;
+import com.example.shoppingmall_comp.domain.items.entity.ItemState;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.List;
@@ -26,8 +26,8 @@ public record ItemResponse (
         @Schema(description = "상품 옵션", example = "{색상: WHITE}")
         List<Option> optionValue,
 
-        @Schema(description = "상품 품절상태", example = "품절")
-        SoldOutState soldOutState,
+        @Schema(description = "상품 판매 상태", example = "품절")
+        ItemState itemState,
 
         @Schema(description = "상품 상세 설명", example = "가볍고 화질이 선명해요.")
         String description,
