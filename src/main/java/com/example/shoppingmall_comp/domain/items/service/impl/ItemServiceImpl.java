@@ -14,6 +14,8 @@ import com.example.shoppingmall_comp.domain.items.repository.ItemOptionRepositor
 import com.example.shoppingmall_comp.domain.items.repository.ItemRepository;
 import com.example.shoppingmall_comp.domain.items.service.ItemService;
 import com.example.shoppingmall_comp.domain.items.service.S3Service;
+import com.example.shoppingmall_comp.domain.members.dto.CartPageResponse;
+import com.example.shoppingmall_comp.domain.members.dto.CartResponse;
 import com.example.shoppingmall_comp.domain.members.entity.Member;
 import com.example.shoppingmall_comp.domain.members.repository.MemberRepository;
 import com.example.shoppingmall_comp.global.exception.BusinessException;
@@ -194,7 +196,7 @@ public class ItemServiceImpl implements ItemService {
     //상품 조회(판매자)
     @Override
     @Transactional(readOnly = true)
-    public List<SellerItemsResponse> getSellerAll(Pageable pageable, User user) {
+    public SellerItemsResponse getSellerAll(Pageable pageable, User user) {
         Member member = getMember(user);
         Page<Item> sellerItems = itemRepository.findByMember(pageable, member);
 
@@ -202,14 +204,22 @@ public class ItemServiceImpl implements ItemService {
             throw new BusinessException(NOT_FOUND_ITEM, "판매한 상품이 없습니다.");
         }
 
-        return sellerItems.stream()
-                .map(item -> new SellerItemsResponse(
-                        item.getItemId(),
-                        item.getItemName(),
-                        item.getItemPrice(),
-                        item.getCount()
+        List<SellerItemsResponse.sellerItem> sellerItemList = sellerItems.stream()
+                .map(sellerItem -> new SellerItemsResponse.sellerItem(
+                        sellerItem.getItemId(),
+                        sellerItem.getItemName(),
+                        sellerItem.getItemPrice(),
+                        sellerItem.getCount()
                 ))
                 .toList();
+
+        return new SellerItemsResponse(
+                sellerItems.getTotalPages(),
+                (int) sellerItems.getTotalElements(),
+                sellerItems.getNumber(),
+                sellerItems.getSize(),
+                sellerItemList
+        );
     }
 
     //상품 상세 조회(전체 사용자)

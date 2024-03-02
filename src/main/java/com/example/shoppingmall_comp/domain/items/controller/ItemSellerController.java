@@ -58,7 +58,7 @@ public class ItemSellerController {
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/items")
     @Operation(summary = "상품 판매자 조회 api", description = "판매자 자신이 등록한 상품을 조회하는 api 입니다.")
-    public List<SellerItemsResponse> getSellerItems(Pageable pageable, @AuthenticationPrincipal User user) {
+    public SellerItemsResponse getSellerItems(Pageable pageable, @AuthenticationPrincipal User user) {
         return itemService.getSellerAll(pageable, user);
     }
 }

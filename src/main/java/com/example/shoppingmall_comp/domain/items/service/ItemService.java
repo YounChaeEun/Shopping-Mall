@@ -14,7 +14,7 @@ public interface ItemService {
     ItemResponse create(ItemRequest itemRequest, List<MultipartFile> multipartFiles, User user);
     List<String> update(Long itemId, ItemRequest itemRequest, List<MultipartFile> multipartFiles, User user);
     void delete(Long itemId, User user);
-    List<SellerItemsResponse> getSellerAll(Pageable pageable, User user);
+    SellerItemsResponse getSellerAll(Pageable pageable, User user);
     ItemResponse getOne(Long itemId);
     ItemPageResponse getAll(Pageable pageable, Long categoryId);
 }
