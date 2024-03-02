@@ -70,12 +70,18 @@ public class S3Service  {
             try(InputStream inputStream = file.getInputStream()) {
                 s3Client.putObject(new PutObjectRequest(bucket, fileName, inputStream, objectMetadata)
                         .withCannedAcl(CannedAccessControlList.PublicRead));
-                imgUrlList.add(fileName);
+                //업로드된 이미지의 url 생성하여 리스트에 추가
+                String imgUrl = generateImgUrl(fileName);
+                imgUrlList.add(imgUrl);
             } catch(IOException e) {
                 throw new BusinessException(UPLOAD_ERROR_IMAGE);
             }
         }
         return imgUrlList;
+    }
+    //파일 이름으로 S3에 업로드된 이미지 URL 생성
+    private String generateImgUrl(String filename) {
+        return "https://" + bucket + ".s3." + region + ".amazonaws.com/" + filename;
     }
 
     // 이미지파일명 중복 방지

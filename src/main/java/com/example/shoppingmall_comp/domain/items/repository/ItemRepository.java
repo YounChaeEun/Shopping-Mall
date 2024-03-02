@@ -14,4 +14,5 @@ import java.util.Optional;
 public interface ItemRepository extends JpaRepository<Item, Long> {
     Optional<Item> findByItemName(String itemName);
     Page<Item> findByMember(Pageable pageable, Member member);
+    List<Item> findAllByMember(Member member);
 }
