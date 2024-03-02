@@ -1,5 +1,6 @@
 package com.example.shoppingmall_comp.domain.items.dto;
 
+import com.example.shoppingmall_comp.domain.items.entity.ItemState;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.List;
@@ -33,7 +34,10 @@ public record SellerItemsResponse(
                 int price,
 
                 @Schema(description = "상품 수량", example = "2000")
-                int count
+                int count,
+
+                @Schema(description = "상품 판매 상태", example = "판매 중단")
+                ItemState itemState
         ) {
 
         }
