@@ -229,7 +229,18 @@ public class ItemServiceImpl implements ItemService {
                 .map(ItemImage::getImageUrl)
                 .toList();
 
-        return getItemResponse(item, imgUrls);
+        return new ItemResponse(
+                item.getItemId(),
+                item.getItemName(),
+                item.getCategory().getCategoryId(),
+                item.getItemPrice(),
+                item.getItemOption().getOptionValues().stream()
+                        .map(option -> new ItemResponse.Option(option.key(), option.value()))
+                        .toList(),
+                item.getItemState(),
+                item.getItemDetail(),
+                imgUrls
+        );
     }
 
     private Member getMember(User user) {
