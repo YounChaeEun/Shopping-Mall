@@ -1,8 +1,6 @@
 package com.example.shoppingmall_comp.domain.items.controller;
 
-import com.example.shoppingmall_comp.domain.items.dto.ItemRequest;
-import com.example.shoppingmall_comp.domain.items.dto.ItemResponse;
-import com.example.shoppingmall_comp.domain.items.dto.SellerItemsResponse;
+import com.example.shoppingmall_comp.domain.items.dto.*;
 import com.example.shoppingmall_comp.domain.items.service.impl.ItemServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -29,7 +27,7 @@ public class ItemSellerController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/items")
     @Operation(summary = "상품 등록 api", description = "상품을 등록하는 api 입니다.")
-    public ItemResponse addItem(@Valid @RequestPart ItemRequest itemRequest,
+    public CreateItemResponse addItem(@Valid @RequestPart ItemRequest itemRequest,
                                 @RequestPart List<MultipartFile> multipartFiles,
                                 @AuthenticationPrincipal User user) {
         return itemService.create(itemRequest, multipartFiles, user);
@@ -39,10 +37,10 @@ public class ItemSellerController {
     @ResponseStatus(HttpStatus.OK)
     @PatchMapping("/items/{itemId}")
     @Operation(summary = "상품 수정 api", description = "상품을 수정하는 api 입니다.")
-    public List<String> updateItem(@PathVariable Long itemId,
-                                   @Valid @RequestPart ItemRequest itemRequest,
-                                   @RequestPart List<MultipartFile> multipartFiles,
-                                   @AuthenticationPrincipal User user) {
+    public UpdateItemResponse updateItem(@PathVariable Long itemId,
+                                         @Valid @RequestPart UpdateItemRequest itemRequest,
+                                         @RequestPart List<MultipartFile> multipartFiles,
+                                         @AuthenticationPrincipal User user) {
          return itemService.update(itemId, itemRequest, multipartFiles, user);
     }
 
