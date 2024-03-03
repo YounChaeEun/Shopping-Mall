@@ -1,9 +1,6 @@
 package com.example.shoppingmall_comp.domain.items.service.impl;
 
-import com.example.shoppingmall_comp.domain.items.dto.ItemPageResponse;
-import com.example.shoppingmall_comp.domain.items.dto.ItemRequest;
-import com.example.shoppingmall_comp.domain.items.dto.ItemResponse;
-import com.example.shoppingmall_comp.domain.items.dto.SellerItemsResponse;
+import com.example.shoppingmall_comp.domain.items.dto.*;
 import com.example.shoppingmall_comp.domain.items.entity.Category;
 import com.example.shoppingmall_comp.domain.items.entity.Item;
 import com.example.shoppingmall_comp.domain.items.entity.ItemImage;
@@ -46,7 +43,7 @@ public class ItemServiceImpl implements ItemService {
     // 상품 등록 + 이미지 추가(필수) + 옵션 추가(필수X)
     @Override
     @Transactional
-    public ItemResponse create(ItemRequest itemRequest, List<MultipartFile> multipartFiles, User user) {
+    public CreateItemResponse create(ItemRequest itemRequest, List<MultipartFile> multipartFiles, User user) {
         Member member = getMember(user);
         System.out.println("사용자 정보: {}" + member);
 
@@ -77,7 +74,6 @@ public class ItemServiceImpl implements ItemService {
                 .count(itemRequest.count())
                 .member(member)
                 .itemOption(itemOption)
-                .itemState(itemRequest.itemState())
                 .build();
 
         Item savedItem = itemRepository.save(item);
@@ -99,14 +95,16 @@ public class ItemServiceImpl implements ItemService {
 
         itemImageRepository.saveAll(imageList);
 
-        return getItemResponse(savedItem, imageUrls);
+        List<Long> itemImgIds = imageList.stream().map(ItemImage::getItemImageId).toList();
+
+        return getCreateItemResponse(savedItem, imageUrls, itemImgIds);
 
     }
 
     //상품 수정
     @Override
     @Transactional
-    public List<String> update(Long itemId, ItemRequest itemRequest, List<MultipartFile> multipartFiles, User user) {
+    public UpdateItemResponse update(Long itemId, UpdateItemRequest itemRequest, List<MultipartFile> multipartFiles, User user) {
         Member member = getMember(user);
 
         // 수정할 상품 이름이 이미 존재하면 예외처리
@@ -161,7 +159,9 @@ public class ItemServiceImpl implements ItemService {
                 .toList();
         itemImageRepository.saveAll(images);
 
-        return imageUrls;
+        List<Long> itemImgIds = images.stream().map(ItemImage::getItemImageId).toList();
+
+        return new UpdateItemResponse(itemImgIds, imageUrls);
     }
 
     // 상품 삭제
@@ -238,18 +238,18 @@ public class ItemServiceImpl implements ItemService {
     }
 
     //ItemResponse 코드 중복 방지
-    private ItemResponse getItemResponse(Item item, List<String> imgUrls) {
-        return new ItemResponse(
+    private CreateItemResponse getCreateItemResponse(Item item, List<String> imgUrls, List<Long> itemImageIds) {
+        return new CreateItemResponse(
                 item.getItemId(),
                 item.getItemName(),
                 item.getCategory().getCategoryId(),
                 item.getItemPrice(),
                 item.getCount(),
                 item.getItemOption().getOptionValues().stream()
-                        .map(option -> new ItemResponse.Option(option.key(), option.value()))
+                        .map(option -> new CreateItemResponse.Option(option.key(), option.value()))
                         .toList(),
-                item.getItemState(),
                 item.getItemDetail(),
+                itemImageIds,
                 imgUrls
         );
     }
