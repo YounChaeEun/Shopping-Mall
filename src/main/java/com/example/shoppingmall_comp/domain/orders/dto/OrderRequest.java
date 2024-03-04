@@ -37,10 +37,6 @@ public record OrderRequest (
         @Schema(description = "주문 가격", example = "1,200,000")
         int totalPrice,
 
-        @NotNull
-        @Schema(description = "주문번호", example = "ORD20301948-0000000")
-        UUID merchantId,
-
         @NotBlank
         @Schema(description = "카드사", example = "카드사 이름")
         String cardCompany,
@@ -50,14 +46,25 @@ public record OrderRequest (
         String cardNum,
 
         @NotNull
-        List<orderItemCreate> orderItemCreates //주문할 상품 리스트
+        @Schema(description = "주문할 상품 리스트")
+        List<OrderedItem> orderedItems
 
 ) {
-    public record orderItemCreate (
-            Long itemId, //주문할 상품 id
-            String name, //주문할 상품 이름
-            int count, //주문할 상품 수량
-            int orderPrice, //주문할 각 상품 주문 가격
+    @Schema(description = "주문할 상품 정보")
+    public record OrderedItem (
+            @Schema(description = "상품 id", example = "1")
+            Long itemId,
+
+            @Schema(description = "상품명", example = "노트북")
+            String name,
+
+            @Schema(description = "상품 수량", example = "1")
+            int count,
+
+            @Schema(description = "상품 가격", example = "89700")
+            int price,
+
+            @Schema(description = "상품 옵션", example = "{색상: WHITE}")
             List<OrderItem.Option> optionValues
     ) {}
 }

@@ -1,6 +1,5 @@
 package com.example.shoppingmall_comp.domain.orders.dto;
 
-import com.example.shoppingmall_comp.domain.orders.entity.OrderItem;
 import com.example.shoppingmall_comp.domain.orders.entity.OrderState;
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -21,7 +20,7 @@ public record OrderPageResponse(
         @Schema(description = "한 페이지당 크기", example = "5")
         int currentPageSize,
 
-        @Schema(description = "장바구니 상품 리스트")
+        @Schema(description = "주문 리스트")
         List<OrderList> OrderList
 
 ) {
@@ -33,7 +32,7 @@ public record OrderPageResponse(
             OrderState orderState,
 
             @Schema(description = "주문 시간", example = "2024.2.20")
-            LocalDateTime orderTime, //주문 시간
+            LocalDateTime orderTime,
 
             @Schema(description = "주문상품 정보")
             List<OrderResponse.OrderedItem> orderItemList

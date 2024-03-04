@@ -56,17 +56,21 @@ public class OrderServiceImpl implements OrderService {
 
         //주문상품 DB에 저장
         //orderRequest에 있는 각 주문된 상품을 반복하면서, 해당 주문 항목의 상품 id를 이용하여 주문한 아이템 가져옴
-        for (OrderRequest.orderItemCreate orderItemCreate : orderRequest.orderItemCreates()) {
-            Item item = itemRepository.findById(orderItemCreate.itemId())
+        for (OrderRequest.OrderedItem OrderedItem : orderRequest.orderedItems()) {
+            Item item = itemRepository.findById(OrderedItem.itemId())
                     .orElseThrow(() -> new BusinessException(NOT_FOUND_ITEM));
 
             //상품 재고가 품절일 경우 주문 불가
-            if(item.getItemState() == ItemState.SOLD_OUT) {
+            if (item.getItemState() == ItemState.SOLD_OUT) {
                 throw new BusinessException(NOT_SELLING_ITEM);
+            }
+            //판매가 중단된 상품일 때 주문 불가
+            if (item.getItemState() == ItemState.DISCONTINUED) {
+                throw new BusinessException(DISCONTINUED_ITEM);
             }
 
             //주문 후 상품 재고 업데이트
-            int orderedQuantity = orderItemCreate.count();
+            int orderedQuantity = OrderedItem.count();
             if (item.getCount() < orderedQuantity) { //주문하려는 상품 재고 < 주문 수량
                 throw new BusinessException(NOT_ENOUGH_STOCK);
             }
@@ -77,7 +81,7 @@ public class OrderServiceImpl implements OrderService {
             itemRepository.save(item);
 
             //주문된 상품을 주문 상품 DB에 저장
-            OrderItem orderItem = OrderItem.createOrderItem(member, item, item.getItemName(), orderItemCreate.orderPrice(), orderItemCreate.count(), order, orderItemCreate.optionValues());
+            OrderItem orderItem = OrderItem.createOrderItem(member, item, item.getItemName(), OrderedItem.price(), OrderedItem.count(), order, OrderedItem.optionValues());
             orderItemRepository.save(orderItem);
 
             //주문한 상품이 장바구니에 존재할 경우
@@ -141,7 +145,7 @@ public class OrderServiceImpl implements OrderService {
                 .build();
 
         //주문 상품 DB에서 삭제
-        List<OrderItem> orderItems = orderItemRepository.findAllByOrder(pay.getOrder());//todo:이거 어떻게 가능?
+        List<OrderItem> orderItems = orderItemRepository.findAllByOrder(pay.getOrder());
         orderItemRepository.deleteAll(orderItems);
 
         //결제취소 DB 저장
