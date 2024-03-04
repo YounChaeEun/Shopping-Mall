@@ -1,9 +1,6 @@
 package com.example.shoppingmall_comp.domain.items.service.impl;
 
-import com.example.shoppingmall_comp.domain.items.dto.ItemPageResponse;
-import com.example.shoppingmall_comp.domain.items.dto.ItemRequest;
-import com.example.shoppingmall_comp.domain.items.dto.ItemResponse;
-import com.example.shoppingmall_comp.domain.items.dto.SellerItemsResponse;
+import com.example.shoppingmall_comp.domain.items.dto.*;
 import com.example.shoppingmall_comp.domain.items.entity.Category;
 import com.example.shoppingmall_comp.domain.items.entity.Item;
 import com.example.shoppingmall_comp.domain.items.entity.ItemImage;
@@ -46,7 +43,7 @@ public class ItemServiceImpl implements ItemService {
     // 상품 등록 + 이미지 추가(필수) + 옵션 추가(필수X)
     @Override
     @Transactional
-    public ItemResponse create(ItemRequest itemRequest, List<MultipartFile> multipartFiles, User user) {
+    public CreateItemResponse create(ItemRequest itemRequest, List<MultipartFile> multipartFiles, User user) {
         Member member = getMember(user);
         System.out.println("사용자 정보: {}" + member);
 
@@ -77,7 +74,6 @@ public class ItemServiceImpl implements ItemService {
                 .count(itemRequest.count())
                 .member(member)
                 .itemOption(itemOption)
-                .soldOutState(itemRequest.soldOutState())
                 .build();
 
         Item savedItem = itemRepository.save(item);
@@ -99,17 +95,19 @@ public class ItemServiceImpl implements ItemService {
 
         itemImageRepository.saveAll(imageList);
 
-        return getItemResponse(savedItem, imageUrls);
+        List<Long> itemImgIds = imageList.stream().map(ItemImage::getItemImageId).toList();
+
+        return getCreateItemResponse(savedItem, imageUrls, itemImgIds);
 
     }
 
     //상품 수정
     @Override
     @Transactional
-    public List<String> update(Long itemId, ItemRequest itemRequest, List<MultipartFile> multipartFiles, User user) {
+    public UpdateItemResponse update(Long itemId, UpdateItemRequest itemRequest, List<MultipartFile> multipartFiles, User user) {
         Member member = getMember(user);
 
-        // 수정할 상품이름이 이미 존재하면 예외처리
+        // 수정할 상품 이름이 이미 존재하면 예외처리
         if (itemRepository.findByItemName(itemRequest.itemName()).isPresent()) {
             throw new BusinessException(DUPLICATE_ITEM, "이미 존재하는 상품입니다.");
         }
@@ -127,7 +125,7 @@ public class ItemServiceImpl implements ItemService {
 
         // 엔티티 수정
         item.updateItem(itemRequest.itemName(), itemRequest.price(),
-                itemRequest.count(), itemRequest.description(), category);
+                itemRequest.count(), itemRequest.description(), category, itemRequest.itemState());
 
         // 상품의 기존 옵션 삭제
         List<ItemOption> options = itemOptionRepository.findByItem(item); // 아이템 관련해서 아이템 옵션 조회
@@ -161,7 +159,9 @@ public class ItemServiceImpl implements ItemService {
                 .toList();
         itemImageRepository.saveAll(images);
 
-        return imageUrls;
+        List<Long> itemImgIds = images.stream().map(ItemImage::getItemImageId).toList();
+
+        return new UpdateItemResponse(itemImgIds, imageUrls);
     }
 
     // 상품 삭제
@@ -191,25 +191,29 @@ public class ItemServiceImpl implements ItemService {
         itemRepository.deleteById(itemId);
     }
 
-    //상품 조회(판매자)
+    //상품 전체 조회(판매자)
     @Override
-    @Transactional(readOnly = true)
-    public List<SellerItemsResponse> getSellerAll(Pageable pageable, User user) {
+    public SellerItemsResponse getSellerAll(Pageable pageable, User user) {
         Member member = getMember(user);
         Page<Item> sellerItems = itemRepository.findByMember(pageable, member);
 
-        if (sellerItems.isEmpty()) {
-            throw new BusinessException(NOT_FOUND_ITEM, "판매한 상품이 없습니다.");
-        }
-
-        return sellerItems.stream()
-                .map(item -> new SellerItemsResponse(
-                        item.getItemId(),
-                        item.getItemName(),
-                        item.getItemPrice(),
-                        item.getCount()
+        List<SellerItemsResponse.sellerItem> sellerItemList = sellerItems.stream()
+                .map(sellerItem -> new SellerItemsResponse.sellerItem(
+                        sellerItem.getItemId(),
+                        sellerItem.getItemName(),
+                        sellerItem.getItemPrice(),
+                        sellerItem.getCount(),
+                        sellerItem.getItemState()
                 ))
                 .toList();
+
+        return new SellerItemsResponse(
+                sellerItems.getTotalPages(),
+                (int) sellerItems.getTotalElements(),
+                sellerItems.getNumber(),
+                sellerItems.getSize(),
+                sellerItemList
+        );
     }
 
     //상품 상세 조회(전체 사용자)
@@ -225,7 +229,18 @@ public class ItemServiceImpl implements ItemService {
                 .map(ItemImage::getImageUrl)
                 .toList();
 
-        return getItemResponse(item, imgUrls);
+        return new ItemResponse(
+                item.getItemId(),
+                item.getItemName(),
+                item.getCategory().getCategoryId(),
+                item.getItemPrice(),
+                item.getItemOption().getOptionValues().stream()
+                        .map(option -> new ItemResponse.Option(option.key(), option.value()))
+                        .toList(),
+                item.getItemState(),
+                item.getItemDetail(),
+                imgUrls
+        );
     }
 
     private Member getMember(User user) {
@@ -234,18 +249,18 @@ public class ItemServiceImpl implements ItemService {
     }
 
     //ItemResponse 코드 중복 방지
-    private ItemResponse getItemResponse(Item item, List<String> imgUrls) {
-        return new ItemResponse(
+    private CreateItemResponse getCreateItemResponse(Item item, List<String> imgUrls, List<Long> itemImageIds) {
+        return new CreateItemResponse(
                 item.getItemId(),
                 item.getItemName(),
                 item.getCategory().getCategoryId(),
                 item.getItemPrice(),
                 item.getCount(),
                 item.getItemOption().getOptionValues().stream()
-                        .map(option -> new ItemResponse.Option(option.key(), option.value()))
+                        .map(option -> new CreateItemResponse.Option(option.key(), option.value()))
                         .toList(),
-                item.getSoldOutState(),
                 item.getItemDetail(),
+                itemImageIds,
                 imgUrls
         );
     }

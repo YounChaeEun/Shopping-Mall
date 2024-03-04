@@ -1,7 +1,7 @@
 package com.example.shoppingmall_comp.domain.members.service.impl;
 
 import com.example.shoppingmall_comp.domain.items.entity.Item;
-import com.example.shoppingmall_comp.domain.items.entity.SoldOutState;
+import com.example.shoppingmall_comp.domain.items.entity.ItemState;
 import com.example.shoppingmall_comp.domain.items.repository.ItemRepository;
 import com.example.shoppingmall_comp.domain.members.dto.CartPageResponse;
 import com.example.shoppingmall_comp.domain.members.dto.CartRequest;
@@ -48,7 +48,7 @@ public class CartServiceImpl implements CartService {
         }
 
         //품절 상태인지 확인
-        if(item.getSoldOutState() == SoldOutState.SOLD_OUT) {
+        if(item.getItemState() == ItemState.SOLD_OUT) {
             throw new BusinessException(SOLD_OUT_STATE_ITEM, "상품이 품절되었습니다.");
         }
 
@@ -68,7 +68,7 @@ public class CartServiceImpl implements CartService {
                 .count(cartRequest.count())
                 .member(member)
                 .item(item)
-                .soldOutState(cartRequest.itemSoldOutState())
+                .itemState(cartRequest.itemState())
                 .optionValues(options)
                 .build();
 
@@ -103,7 +103,7 @@ public class CartServiceImpl implements CartService {
                         cart.getItem().getItemId(),
                         cart.getItem().getItemName(),
                         cart.getItem().getItemPrice(),
-                        cart.getSoldOutState(),
+                        cart.getItemState(),
                         cart.getItem().getItemOption().getOptionValues().stream()
                                 .map(option -> new CartResponse.Option(option.key(), option.value()))
                                 .toList()
@@ -155,7 +155,7 @@ public class CartServiceImpl implements CartService {
                 cart.getItem().getItemId(),
                 cart.getItem().getItemName(),
                 cart.getItem().getItemPrice(),
-                cart.getItem().getSoldOutState(),
+                cart.getItem().getItemState(),
                 cart.getItem().getItemOption().getOptionValues().stream()
                         .map(option -> new CartResponse.Option(option.key(), option.value()))
                         .toList()
