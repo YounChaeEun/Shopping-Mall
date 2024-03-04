@@ -39,8 +39,8 @@ public class CartServiceImpl implements CartService {
         Item item = existItemCheck(cartRequest.itemId());
 
         //장바구니 넣으려는 상품 수량 > 실제 상품 재고
-        int cartCount = cartRequest.count();
-        if (cartCount > item.getCount()) {
+        int cartItemCount = cartRequest.count();
+        if (cartItemCount > item.getCount()) {
             throw new BusinessException(NOT_ENOUGH_STOCK);
         }
 
