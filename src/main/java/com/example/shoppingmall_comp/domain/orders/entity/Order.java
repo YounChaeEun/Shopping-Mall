@@ -81,7 +81,8 @@ public class Order extends BaseEntity {
                 .zipcode(orderRequest.zipcode())
                 .address(orderRequest.address())
                 .requestMessage(orderRequest.requestMessage())
-                .totalPrice(totalPrice) // 총 주문 금액 설정
+                .totalPrice(totalPrice)
+                .merchantId(UUID.randomUUID())
                 .build();
     }
 
