@@ -7,7 +7,6 @@ import com.example.shoppingmall_comp.domain.members.service.impl.ReviewServiceIm
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,8 +21,6 @@ import javax.validation.Valid;
 @Tag(name = "리뷰 관련 api", description = "리뷰 관련 api입니다.")
 public class ReviewController {
 
-    @Value("${application.paging.size}")
-    private int pageSize;
     private final ReviewServiceImpl reviewService;
 
 
