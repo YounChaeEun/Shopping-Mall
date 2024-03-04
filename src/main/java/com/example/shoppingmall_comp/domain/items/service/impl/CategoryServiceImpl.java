@@ -1,4 +1,4 @@
-package com.example.shoppingmall_comp.domain.items.service.imple;
+package com.example.shoppingmall_comp.domain.items.service.impl;
 
 import com.example.shoppingmall_comp.domain.items.dto.CategoryRequest;
 import com.example.shoppingmall_comp.domain.items.dto.CategoryResponse;
