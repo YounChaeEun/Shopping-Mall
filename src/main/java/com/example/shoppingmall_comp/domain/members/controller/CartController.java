@@ -1,9 +1,6 @@
 package com.example.shoppingmall_comp.domain.members.controller;
 
-import com.example.shoppingmall_comp.domain.members.dto.CartPageResponse;
-import com.example.shoppingmall_comp.domain.members.dto.CartRequest;
-import com.example.shoppingmall_comp.domain.members.dto.CartResponse;
-import com.example.shoppingmall_comp.domain.members.dto.DeleteCartRequest;
+import com.example.shoppingmall_comp.domain.members.dto.*;
 import com.example.shoppingmall_comp.domain.members.service.impl.CartServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,7 +27,7 @@ public class CartController {
     @PostMapping("/carts")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "장바구니 생성 api", description = "장바구니를 생성하는 api 입니다.")
-    public CartResponse addCart(@Valid @RequestBody CartRequest cartRequest,
+    public CartResponse addCart(@Valid @RequestBody CreateCartRequest cartRequest,
                                 @AuthenticationPrincipal User user) {
         return cartService.create(cartRequest, user);
     }
@@ -40,7 +37,7 @@ public class CartController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "장바구니 수정 api", description = "장바구니를 수정하는 api 입니다.")
     public void updateCart(@PathVariable Long cartId,
-                           @Valid @RequestBody CartRequest cartRequest,
+                           @Valid @RequestBody UpdateCartRequest cartRequest,
                            @AuthenticationPrincipal User user) {
         cartService.update(cartId, cartRequest, user);
     }

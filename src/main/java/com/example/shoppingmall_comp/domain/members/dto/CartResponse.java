@@ -23,7 +23,7 @@ public record CartResponse(
         @Schema(description = "상품 가격", example = "38000")
         int itemPrice,
 
-        @Schema(description = "상품 품절상태", example = "ON_SALE")
+        @Schema(description = "상품 판매 상태", example = "판매중")
         ItemState itemState,
 
         @Schema(description = "상품 옵션", example = "{색상: WHITE}")
