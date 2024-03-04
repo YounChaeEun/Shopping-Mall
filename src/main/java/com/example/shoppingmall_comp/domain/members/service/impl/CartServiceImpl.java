@@ -122,10 +122,9 @@ public class CartServiceImpl implements CartService {
     //체크된 장바구니들 삭제
     @Override
     @Transactional
-    public void deleteSelectedCarts(DeleteCartRequest cartRequest, User user) {
+    public void deleteSelectedCarts(List<Long> cartIds, User user) {
         Member member = getMember(user);
-        List<Long> cartIdList = cartRequest.cartIdList();
-        for (Long cartId : cartIdList) {
+        for (Long cartId : cartIds) {
             Cart cart = existMemberCartCheck(cartId, member);
             cartRepository.delete(cart);
         }

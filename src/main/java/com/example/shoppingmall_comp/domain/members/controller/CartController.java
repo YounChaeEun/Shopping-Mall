@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -55,9 +56,9 @@ public class CartController {
     @DeleteMapping("/carts")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "장바구니 삭제 api", description = "선택한 장바구니들을 삭제하는 api 입니다.")
-    public void deleteCart(@Valid @RequestBody DeleteCartRequest cartIdList,
+    public void deleteCarts(@RequestParam("cartIds") List<Long> cartIds,
                            @AuthenticationPrincipal User user) {
-        cartService.deleteSelectedCarts(cartIdList, user);
+        cartService.deleteSelectedCarts(cartIds, user);
     }
 
 }
