@@ -28,8 +28,6 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 
 	implementation 'io.hypersistence:hypersistence-utils-hibernate-55:3.7.0'
-	implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.5'
-	implementation 'com.fasterxml.jackson.module:jackson-module-jaxb-annotations:2.13.5'
 
 	implementation 'org.springdoc:springdoc-openapi-ui:1.7.0'
 	implementation 'org.springdoc:springdoc-openapi-security:1.7.0'
