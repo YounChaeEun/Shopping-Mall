@@ -64,6 +64,10 @@ public class OrderServiceImpl implements OrderService {
             if(item.getItemState() == ItemState.SOLD_OUT) {
                 throw new BusinessException(NOT_SELLING_ITEM);
             }
+            //판매가 중단된 상품일 때 주문 불가
+            if(item.getItemState() == ItemState.DISCONTINUED) {
+                throw new BusinessException(DISCONTINUED_ITEM);
+            }
 
             //주문 후 상품 재고 업데이트
             int orderedQuantity = orderItemCreate.count();
