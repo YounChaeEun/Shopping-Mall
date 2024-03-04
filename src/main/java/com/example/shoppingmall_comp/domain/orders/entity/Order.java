@@ -70,8 +70,8 @@ public class Order extends BaseEntity {
         int totalPrice = 0;
 
         //총 주문 금액 계산
-        for(OrderRequest.orderItemCreate orderItemCreate : orderRequest.orderItemCreates()) {
-            totalPrice += orderItemCreate.orderPrice() * orderItemCreate.count();
+        for(OrderRequest.OrderedItem OrderedItem : orderRequest.orderedItems()) {
+            totalPrice += OrderedItem.price() * OrderedItem.count();
         }
 
         return Order.builder()
@@ -82,7 +82,6 @@ public class Order extends BaseEntity {
                 .address(orderRequest.address())
                 .requestMessage(orderRequest.requestMessage())
                 .totalPrice(totalPrice) // 총 주문 금액 설정
-                .merchantId(orderRequest.merchantId())
                 .build();
     }
 
