@@ -1,9 +1,6 @@
 package com.example.shoppingmall_comp.domain.orders.controller;
 
-import com.example.shoppingmall_comp.domain.orders.dto.OrderPageResponse;
-import com.example.shoppingmall_comp.domain.orders.dto.OrderRequest;
-import com.example.shoppingmall_comp.domain.orders.dto.OrderResponse;
-import com.example.shoppingmall_comp.domain.orders.dto.PayCancelRequest;
+import com.example.shoppingmall_comp.domain.orders.dto.*;
 import com.example.shoppingmall_comp.domain.orders.service.implement.OrderServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -26,11 +23,12 @@ public class OrderController {
     private final OrderServiceImpl orderService;
 
     //주문번호 UUID 생성
-    @PostMapping("/order-uuid")
+    @PostMapping("/order-keys")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "주문번호(UUID) 생성 api", description = "주문 관련 주문번호(UUID)를 생성하는 api입니다.")
-    public UUID generateOrderUUID() {
-        return UUID.randomUUID();
+    public OrderKeyResponse generateOrderKey() {
+        UUID orderKey = UUID.randomUUID();
+        return new OrderKeyResponse(orderKey);
     }
 
     //주문 생성
