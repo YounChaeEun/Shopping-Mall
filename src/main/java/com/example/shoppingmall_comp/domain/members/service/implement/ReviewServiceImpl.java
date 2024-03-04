@@ -1,4 +1,4 @@
-package com.example.shoppingmall_comp.domain.members.service.impl;
+package com.example.shoppingmall_comp.domain.members.service.implement;
 
 import com.example.shoppingmall_comp.domain.items.entity.Item;
 import com.example.shoppingmall_comp.domain.items.repository.ItemRepository;

@@ -4,7 +4,7 @@ import com.example.shoppingmall_comp.domain.orders.dto.OrderPageResponse;
 import com.example.shoppingmall_comp.domain.orders.dto.OrderRequest;
 import com.example.shoppingmall_comp.domain.orders.dto.OrderResponse;
 import com.example.shoppingmall_comp.domain.orders.dto.PayCancelRequest;
-import com.example.shoppingmall_comp.domain.orders.service.impl.OrderServiceImpl;
+import com.example.shoppingmall_comp.domain.orders.service.implement.OrderServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

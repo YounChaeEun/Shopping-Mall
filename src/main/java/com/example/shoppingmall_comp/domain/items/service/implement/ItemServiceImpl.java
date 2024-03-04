@@ -1,4 +1,4 @@
-package com.example.shoppingmall_comp.domain.items.service.impl;
+package com.example.shoppingmall_comp.domain.items.service.implement;
 
 import com.example.shoppingmall_comp.domain.items.dto.*;
 import com.example.shoppingmall_comp.domain.items.entity.Category;

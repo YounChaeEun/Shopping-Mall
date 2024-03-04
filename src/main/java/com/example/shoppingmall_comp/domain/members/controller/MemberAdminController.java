@@ -1,7 +1,7 @@
 package com.example.shoppingmall_comp.domain.members.controller;
 
 import com.example.shoppingmall_comp.domain.members.dto.MemberResponse;
-import com.example.shoppingmall_comp.domain.members.service.impl.MemberServiceImpl;
+import com.example.shoppingmall_comp.domain.members.service.implement.MemberServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
