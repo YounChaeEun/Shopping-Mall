@@ -11,6 +11,6 @@ public interface ReviewService {
     ReviewResponse create(ReviewRequest request, User user);
     void update(Long reviewId, ReviewRequest reviewRequest, User user);
     void delete(Long reviewId, User user);
-    ReviewPageResponse getAllByMember(User user, int page, Pageable pageable);
-    ReviewPageResponse getAllByItem(Long itemId, int page, Pageable pageable);
+    ReviewPageResponse getAllByMember(User user, Pageable pageable);
+    ReviewPageResponse getAllByItem(Long itemId, Pageable pageable);
 }

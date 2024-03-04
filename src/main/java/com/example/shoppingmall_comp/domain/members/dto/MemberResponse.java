@@ -2,7 +2,7 @@ package com.example.shoppingmall_comp.domain.members.dto;
 
 import com.example.shoppingmall_comp.domain.members.entity.DeletedState;
 import com.example.shoppingmall_comp.domain.members.entity.RoleName;
-import com.example.shoppingmall_comp.domain.members.entity.VipState;
+import com.example.shoppingmall_comp.domain.members.entity.Grade;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "회원가입 응답 DTO")
@@ -20,7 +20,7 @@ public record MemberResponse(
         int consumePrice,
 
         @Schema(description = "사용자의 VIP 여부", example = "VIP")
-        VipState vipState,
+        Grade grade,
 
         @Schema(description = "사용자의 삭제 여부", example = "DELETED")
         DeletedState deletedState,

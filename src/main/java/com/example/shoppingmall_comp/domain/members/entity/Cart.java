@@ -3,8 +3,7 @@ package com.example.shoppingmall_comp.domain.members.entity;
 
 import com.example.shoppingmall_comp.domain.BaseEntity;
 import com.example.shoppingmall_comp.domain.items.entity.Item;
-import com.example.shoppingmall_comp.domain.items.entity.ItemOption;
-import com.example.shoppingmall_comp.domain.items.entity.SoldOutState;
+import com.example.shoppingmall_comp.domain.items.entity.ItemState;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -15,7 +14,6 @@ import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
 import java.util.List;
-import java.util.Map;
 
 @Entity
 @Table(name = "cart")
@@ -41,18 +39,18 @@ public class Cart extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "sold_out_state")
-    private SoldOutState soldOutState;
+    private ItemState itemState;
 
     @Column(name = "option_values", columnDefinition = "longtext")
     @Type(type = "json")
     private List<Option> optionValues;
 
     @Builder
-    public Cart(int count, Item item, Member member, SoldOutState soldOutState, List<Option> optionValues) {
+    public Cart(int count, Item item, Member member, ItemState itemState, List<Option> optionValues) {
         this.count = count;
         this.item = item;
         this.member = member;
-        this.soldOutState = soldOutState;
+        this.itemState = itemState;
         this.optionValues = optionValues;
     }
     public void updateCart(int count) {

@@ -1,8 +1,6 @@
 package com.example.shoppingmall_comp.domain.items.controller;
 
-import com.example.shoppingmall_comp.domain.items.dto.ItemRequest;
-import com.example.shoppingmall_comp.domain.items.dto.ItemResponse;
-import com.example.shoppingmall_comp.domain.items.dto.SellerItemsResponse;
+import com.example.shoppingmall_comp.domain.items.dto.*;
 import com.example.shoppingmall_comp.domain.items.service.impl.ItemServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -20,7 +18,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/seller")
-@Tag(name = "상품 관련 api", description = "상품 등록, 수정, 조회, 삭제 관련 api입니다.")
+@Tag(name = "(판매자 권한) 상품 관련 api", description = "판매자의 상품 등록, 수정, 조회, 삭제 api입니다.")
 public class ItemSellerController {
 
     private final ItemServiceImpl itemService;
@@ -29,7 +27,7 @@ public class ItemSellerController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/items")
     @Operation(summary = "상품 등록 api", description = "상품을 등록하는 api 입니다.")
-    public ItemResponse addItem(@Valid @RequestPart ItemRequest itemRequest,
+    public CreateItemResponse addItem(@Valid @RequestPart ItemRequest itemRequest,
                                 @RequestPart List<MultipartFile> multipartFiles,
                                 @AuthenticationPrincipal User user) {
         return itemService.create(itemRequest, multipartFiles, user);
@@ -39,10 +37,10 @@ public class ItemSellerController {
     @ResponseStatus(HttpStatus.OK)
     @PatchMapping("/items/{itemId}")
     @Operation(summary = "상품 수정 api", description = "상품을 수정하는 api 입니다.")
-    public List<String> updateItem(@PathVariable Long itemId,
-                                   @Valid @RequestPart ItemRequest itemRequest,
-                                   @RequestPart List<MultipartFile> multipartFiles,
-                                   @AuthenticationPrincipal User user) {
+    public UpdateItemResponse updateItem(@PathVariable Long itemId,
+                                         @Valid @RequestPart UpdateItemRequest itemRequest,
+                                         @RequestPart List<MultipartFile> multipartFiles,
+                                         @AuthenticationPrincipal User user) {
          return itemService.update(itemId, itemRequest, multipartFiles, user);
     }
 
@@ -58,7 +56,7 @@ public class ItemSellerController {
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/items")
     @Operation(summary = "상품 판매자 조회 api", description = "판매자 자신이 등록한 상품을 조회하는 api 입니다.")
-    public List<SellerItemsResponse> getSellerItems(Pageable pageable, @AuthenticationPrincipal User user) {
+    public SellerItemsResponse getSellerItems(Pageable pageable, @AuthenticationPrincipal User user) {
         return itemService.getSellerAll(pageable, user);
     }
 }
