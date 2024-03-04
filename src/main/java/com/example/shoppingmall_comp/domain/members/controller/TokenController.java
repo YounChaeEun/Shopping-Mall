@@ -3,6 +3,7 @@ package com.example.shoppingmall_comp.domain.members.controller;
 import com.example.shoppingmall_comp.domain.members.dto.CreateAccessTokenReponse;
 import com.example.shoppingmall_comp.domain.members.dto.CreateAccessTokenRequest;
 import com.example.shoppingmall_comp.domain.members.service.impl.TokenServiceImpl;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,7 +21,7 @@ public class TokenController {
 
     @PostMapping("/token")
     @ResponseStatus(HttpStatus.CREATED)
-    @Tag(name = "엑세스 토큰 재발급api", description = "리프레시 토큰으로 새 엑세스 토큰 발급해주는 api입니다.")
+    @Operation(summary ="엑세스 토큰 재발급 api", description = "리프레시 토큰으로 새 엑세스 토큰 발급해주는 api입니다.")
     public CreateAccessTokenReponse createNewAccessToken(@RequestBody @Valid CreateAccessTokenRequest request) {
         return tokenService.createNewAccessToken(request);
     }
