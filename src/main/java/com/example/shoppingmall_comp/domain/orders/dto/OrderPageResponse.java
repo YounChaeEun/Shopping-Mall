@@ -9,37 +9,34 @@ import java.util.List;
 
 @Schema(description = "주문내역 응답 DTO")
 public record OrderPageResponse(
-        @Schema(description = "주문 id", example = "1")
-        Long orderId,
-
-        @Schema(description = "주문상태", example = "주문 완료")
-        OrderState orderState,
-
-        @Schema(description = "주문 시간", example = "2024.2.20")
-        LocalDateTime orderTime, //주문 시간
-
-        @Schema(description = "주문상품 정보")
-        List<OrderItemInfo> orderItemCreates,
-
+        @Schema(description = "총 페이지 수", example = "10")
         int totalPage,
+
+        @Schema(description = "총 항목 수", example = "50")
         int totalCount,
+
+        @Schema(description = "현재 페이지 번호", example = "1")
         int pageNumber,
-        int currentPageSize
+
+        @Schema(description = "한 페이지당 크기", example = "5")
+        int currentPageSize,
+
+        @Schema(description = "장바구니 상품 리스트")
+        List<OrderList> OrderList
+
 ) {
-    public record OrderItemInfo (
-            @Schema(description = "주문상품 id", example = "1")
-            Long itemId,
+    public record OrderList(
+            @Schema(description = "주문 id", example = "1")
+            Long orderId,
 
-            @Schema(description = "주문상품명", example = "바지")
-            String name,
+            @Schema(description = "주문상태", example = "주문 완료")
+            OrderState orderState,
 
-            @Schema(description = "주문상품 수량", example = "1")
-            int count,
+            @Schema(description = "주문 시간", example = "2024.2.20")
+            LocalDateTime orderTime, //주문 시간
 
-            @Schema(description = "주문상품 가격", example = "43000")
-            int orderPrice, //주문할 각 상품 주문 가격
-
-            @Schema(description = "주문상품 옵션", example = "진청/L")
-            List<OrderItem.Option> optionValues
-    ) {}
+            @Schema(description = "주문상품 정보")
+            List<OrderResponse.OrderedItem> orderItemList
+    ) {
+    }
 }
