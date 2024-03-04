@@ -1,4 +1,4 @@
-package com.example.shoppingmall_comp.domain.members.service.impl;
+package com.example.shoppingmall_comp.domain.members.service.imple;
 
 import com.example.shoppingmall_comp.domain.items.entity.Item;
 import com.example.shoppingmall_comp.domain.items.repository.ItemRepository;
@@ -15,7 +15,6 @@ import com.example.shoppingmall_comp.domain.orders.repository.OrderItemRepositor
 import com.example.shoppingmall_comp.global.exception.BusinessException;
 import com.example.shoppingmall_comp.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,8 +23,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-
-import static org.springframework.data.domain.Sort.Direction.fromString;
 
 @Service
 @RequiredArgsConstructor

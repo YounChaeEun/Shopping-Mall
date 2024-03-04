@@ -2,7 +2,7 @@ package com.example.shoppingmall_comp.domain.items.controller;
 
 import com.example.shoppingmall_comp.domain.items.dto.CategoryRequest;
 import com.example.shoppingmall_comp.domain.items.dto.CategoryResponse;
-import com.example.shoppingmall_comp.domain.items.service.impl.CategoryServiceImpl;
+import com.example.shoppingmall_comp.domain.items.service.imple.CategoryServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

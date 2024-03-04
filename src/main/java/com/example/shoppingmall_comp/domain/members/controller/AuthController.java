@@ -3,7 +3,7 @@ package com.example.shoppingmall_comp.domain.members.controller;
 import com.example.shoppingmall_comp.domain.members.dto.MemberSignInRequest;
 import com.example.shoppingmall_comp.domain.members.dto.MemberSignInResponse;
 import com.example.shoppingmall_comp.domain.members.dto.MemberSignUpRequest;
-import com.example.shoppingmall_comp.domain.members.service.impl.AuthServiceImpl;
+import com.example.shoppingmall_comp.domain.members.service.imple.AuthServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
