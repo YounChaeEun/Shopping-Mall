@@ -6,7 +6,7 @@ import java.util.List;
 
 @Schema(description = "장바구니 Page 응답 DTO")
 public record CartPageResponse(
-        //페이징
+
         @Schema(description = "총 페이지 수", example = "10")
         int totalPage,
 

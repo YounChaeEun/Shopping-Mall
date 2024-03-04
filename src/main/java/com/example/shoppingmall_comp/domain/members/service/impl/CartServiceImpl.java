@@ -3,10 +3,7 @@ package com.example.shoppingmall_comp.domain.members.service.impl;
 import com.example.shoppingmall_comp.domain.items.entity.Item;
 import com.example.shoppingmall_comp.domain.items.entity.ItemState;
 import com.example.shoppingmall_comp.domain.items.repository.ItemRepository;
-import com.example.shoppingmall_comp.domain.members.dto.CartPageResponse;
-import com.example.shoppingmall_comp.domain.members.dto.CartRequest;
-import com.example.shoppingmall_comp.domain.members.dto.CartResponse;
-import com.example.shoppingmall_comp.domain.members.dto.DeleteCartRequest;
+import com.example.shoppingmall_comp.domain.members.dto.*;
 import com.example.shoppingmall_comp.domain.members.entity.Cart;
 import com.example.shoppingmall_comp.domain.members.entity.Member;
 import com.example.shoppingmall_comp.domain.members.repository.CartRepository;
@@ -36,25 +33,29 @@ public class CartServiceImpl implements CartService {
     //장바구니 생성
     @Override
     @Transactional
-    public CartResponse create(CartRequest cartRequest, User user) {
+    public CartResponse create(CreateCartRequest cartRequest, User user) {
         Member member = getMember(user);
 
         Item item = existItemCheck(cartRequest.itemId());
 
         //장바구니 넣으려는 상품 수량 > 실제 상품 재고
-        int cartCount = cartRequest.count();
-        if(cartCount > item.getCount()) {
+        int cartItemCount = cartRequest.count();
+        if (cartItemCount > item.getCount()) {
             throw new BusinessException(NOT_ENOUGH_STOCK);
         }
 
         //품절 상태인지 확인
-        if(item.getItemState() == ItemState.SOLD_OUT) {
+        if (item.getItemState() == ItemState.SOLD_OUT) {
             throw new BusinessException(SOLD_OUT_STATE_ITEM, "상품이 품절되었습니다.");
+        }
+        //판매중단된 상태인지 확인
+        if (item.getItemState() == ItemState.DISCONTINUED) {
+            throw new BusinessException(DISCONTINUED_ITEM, "판매가 중단된 상품입니다.");
         }
 
         //장바구니에 이미 존재하는 상품이면
         Cart existingCart = cartRepository.findByItemAndMember(item, member);
-        if(existingCart != null) {
+        if (existingCart != null) {
             throw new BusinessException(CART_IN_ITEM_DUPLICATED);
         }
 
@@ -68,7 +69,6 @@ public class CartServiceImpl implements CartService {
                 .count(cartRequest.count())
                 .member(member)
                 .item(item)
-                .itemState(cartRequest.itemState())
                 .optionValues(options)
                 .build();
 
@@ -80,7 +80,7 @@ public class CartServiceImpl implements CartService {
     //장바구니 수정
     @Override
     @Transactional
-    public void update(Long cartId, CartRequest cartRequest, User user) {
+    public void update(Long cartId, UpdateCartRequest cartRequest, User user) {
         Member member = getMember(user);
         Cart cart = existMemberCartCheck(cartId, member);
 
@@ -122,10 +122,9 @@ public class CartServiceImpl implements CartService {
     //체크된 장바구니들 삭제
     @Override
     @Transactional
-    public void deleteSelectedCarts(DeleteCartRequest cartRequest, User user) {
+    public void deleteSelectedCarts(List<Long> cartIds, User user) {
         Member member = getMember(user);
-        List<Long> cartIdList = cartRequest.cartIdList();
-        for (Long cartId : cartIdList) {
+        for (Long cartId : cartIds) {
             Cart cart = existMemberCartCheck(cartId, member);
             cartRepository.delete(cart);
         }
