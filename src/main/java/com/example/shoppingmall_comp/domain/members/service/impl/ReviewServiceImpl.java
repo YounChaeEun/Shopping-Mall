@@ -32,11 +32,6 @@ import static org.springframework.data.domain.Sort.Direction.fromString;
 @Transactional(readOnly = true)
 public class ReviewServiceImpl implements ReviewService {
 
-    @Value("${application.paging.size}")
-    private int size;
-    @Value("${application.paging.direction}")
-    private String direction;
-
     private final ReviewRepository reviewRepository;
     private final MemberRepository memberRepository;
     private final OrderItemRepository orderItemRepository;
