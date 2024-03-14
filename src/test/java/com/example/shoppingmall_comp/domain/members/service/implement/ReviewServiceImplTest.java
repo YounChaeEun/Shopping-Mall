@@ -62,4 +62,19 @@ class ReviewServiceImplTest {
         assertThat(review.getReviewContent()).isEqualTo("test review new content");
         assertThat(review.getStar()).isEqualTo(5);
     }
+
+    @DisplayName("리뷰 삭제 테스트")
+    @Test
+    void delete() {
+        // given
+        var request = new ReviewRequest("test review title", "test review content", 3, 5L);
+        reviewService.create(request, user); // 리뷰 ID 8로 생성됨
+
+        // when
+        reviewService.delete(8L, user);
+
+        // then
+        List<Review> reviews = reviewRepository.findAll();
+        assertThat(reviews.size()).isEqualTo(7);
+    }
 }
