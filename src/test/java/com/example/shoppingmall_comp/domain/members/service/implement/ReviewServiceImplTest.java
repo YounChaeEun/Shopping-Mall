@@ -43,4 +43,23 @@ class ReviewServiceImplTest {
         assertThat(response.content()).isEqualTo("test review content");
         assertThat(response.star()).isEqualTo(3);
     }
+
+    @DisplayName("리뷰 수정 테스트")
+    @Test
+    void update() {
+        // given
+        var request = new ReviewRequest("test review title", "test review content", 3, 5L);
+        reviewService.create(request, user); // 리뷰 ID 7로 생성됨
+
+        var newRequest = new ReviewRequest("test review new title", "test review new content", 5, 5L);
+
+        // when
+        reviewService.update(7L, newRequest, user);
+        var review = reviewRepository.findById(7L).get();
+
+        //then
+        assertThat(review.getReviewTitle()).isEqualTo("test review new title");
+        assertThat(review.getReviewContent()).isEqualTo("test review new content");
+        assertThat(review.getStar()).isEqualTo(5);
+    }
 }
