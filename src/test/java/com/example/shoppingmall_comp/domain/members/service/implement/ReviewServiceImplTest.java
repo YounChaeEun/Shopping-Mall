@@ -99,4 +99,19 @@ class ReviewServiceImplTest {
         assertThat(response.totalCount()).isEqualTo(7);
         assertThat(response.totalPage()).isEqualTo(1);
     }
+
+    @DisplayName("자신이 쓴 리뷰 전체 조회 성공 테스트")
+    @Test
+    void getAllByMember() {
+        // when
+        var response = reviewService.getAllByMember(user, pageable);
+
+        // then
+        assertThat(response.responseList().size()).isEqualTo(3);
+        // 굳이 안해도 될 것 같긴 하지만.. pageable 검사
+        assertThat(response.currentPageSize()).isEqualTo(15);
+        assertThat(response.pageNumber()).isEqualTo(0);
+        assertThat(response.totalCount()).isEqualTo(3);
+        assertThat(response.totalPage()).isEqualTo(1);
+    }
 }
