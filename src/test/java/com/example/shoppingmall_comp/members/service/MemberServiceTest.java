@@ -1,6 +1,5 @@
 package com.example.shoppingmall_comp.members.service;
 
-import com.example.shoppingmall_comp.domain.members.dto.MemberResponse;
 import com.example.shoppingmall_comp.domain.members.service.implement.MemberServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -37,4 +36,15 @@ public class MemberServiceTest {
         assertThat(response.email()).isEqualTo("amy1234@naver.com");
         // 질문: Point, TotalConsumePrice 같은 나머지것들도 확인하는 게 맞나? 근데 이거 확인하려면, 여기서 직접 설정하는 게 아니라서 디비 들어가서 확인해야하는데..
     }
+
+    @DisplayName("회원 전체 조회 성공 테스트")
+    @Test
+    void getAll() {
+        // when
+        var responses = memberService.getAll();
+
+        // then
+        assertThat(responses.size()).isEqualTo(3);
+    }
+
 }
