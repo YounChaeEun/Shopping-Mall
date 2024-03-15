@@ -1,6 +1,8 @@
 package com.example.shoppingmall_comp.members.service;
 
+import com.example.shoppingmall_comp.domain.items.repository.ItemRepository;
 import com.example.shoppingmall_comp.domain.members.dto.UpdateMemberPaswordRequest;
+import com.example.shoppingmall_comp.domain.members.entity.Cart;
 import com.example.shoppingmall_comp.domain.members.repository.CartRepository;
 import com.example.shoppingmall_comp.domain.members.repository.MemberRepository;
 import com.example.shoppingmall_comp.domain.members.repository.RefreshTokenRepository;
@@ -17,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -26,7 +29,7 @@ public class MemberServiceTest {
 
     @Autowired
     private MemberServiceImpl memberService;
-    @Autowired 
+    @Autowired
     private MemberRepository memberRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -38,12 +41,14 @@ public class MemberServiceTest {
     private OrderRepository orderRepository;
     @Autowired
     private ReviewRepository reviewRepository;
+    @Autowired
+    private ItemRepository itemRepository;
 
     private User user;
 
     @BeforeEach
     void setUp() {
-        this.user = new User("amy1234@naver.com", "Amy4021*", new ArrayList<>());
+        this.user = new User("amy12345seller@naver.com", "Amy4021*", new ArrayList<>());
     }
 
     @DisplayName("회원 상세 조회 성공 테스트")
@@ -110,4 +115,22 @@ public class MemberServiceTest {
         assertThat(reviewList).isEmpty();
     }
 
+    @DisplayName("판매자 회원 삭제 성공 테스트")
+    @Test
+    void deleteSeller() {
+        // given
+        var member = memberRepository.findByEmail(user.getUsername()).get();
+
+        // when
+         memberService.deleteSeller(user);
+
+        // then
+        List<Cart> cartList = new ArrayList<>();
+        itemRepository.findAllByMember(member).forEach(item -> {
+            List<Cart> carts = cartRepository.findAllByItem(item);
+            cartList.addAll(carts);
+        });
+         assertThat(cartList).isEmpty();
+        // 질문 -> 위의 메서드도 실행하는게 이것도 확인해야 하나? 위에서 했으니까 안해도 되지 않을까?
+    }
 }
