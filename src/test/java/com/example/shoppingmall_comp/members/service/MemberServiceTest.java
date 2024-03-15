@@ -31,7 +31,7 @@ public class MemberServiceTest {
     @Test
     void getOne() {
         // when
-        MemberResponse response = memberService.getOne(user);
+        var response = memberService.getOne(user);
 
         // then
         assertThat(response.email()).isEqualTo("amy1234@naver.com");
