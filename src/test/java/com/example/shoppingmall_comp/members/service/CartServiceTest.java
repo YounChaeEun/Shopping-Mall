@@ -106,4 +106,32 @@ public class CartServiceTest {
                 .anyMatch(option -> option.key().equals("색상") && option.value().equals("WHITE")));
     }
 
+    @Test
+    @DisplayName("장바구니 수정 성공 테스트")
+    void updateCart() {
+        //given
+        CreateCartRequest cartRequest = new CreateCartRequest(
+                item.getItemId(),
+                "노트북",
+                100,
+                897000,
+                List.of(new CreateCartRequest.Option("색상","WHITE"))
+        );
+        CartResponse cartResponse = cartService.create(cartRequest, user);
+        Cart cart = cartRepository.findById(cartResponse.cartId()).orElseThrow();
+
+        UpdateCartRequest updateRequest = new UpdateCartRequest(
+                item.getItemId(),
+                200
+        );
+
+        //when
+        cartService.update(cart.getCartId(), updateRequest, user);
+
+        //then
+        //장바구니 id 다시 가져와서 수정 내용 확인
+        Cart updatedCart = cartRepository.findById(cartResponse.cartId()).orElseThrow();
+        Assertions.assertEquals(updateRequest.count(), updatedCart.getCount());
+        Assertions.assertEquals(cart.getItem(), updatedCart.getItem());
+    }
 }
