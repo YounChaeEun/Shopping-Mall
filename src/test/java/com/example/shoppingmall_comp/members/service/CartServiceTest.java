@@ -9,7 +9,6 @@ import com.example.shoppingmall_comp.domain.items.repository.ItemOptionRepositor
 import com.example.shoppingmall_comp.domain.items.repository.ItemRepository;
 import com.example.shoppingmall_comp.domain.members.dto.CartPageResponse;
 import com.example.shoppingmall_comp.domain.members.dto.CartResponse;
-import com.example.shoppingmall_comp.domain.members.dto.CreateCartRequest;
 import com.example.shoppingmall_comp.domain.members.dto.UpdateCartRequest;
 import com.example.shoppingmall_comp.domain.members.entity.*;
 import com.example.shoppingmall_comp.domain.members.repository.CartRepository;
@@ -34,19 +33,14 @@ public class CartServiceTest {
 
     @Autowired
     private CartServiceImpl cartService;
-
     @Autowired
     private ItemRepository itemRepository;
-
     @Autowired
     private ItemOptionRepository itemOptionRepository;
-
     @Autowired
     private CategoryRepository categoryRepository;
-
     @Autowired
     private MemberRepository memberRepository;
-
     @Autowired
     private CartRepository cartRepository;
 
@@ -71,33 +65,20 @@ public class CartServiceTest {
 
         //상품 생성
         this.item = createItem("노트북", 897000, "상품 상세설명 test", 1000, category, member,itemOption, ItemState.ON_SALE);
-
-
     }
 
     @Test
     @DisplayName("장바구니 생성 성공 테스트")
     void addCart() {
-        //given
-        //setUp에 있는 내용은 성공, 실패 모두 사용 가능할 때임. 성공한 경우만은 given에 있는 것이 맞음
-        CreateCartRequest cartRequest = new CreateCartRequest(
-                item.getItemId(),
-                "노트북",
-                100,
-                897000,
-                List.of(new CreateCartRequest.Option("색상","WHITE"))
-        );
-
         //when
-        CartResponse cartResponse = cartService.create(cartRequest, user);
+        Cart createdCart = createCart(100, item, member, ItemState.ON_SALE, List.of(new Cart.Option("색상", "WHITE")));
 
         //then
-        Assertions.assertNotNull(cartResponse);
-        Assertions.assertEquals(cartResponse.cartCount(), cartRequest.count());
-        Assertions.assertEquals(cartResponse.itemId(), item.getItemId());
-        Assertions.assertEquals(cartResponse.itemName(), item.getItemName());
-        Assertions.assertFalse(cartResponse.optionValue().isEmpty());
-        Assertions.assertTrue(cartResponse.optionValue().stream()
+        Assertions.assertNotNull(createdCart);
+        Assertions.assertEquals(createdCart.getCount(), 100);
+        Assertions.assertEquals(createdCart.getItem().getItemId(), item.getItemId());
+        Assertions.assertEquals(createdCart.getItem().getItemName(), item.getItemName());
+        Assertions.assertTrue(createdCart.getOptionValues().stream()
                 .anyMatch(option -> option.key().equals("색상") && option.value().equals("WHITE")));
     }
 
@@ -105,29 +86,17 @@ public class CartServiceTest {
     @DisplayName("장바구니 수정 성공 테스트")
     void updateCart() {
         //given
-        CreateCartRequest cartRequest = new CreateCartRequest(
-                item.getItemId(),
-                "노트북",
-                100,
-                897000,
-                List.of(new CreateCartRequest.Option("색상","WHITE"))
-        );
-        CartResponse cartResponse = cartService.create(cartRequest, user);
-        Cart cart = cartRepository.findById(cartResponse.cartId()).orElseThrow();
-
-        UpdateCartRequest updateRequest = new UpdateCartRequest(
-                item.getItemId(),
-                200
-        );
+        Cart createdCart = createCart(100, item, member, ItemState.ON_SALE, List.of(new Cart.Option("색상", "WHITE")));
+        UpdateCartRequest updateRequest = new UpdateCartRequest(item.getItemId(), 200);
 
         //when
-        cartService.update(cart.getCartId(), updateRequest, user);
+        cartService.update(createdCart.getCartId(), updateRequest, user);
 
         //then
         //장바구니 id 다시 가져와서 수정 내용 확인
-        Cart updatedCart = cartRepository.findById(cartResponse.cartId()).orElseThrow();
+        Cart updatedCart = cartRepository.findById(createdCart.getCartId()).orElseThrow();
         Assertions.assertEquals(updateRequest.count(), updatedCart.getCount());
-        Assertions.assertEquals(cart.getItem(), updatedCart.getItem());
+        Assertions.assertEquals(item, updatedCart.getItem());
     }
 
     @Test
@@ -135,14 +104,7 @@ public class CartServiceTest {
     void getAllCart() {
         //given
         // 장바구니에 상품 추가
-        CreateCartRequest cartRequest = new CreateCartRequest(
-                item.getItemId(),
-                item.getItemName(),
-                10,
-                210000,
-                List.of(new CreateCartRequest.Option("색상","WHITE"))
-        );
-        CartResponse cartResponse = cartService.create(cartRequest, user); //장바구니에 추가한 것: 책상
+        Cart createdCart = createCart(100, item, member, ItemState.ON_SALE, List.of(new Cart.Option("색상", "WHITE")));
 
         //when
         CartPageResponse cartPageResponse = cartService.getAll(PageRequest.of(0,10), user);
@@ -161,10 +123,10 @@ public class CartServiceTest {
 
         //장바구니의 상품 정보 확인
         CartResponse cartItem = cartItems.get(0);
-        Assertions.assertEquals(cartResponse.cartId(), cartItem.cartId());
-        Assertions.assertEquals(cartResponse.cartCount(), cartItem.cartCount());
-        Assertions.assertEquals(cartResponse.itemId(), cartItem.itemId());
-        Assertions.assertEquals(cartResponse.itemName(), cartItem.itemName());
+        Assertions.assertEquals(createdCart.getCartId(), cartItem.cartId());
+        Assertions.assertEquals(createdCart.getCount(), cartItem.cartCount());
+        Assertions.assertEquals(item.getItemId(), cartItem.itemId());
+        Assertions.assertEquals(item.getItemName(), cartItem.itemName());
         Assertions.assertTrue(cartItem.optionValue().stream()
                 .anyMatch(option -> option.key().equals("색상") && option.value().equals("WHITE")));
     }
@@ -176,33 +138,17 @@ public class CartServiceTest {
         //상품 추가
         Item item2 = createItem("책상", 21000, "책상 상세설명", 20, category, member, itemOption, ItemState.ON_SALE);
 
-        //첫번째 장바구니 추가
-        CreateCartRequest cartRequest1 = new CreateCartRequest(
-                item.getItemId(),
-                item.getItemName(),
-                10,
-                897000,
-                List.of(new CreateCartRequest.Option("색상","WHITE"))
-        );
-        CartResponse cartResponse1 = cartService.create(cartRequest1, user);
-
-        //두번째 장바구니 추가
-        CreateCartRequest cartRequest2 = new CreateCartRequest(
-                item2.getItemId(),
-                item2.getItemName(),
-                10,
-                21000,
-                List.of(new CreateCartRequest.Option("색상","BLACK"))
-        );
-        CartResponse cartResponse2 = cartService.create(cartRequest2, user);
+        //첫번째, 두번째 장바구니 추가
+        Cart cart1 = createCart(100, item, member, ItemState.ON_SALE, List.of(new Cart.Option("색상", "WHITE")));
+        Cart cart2 = createCart(10, item2, member, ItemState.ON_SALE, List.of(new Cart.Option("색상", "BLACK")));
 
         //when
-        List<Long> cartIdsDelete = List.of(cartResponse1.cartId());
+        List<Long> cartIdsDelete = List.of(cart1.getCartId());
         cartService.deleteSelectedCarts(cartIdsDelete, user);
 
         //then
         //첫번째 장바구니 삭제 확인
-        Assertions.assertFalse(cartRepository.existsById(cartResponse1.cartId()));
+        Assertions.assertFalse(cartRepository.existsById(cart1.getCartId()));
 
         //남은 장바구니들 몇개 있는지
         List<Cart> remainCarts = cartRepository.findAll();
@@ -210,9 +156,9 @@ public class CartServiceTest {
 
         //남은 장바구니 상품 맞는지 조회
         Cart remainCart = remainCarts.get(0);
-        Assertions.assertEquals(cartResponse2.cartId(), remainCart.getCartId());
-        Assertions.assertEquals(cartRequest2.count(), remainCart.getCount());
-        Assertions.assertEquals(cartRequest2.itemName(), remainCart.getItem().getItemName());
+        Assertions.assertEquals(cart2.getCartId(), remainCart.getCartId());
+        Assertions.assertEquals(cart2.getCount(), remainCart.getCount());
+        Assertions.assertEquals(cart2.getItem().getItemName(), remainCart.getItem().getItemName());
         Assertions.assertTrue(remainCart.getOptionValues().stream()
                 .anyMatch(option -> option.key().equals("색상") && option.value().equals("BLACK")));
 
@@ -229,6 +175,18 @@ public class CartServiceTest {
                 .member(member)
                 .itemOption(itemOption)
                 .itemState(itemState)
+                .build()
+        );
+    }
+
+    //장바구니 생성 메소드
+    private Cart createCart(int count, Item item, Member member, ItemState itemState, List<Cart.Option> optionValues) {
+        return cartRepository.save(Cart.builder()
+                .count(count)
+                .item(item)
+                .member(member)
+                .itemState(itemState)
+                .optionValues(optionValues)
                 .build()
         );
     }
