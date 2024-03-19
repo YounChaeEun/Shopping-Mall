@@ -7,6 +7,7 @@ import com.example.shoppingmall_comp.domain.items.entity.ItemState;
 import com.example.shoppingmall_comp.domain.items.repository.CategoryRepository;
 import com.example.shoppingmall_comp.domain.items.repository.ItemOptionRepository;
 import com.example.shoppingmall_comp.domain.items.repository.ItemRepository;
+import com.example.shoppingmall_comp.domain.members.dto.CartPageResponse;
 import com.example.shoppingmall_comp.domain.members.dto.CartResponse;
 import com.example.shoppingmall_comp.domain.members.dto.CreateCartRequest;
 import com.example.shoppingmall_comp.domain.members.dto.UpdateCartRequest;
@@ -20,6 +21,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
@@ -68,16 +70,9 @@ public class CartServiceTest {
         itemOption = itemOptionRepository.save(ItemOption.builder().optionValues(options).build());
 
         //상품 생성
-        this.item = itemRepository.save(Item.builder()
-                        .itemName("노트북")
-                        .itemPrice(897000)
-                        .itemDetail("상품 상세 내용 test")
-                        .count(1000)
-                        .itemOption(itemOption)
-                        .itemState(ItemState.ON_SALE)
-                        .category(category)
-                        .member(this.member)
-                        .build());
+        this.item = createItem("노트북", 897000, "상품 상세설명 test", 1000, category, member,itemOption, ItemState.ON_SALE);
+
+
     }
 
     @Test
@@ -134,4 +129,59 @@ public class CartServiceTest {
         Assertions.assertEquals(updateRequest.count(), updatedCart.getCount());
         Assertions.assertEquals(cart.getItem(), updatedCart.getItem());
     }
+
+    @Test
+    @DisplayName("장바구니 전체 조회")
+    void getAllCart() {
+        //given
+        // 장바구니에 상품 추가
+        CreateCartRequest cartRequest = new CreateCartRequest(
+                item.getItemId(),
+                item.getItemName(),
+                10,
+                210000,
+                List.of(new CreateCartRequest.Option("색상","WHITE"))
+        );
+        CartResponse cartResponse = cartService.create(cartRequest, user); //장바구니에 추가한 것: 책상
+
+        //when
+        CartPageResponse cartPageResponse = cartService.getAll(PageRequest.of(0,10), user);
+
+        //then
+        //페이징 테스트
+        Assertions.assertNotNull(cartPageResponse);
+        Assertions.assertEquals(1,cartPageResponse.totalPage());
+        Assertions.assertEquals(1, cartPageResponse.totalCount());
+        Assertions.assertEquals(0, cartPageResponse.pageNumber());
+        Assertions.assertEquals(10, cartPageResponse.currentPageSize());
+
+        //장바구니 추가된 상품들 개수 확인
+        List<CartResponse> cartItems = cartPageResponse.cartItems();
+        Assertions.assertEquals(1, cartItems.size());
+
+        //장바구니의 상품 정보 확인
+        CartResponse cartItem = cartItems.get(0);
+        Assertions.assertEquals(cartResponse.cartId(), cartItem.cartId());
+        Assertions.assertEquals(cartResponse.cartCount(), cartItem.cartCount());
+        Assertions.assertEquals(cartResponse.itemId(), cartItem.itemId());
+        Assertions.assertEquals(cartResponse.itemName(), cartItem.itemName());
+        Assertions.assertTrue(cartItem.optionValue().stream()
+                .anyMatch(option -> option.key().equals("색상") && option.value().equals("WHITE")));
+    }
+
+    //상품 생성 메소드
+    private Item createItem(String itemName, int itemPrice, String itemDetail, int count, Category category, Member member, ItemOption itemOption, ItemState itemState) {
+        return itemRepository.save(Item.builder()
+                .itemName(itemName)
+                .itemPrice(itemPrice)
+                .itemDetail(itemDetail)
+                .count(count)
+                .category(category)
+                .member(member)
+                .itemOption(itemOption)
+                .itemState(itemState)
+                .build()
+        );
+    }
+
 }
