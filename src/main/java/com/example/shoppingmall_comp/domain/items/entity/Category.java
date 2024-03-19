@@ -24,8 +24,7 @@ public class Category extends BaseEntity {
     private String categoryName;
 
     @Builder
-    public Category(Long categoryId, String categoryName) {
-        this.categoryId = categoryId;
+    public Category(String categoryName) {
         this.categoryName = categoryName;
     }
 
