@@ -54,6 +54,19 @@ public class CategoryServiceTest {
         Assertions.assertEquals(categoryRequest.categoryName(), updatedCategory.getCategoryName());
     }
 
+    @DisplayName("카테고리 전체 조회 테스트")
+    @Test
+    void getAll() {
+        //given
+        createCategory("생활용품");
+
+        //when
+        List<CategoryResponse> categories = categoryService.getAll();
+
+        //then
+        Assertions.assertEquals(2, categories.size());
+    }
+
 
     //카테고리 생성 메소드
     private Category createCategory(String categoryName) {
