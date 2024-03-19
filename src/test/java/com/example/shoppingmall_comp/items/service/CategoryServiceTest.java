@@ -28,7 +28,7 @@ public class CategoryServiceTest {
         createCategory("전자제품");
     }
 
-    @DisplayName("카테고리 생성 테스트")
+    @DisplayName("카테고리 생성 성공 테스트")
     @Test
     void create() {
         //when
@@ -38,6 +38,22 @@ public class CategoryServiceTest {
         Assertions.assertNotNull(createdCategory);
         Assertions.assertEquals("전자제품", createdCategory.getCategoryName());
     }
+
+    @DisplayName("카테고리 수정 성공 테스트")
+    @Test
+    void update() {
+        //given
+        Category createdCategory = createCategory("전자제품");
+        CategoryRequest categoryRequest = new CategoryRequest("도서");
+
+        //when
+        categoryService.update(categoryRequest, createdCategory.getCategoryId());
+
+        //then
+        Category updatedCategory = categoryRepository.findById(createdCategory.getCategoryId()).orElseThrow();
+        Assertions.assertEquals(categoryRequest.categoryName(), updatedCategory.getCategoryName());
+    }
+
 
     //카테고리 생성 메소드
     private Category createCategory(String categoryName) {
