@@ -67,6 +67,19 @@ public class CategoryServiceTest {
         Assertions.assertEquals(2, categories.size());
     }
 
+    @DisplayName("카테고리 삭제 테스트")
+    @Test
+    void delete() {
+        //given
+        Category createdCategory = createCategory("전자제품");
+
+        //when
+        categoryService.delete(createdCategory.getCategoryId());
+
+        //then
+        Optional<Category> deletedCategory = categoryRepository.findById(createdCategory.getCategoryId());
+        Assertions.assertFalse(deletedCategory.isPresent());
+    }
 
     //카테고리 생성 메소드
     private Category createCategory(String categoryName) {
