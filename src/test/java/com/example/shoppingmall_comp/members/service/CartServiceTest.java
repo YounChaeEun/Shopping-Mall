@@ -169,6 +169,55 @@ public class CartServiceTest {
                 .anyMatch(option -> option.key().equals("색상") && option.value().equals("WHITE")));
     }
 
+    @Test
+    @DisplayName("선택한 장바구니들 삭제")
+    void deleteCarts() {
+        //given
+        //상품 추가
+        Item item2 = createItem("책상", 21000, "책상 상세설명", 20, category, member, itemOption, ItemState.ON_SALE);
+
+        //첫번째 장바구니 추가
+        CreateCartRequest cartRequest1 = new CreateCartRequest(
+                item.getItemId(),
+                item.getItemName(),
+                10,
+                897000,
+                List.of(new CreateCartRequest.Option("색상","WHITE"))
+        );
+        CartResponse cartResponse1 = cartService.create(cartRequest1, user);
+
+        //두번째 장바구니 추가
+        CreateCartRequest cartRequest2 = new CreateCartRequest(
+                item2.getItemId(),
+                item2.getItemName(),
+                10,
+                21000,
+                List.of(new CreateCartRequest.Option("색상","BLACK"))
+        );
+        CartResponse cartResponse2 = cartService.create(cartRequest2, user);
+
+        //when
+        List<Long> cartIdsDelete = List.of(cartResponse1.cartId());
+        cartService.deleteSelectedCarts(cartIdsDelete, user);
+
+        //then
+        //첫번째 장바구니 삭제 확인
+        Assertions.assertFalse(cartRepository.existsById(cartResponse1.cartId()));
+
+        //남은 장바구니들 몇개 있는지
+        List<Cart> remainCarts = cartRepository.findAll();
+        Assertions.assertEquals(1, remainCarts.size());
+
+        //남은 장바구니 상품 맞는지 조회
+        Cart remainCart = remainCarts.get(0);
+        Assertions.assertEquals(cartResponse2.cartId(), remainCart.getCartId());
+        Assertions.assertEquals(cartRequest2.count(), remainCart.getCount());
+        Assertions.assertEquals(cartRequest2.itemName(), remainCart.getItem().getItemName());
+        Assertions.assertTrue(remainCart.getOptionValues().stream()
+                .anyMatch(option -> option.key().equals("색상") && option.value().equals("BLACK")));
+
+    }
+
     //상품 생성 메소드
     private Item createItem(String itemName, int itemPrice, String itemDetail, int count, Category category, Member member, ItemOption itemOption, ItemState itemState) {
         return itemRepository.save(Item.builder()
