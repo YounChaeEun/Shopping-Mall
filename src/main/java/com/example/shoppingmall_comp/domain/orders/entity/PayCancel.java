@@ -21,22 +21,22 @@ public class PayCancel extends BaseEntity {
     private Long payCancelId;
 
     @ManyToOne(fetch = FetchType.LAZY) //한 주문에 여러개의 결제 취소 있을 수 있음
-    @JoinColumn(name = "order_id")
+    @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
-    @Column(nullable = false)
+    @Column(name = "merchant_id", nullable = false)
     private UUID merchantId;   //주문번호
 
-    @Column(nullable = false)
+    @Column(name = "cancel_reason", nullable = false)
     private String cancelReason; //주문 취소 사유
 
-    @Column(nullable = false)
+    @Column(name = "cancel_price", nullable = false)
     private int cancelPrice;     //주문가격
 
-    @Column(nullable = false)
+    @Column(name = "company", nullable = false)
     private String cardCompany;     //카드사
 
-    @Column(nullable = false)
+    @Column(name = "card_num", nullable = false)
     private String cardNum;      //카드일련번호
 
     @Builder
