@@ -1,10 +1,7 @@
 # ShoppingMall
 Spring Boot로 만든 쇼핑몰 프로젝트입니다. <br>
-어느 곳에서든 사용하며 접할 수 있는 인터넷 쇼핑몰들을 모티브하여 설계하였습니다.
+어느 곳에서든 사용하며 접할 수 있는 인터넷 쇼핑몰들을 모티브하여 설계하였습니다.<br>
 사용자, 판매자, 관리자의 권한이 있는 쇼핑몰 API입니다.
-
-# REST API 문서
-- [ShoppingMall API 문서](https://github.com/LeeDaye7888/ShoppingMall/issues/26)
 
 # 기술 스택
 - Language: Java
@@ -16,6 +13,9 @@ Spring Boot로 만든 쇼핑몰 프로젝트입니다. <br>
 - Server: AWS EC2
 - Test: JUnit5, AssertJ
 - Build Tool: Gradle
+
+# REST API 문서
+- [ShoppingMall API 문서](https://github.com/LeeDaye7888/ShoppingMall/issues/26)
 
 
 # 기능 설명
@@ -108,3 +108,5 @@ Spring Boot로 만든 쇼핑몰 프로젝트입니다. <br>
 
 
 # ERD
+![쇼핑몰_완성본 (1)](https://github.com/LeeDaye7888/ShoppingMall/assets/111855256/42bb69bc-905d-4b30-9aaf-8477ae1da1d7)
+
