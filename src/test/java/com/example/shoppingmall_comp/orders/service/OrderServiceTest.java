@@ -43,8 +43,6 @@ public class OrderServiceTest {
     @Autowired
     private OrderService orderService;
     @Autowired
-    private OrderItemRepository orderItemRepository;
-    @Autowired
     private ItemRepository itemRepository;
     @Autowired
     private ItemOptionRepository itemOptionRepository;
@@ -52,6 +50,8 @@ public class OrderServiceTest {
     private CategoryRepository categoryRepository;
     @Autowired
     private OrderRepository orderRepository;
+    @Autowired
+    private OrderItemRepository orderItemRepository;
     @Autowired
     private MemberRepository memberRepository;
     @Autowired
@@ -131,7 +131,7 @@ public class OrderServiceTest {
     void cancelOrder() {
         //given
         Order createdOrder = createOrder(member, "이다예", "01012345678", "Street 66", "상세주소", "요청메세지", OrderState.COMPLETE, 1000000, merchantId);
-        createPay("카드사", "카드 번호", 10000, createdOrder);
+        createPay(member, "카드사", "카드 번호", 10000, createdOrder);
         PayCancelRequest cancelRequest = new PayCancelRequest(createdOrder.getMerchantId(),createdOrder.getOrderId(), "취소 사유");
 
         //when
@@ -145,11 +145,33 @@ public class OrderServiceTest {
     }
 
     @Test
+    @DisplayName("결제 취소 후 상품 재고 복구 테스트")
+    void recoverStock() {
+        //given
+        int initialStock = 100;
+        int orderItemCount = 10;
+        Item item = createItem("노트북", 897000, "상품 상세설명 test", initialStock, category, member, itemOption, ItemState.ON_SALE);
+        Order createdOrder = createOrder(member, "이다예", "01012345678", "Street 66", "상세주소", "요청메세지", OrderState.COMPLETE, 897000, merchantId);
+        createOrderItem(member.getMemberId(), item, "노트북", 897000, orderItemCount, createdOrder);
+        createPay(member, "카드사", "카드 번호", 10000, createdOrder);
+
+        PayCancelRequest cancelRequest = new PayCancelRequest(createdOrder.getMerchantId(), createdOrder.getOrderId(), "취소 사유");
+
+        //when
+        orderService.payCancel(cancelRequest,user);
+
+        //then
+        Item updatedItem = itemRepository.findById(item.getItemId()).orElse(null);
+        assertThat(updatedItem).isNotNull();
+        assertThat(updatedItem.getCount()).isEqualTo(initialStock + orderItemCount);
+    }
+
+    @Test
     @DisplayName("주문 상세 조회 성공 테스트")
     void getOneOrder() {
         //given
         Order createdOrder = createOrder(member, "이다예", "01012345678", "Street 66", "상세주소", "요청메세지", OrderState.COMPLETE, 10000, merchantId);
-        createPay("카드사", "카드번호", 10000, createdOrder);
+        createPay(member, "카드사", "카드번호", 10000, createdOrder);
 
         //when
         OrderResponse orderResponse = orderService.getOne(user, createdOrder.getOrderId());
@@ -192,10 +214,10 @@ public class OrderServiceTest {
     void getAllOrder() {
         //given
         Order order1 = createOrder(member, "이다예", "01012345678", "Street 66", "상세주소", "요청메세지", OrderState.COMPLETE, 10000, merchantId);
-        createPay("카드사1", "카드번호1", 10000, order1);
+        createPay(member,"카드사1", "카드번호1", 10000, order1);
 
         Order order2 = createOrder(member, "이다예", "01012345678", "Street 66", "상세주소", "요청메세지", OrderState.COMPLETE, 10000, merchantId);
-        createPay("카드사2", "카드번호2", 10000, order2);
+        createPay(member,"카드사2", "카드번호2", 10000, order2);
 
         //when
         OrderPageResponse orderPageResponse = orderService.getAll(user, PageRequest.of(0,10));
@@ -264,9 +286,23 @@ public class OrderServiceTest {
         );
     }
 
+    //주문 상품 생성 메소드
+    private OrderItem createOrderItem(Long memberId, Item item, String orderItemName, int orderItemPrice, int orderItemCount, Order order) {
+        return orderItemRepository.save(OrderItem.builder()
+                .memberId(member.getMemberId())
+                .item(item)
+                .orderItemName(orderItemName)
+                .orderItemPrice(orderItemPrice)
+                .orderItemCount(orderItemCount)
+                .order(order)
+                .build()
+        );
+    }
+
     //결제 생성 메소드
-    private Pay createPay(String cardCompany, String cardNum, int payPrice, Order order) {
+    private Pay createPay(Member member, String cardCompany, String cardNum, int payPrice, Order order) {
         return payRepository.save(Pay.builder()
+                .memberId(member.getMemberId())
                 .cardCompany(cardCompany)
                 .cardNum(cardNum)
                 .order(order)
