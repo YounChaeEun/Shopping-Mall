@@ -53,7 +53,7 @@ public class Order extends BaseEntity {
     private UUID merchantId; //주문번호 예) ORD20301948-0000000
 
     @Builder
-    public Order(Member member, String receiverName, String receiverPhone, String zipcode, String address, String requestMessage, int totalPrice, UUID merchantId) {
+    public Order(Member member, String receiverName, String receiverPhone, String zipcode, String address, String requestMessage, OrderState orderState, int totalPrice, UUID merchantId) {
         this.member = member;
         this.receiverName = receiverName;
         this.receiverPhone = receiverPhone;
@@ -81,6 +81,7 @@ public class Order extends BaseEntity {
                 .zipcode(orderRequest.zipcode())
                 .address(orderRequest.address())
                 .requestMessage(orderRequest.requestMessage())
+                .orderState(OrderState.COMPLETE)
                 .totalPrice(totalPrice)
                 .merchantId(UUID.randomUUID())
                 .build();
