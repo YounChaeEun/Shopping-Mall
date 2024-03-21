@@ -187,6 +187,37 @@ public class OrderServiceTest {
         }
     }
 
+    @Test
+    @DisplayName("주문 전체 조회 성공 테스트")
+    void getAllOrder() {
+        //given
+        Order order1 = createOrder(member, "이다예", "01012345678", "Street 66", "상세주소", "요청메세지", OrderState.COMPLETE, 10000, merchantId);
+        createPay("카드사1", "카드번호1", 10000, order1);
+
+        Order order2 = createOrder(member, "이다예", "01012345678", "Street 66", "상세주소", "요청메세지", OrderState.COMPLETE, 10000, merchantId);
+        createPay("카드사2", "카드번호2", 10000, order2);
+
+        //when
+        OrderPageResponse orderPageResponse = orderService.getAll(user, PageRequest.of(0,10));
+
+        //then
+        //페이징 테스트
+        assertThat(orderPageResponse).isNotNull();
+        assertThat(orderPageResponse.totalPage()).isEqualTo(1);
+        assertThat(orderPageResponse.totalCount()).isEqualTo(2);
+        assertThat(orderPageResponse.pageNumber()).isEqualTo(0);
+        assertThat(orderPageResponse.currentPageSize()).isEqualTo(10);
+
+        //주문 개수 확인
+        List<OrderPageResponse.OrderList> orderList = orderPageResponse.OrderList();
+        assertThat(orderList).hasSize(2);
+
+        //주문한 상품 정보 확인
+        OrderPageResponse.OrderList firstOrder = orderList.get(0); //상품 1
+        assertThat(firstOrder.orderId()).isEqualTo(order1.getOrderId());
+        assertThat(firstOrder.orderState()).isEqualTo(order1.getOrderState());
+
+    }
 
     //카테고리 생성 메소드
     private Category createCategory(String categoryName) {
