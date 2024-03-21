@@ -81,6 +81,25 @@ public class OrderServiceTest {
         assertThat(createdOrder.getTotalPrice()).isEqualTo(1000000);
     }
 
+    @Test
+    @DisplayName("주문 후 상품 재고 변경 테스트")
+    void updateStock() {
+        //given
+        int initialStock = 100;
+        int orderedItemQuantity = 10;
+        Item item = createItem("노트북", 897000, "상품 상세설명 test", initialStock, category, member, itemOption, ItemState.ON_SALE);
+        int expectedStock = initialStock - orderedItemQuantity; //주문 후 상품의 예상 재고
+        createOrder(member, "이다예", "01012345678", "Street 66", "상세주소", "요청메세지", OrderState.COMPLETE, 1000000, merchantId);
+
+        //when
+        updateItemStock(item, orderedItemQuantity);
+
+        //then
+        Item updatedItem = itemRepository.findById(item.getItemId()).orElse(null);
+        assertThat(updatedItem).isNotNull();
+        assertThat(updatedItem.getCount()).isEqualTo(expectedStock);
+    }
+
     //카테고리 생성 메소드
     private Category createCategory(String categoryName) {
         return categoryRepository.save(Category.builder()
@@ -125,4 +144,12 @@ public class OrderServiceTest {
                 .build()
         );
     }
+
+    //상품 재고 감소 메소드
+    private void updateItemStock(Item item, int quantity) {
+        int newStock = item.getCount() - quantity;
+        item.updateStock(newStock);
+        itemRepository.save(item);
+    }
+
 }
