@@ -11,15 +11,21 @@ import com.example.shoppingmall_comp.domain.members.entity.Member;
 import com.example.shoppingmall_comp.domain.members.entity.Role;
 import com.example.shoppingmall_comp.domain.members.entity.RoleName;
 import com.example.shoppingmall_comp.domain.members.repository.MemberRepository;
-import com.example.shoppingmall_comp.domain.orders.entity.Order;
-import com.example.shoppingmall_comp.domain.orders.entity.OrderState;
+import com.example.shoppingmall_comp.domain.orders.dto.OrderPageResponse;
+import com.example.shoppingmall_comp.domain.orders.dto.OrderResponse;
+import com.example.shoppingmall_comp.domain.orders.dto.PayCancelRequest;
+import com.example.shoppingmall_comp.domain.orders.entity.*;
+import com.example.shoppingmall_comp.domain.orders.repository.OrderItemRepository;
 import com.example.shoppingmall_comp.domain.orders.repository.OrderRepository;
+import com.example.shoppingmall_comp.domain.orders.repository.PayRepository;
 import com.example.shoppingmall_comp.domain.orders.service.OrderService;
+import com.example.shoppingmall_comp.global.exception.BusinessException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static com.example.shoppingmall_comp.global.exception.ErrorCode.NOT_FOUND_PAY;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -35,6 +42,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class OrderServiceTest {
     @Autowired
     private OrderService orderService;
+    @Autowired
+    private OrderItemRepository orderItemRepository;
     @Autowired
     private ItemRepository itemRepository;
     @Autowired
@@ -45,6 +54,8 @@ public class OrderServiceTest {
     private OrderRepository orderRepository;
     @Autowired
     private MemberRepository memberRepository;
+    @Autowired
+    private PayRepository payRepository;
 
     private User user;
     private Item item;
@@ -115,6 +126,24 @@ public class OrderServiceTest {
         assertThat(actualPoints).isEqualTo(expectedPoints);
     }
 
+    @Test
+    @DisplayName("결제 취소 성공 테스트")
+    void cancelOrder() {
+        //given
+        Order createdOrder = createOrder(member, "이다예", "01012345678", "Street 66", "상세주소", "요청메세지", OrderState.COMPLETE, 1000000, merchantId);
+        createPay("카드사", "카드 번호", 10000, createdOrder);
+        PayCancelRequest cancelRequest = new PayCancelRequest(createdOrder.getMerchantId(),createdOrder.getOrderId(), "취소 사유");
+
+        //when
+        orderService.payCancel(cancelRequest, user);
+
+        //then
+        Pay canceledPay = payRepository.findByOrder(createdOrder)
+                .orElseThrow(() -> new BusinessException(NOT_FOUND_PAY));
+        assertThat(createdOrder.getOrderState()).isEqualTo(OrderState.CANCEL);
+        assertThat(canceledPay.getPayState()).isEqualTo(PayState.CANCEL);
+    }
+
     //카테고리 생성 메소드
     private Category createCategory(String categoryName) {
         return categoryRepository.save(Category.builder()
@@ -156,6 +185,17 @@ public class OrderServiceTest {
                 .orderState(orderState)
                 .totalPrice(totalPrice)
                 .merchantId(merchantId)
+                .build()
+        );
+    }
+
+    //결제 생성 메소드
+    private Pay createPay(String cardCompany, String cardNum, int payPrice, Order order) {
+        return payRepository.save(Pay.builder()
+                .cardCompany(cardCompany)
+                .cardNum(cardNum)
+                .order(order)
+                .payPrice(payPrice)
                 .build()
         );
     }
