@@ -114,7 +114,7 @@ public class OrderServiceImpl implements OrderService {
     public void payCancel(PayCancelRequest payCancelRequest, User user) {
         Member member = getMember(user);
 
-        Order order = orderRepository.findByMerchantId(payCancelRequest.merchantId())
+        Order order = orderRepository.findById(payCancelRequest.orderId())
                 .orElseThrow(() -> new BusinessException(NOT_EQUAL_MERCHANT_ID, "주문 번호가 같지 않습니다."));
 
         Pay pay = payRepository.findByOrder(order)
