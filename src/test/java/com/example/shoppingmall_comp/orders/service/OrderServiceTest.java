@@ -100,6 +100,21 @@ public class OrderServiceTest {
         assertThat(updatedItem.getCount()).isEqualTo(expectedStock);
     }
 
+    @Test
+    @DisplayName("주문 후 적립금 부여 테스트")
+    void saveRewardPoints() {
+        //given
+        int totalPrice = 1000000;
+        createOrder(member, "이다예", "01012345678", "Street 66", "상세주소", "요청메세지", OrderState.COMPLETE, totalPrice, merchantId);
+
+        //when
+        int expectedPoints = totalPrice / 100;
+        int actualPoints = member.getPoint();
+
+        //then
+        assertThat(actualPoints).isEqualTo(expectedPoints);
+    }
+
     //카테고리 생성 메소드
     private Category createCategory(String categoryName) {
         return categoryRepository.save(Category.builder()
