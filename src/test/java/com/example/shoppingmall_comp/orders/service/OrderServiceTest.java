@@ -144,6 +144,50 @@ public class OrderServiceTest {
         assertThat(canceledPay.getPayState()).isEqualTo(PayState.CANCEL);
     }
 
+    @Test
+    @DisplayName("주문 상세 조회 성공 테스트")
+    void getOneOrder() {
+        //given
+        Order createdOrder = createOrder(member, "이다예", "01012345678", "Street 66", "상세주소", "요청메세지", OrderState.COMPLETE, 10000, merchantId);
+        createPay("카드사", "카드번호", 10000, createdOrder);
+
+        //when
+        OrderResponse orderResponse = orderService.getOne(user, createdOrder.getOrderId());
+
+        //then
+        //주문 정보
+        assertThat(orderResponse).isNotNull();
+        assertThat(createdOrder.getReceiverName()).isEqualTo(orderResponse.name());
+        assertThat(createdOrder.getReceiverPhone()).isEqualTo(orderResponse.phone());
+        assertThat(createdOrder.getZipcode()).isEqualTo(orderResponse.zipcode());
+        assertThat(createdOrder.getAddress()).isEqualTo(orderResponse.address());
+        assertThat(createdOrder.getRequestMessage()).isEqualTo(orderResponse.requestMessage());
+        assertThat(createdOrder.getTotalPrice()).isEqualTo(orderResponse.totalPrice());
+        assertThat(createdOrder.getMerchantId()).isEqualTo(orderResponse.merchantId());
+        assertThat(createdOrder.getOrderState()).isEqualTo(orderResponse.orderState());
+
+        //결제 정보
+        assertThat(orderResponse.cardCompany()).isEqualTo("카드사");
+        assertThat(orderResponse.cardNum()).isEqualTo("카드번호");
+        assertThat(orderResponse.totalPrice()).isEqualTo(10000);
+        assertThat(orderResponse.cardNum()).isEqualTo("카드번호");
+
+        //주문한 상품 개수 확인
+        List<OrderItem> orderItems = orderItemRepository.findByOrder(createdOrder);
+        assertThat(orderItems.size()).isEqualTo(orderResponse.orderedItems().size());
+
+        //주문한 각 상품에 대한 검증
+        for(int i=0; i<orderItems.size(); i++) {
+            OrderItem orderItem = orderItems.get(i);
+            OrderResponse.OrderedItem orderedItem = orderResponse.orderedItems().get(i);
+
+            assertThat(orderItem.getOrderItemName()).isEqualTo(orderedItem.name());
+            assertThat(orderItem.getOrderItemPrice()).isEqualTo(orderedItem.price());
+            assertThat(orderItem.getOrderItemCount()).isEqualTo(orderedItem.count());
+        }
+    }
+
+
     //카테고리 생성 메소드
     private Category createCategory(String categoryName) {
         return categoryRepository.save(Category.builder()
