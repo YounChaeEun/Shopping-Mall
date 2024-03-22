@@ -70,6 +70,16 @@ public class OrderControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.orderId").value(mockOrderResponse.orderId()));
     }
 
+    @Test
+    @WithMockUser
+    @DisplayName("결제 취소 컨트롤러 테스트")
+    public void testDeleteOrder() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/orders")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(createMockPayCancelRequest())))
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
+    }
+
     private OrderRequest createMockOrderRequest() {
         List<OrderRequest.OrderedItem> orderedItems = Arrays.asList(
                 new OrderRequest.OrderedItem(1L, "노트북", 1, 897000, null)
