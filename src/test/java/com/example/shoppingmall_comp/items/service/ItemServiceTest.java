@@ -99,21 +99,9 @@ public class ItemServiceTest {
     @Test
     void delete() {
         // given
-        Item item = itemRepository.save(Item.builder()
-                .itemName("test item name")
-                .itemPrice(10000)
-                .itemDetail("test item detail")
-                .count(10000)
-                .itemState(ItemState.ON_SALE)
-                .category(this.category)
-                .itemOption(this.itemOption)
-                .member(this.member)
-                .build());
-
-        itemImageRepository.save(ItemImage.builder()
-                .imageUrl("image url")
-                .item(item)
-                .build());
+        var item = saveItem();
+        var itemImage =  saveItemImage(item);
+        saveItemOption();
 
         // when
         itemService.delete(item.getItemId(), user);
@@ -132,21 +120,9 @@ public class ItemServiceTest {
     @Test
     void update() {
         // given
-        var item = itemRepository.save(Item.builder()
-                .itemName("test item name")
-                .itemPrice(10000)
-                .itemDetail("test item detail")
-                .count(10000)
-                .itemState(ItemState.ON_SALE)
-                .category(this.category)
-                .itemOption(this.itemOption)
-                .member(this.member)
-                .build());
-
-        var itemImage = itemImageRepository.save(ItemImage.builder()
-                .imageUrl("image url")
-                .item(item)
-                .build());
+        var item = saveItem();
+        var itemImage =  saveItemImage(item);
+        saveItemOption();
 
         var newOptions = createUpdateItemOption();
         var images = createSuccessItemImage();
@@ -172,23 +148,9 @@ public class ItemServiceTest {
     @Test
     void getOne() {
         // given
-        var item = itemRepository.save(Item.builder()
-                .itemName("test item name")
-                .itemPrice(10000)
-                .itemDetail("test item detail")
-                .count(10000)
-                .itemState(ItemState.ON_SALE)
-                .category(this.category)
-                .itemOption(this.itemOption)
-                .member(this.member)
-                .build());
-
-        var itemImage = itemImageRepository.save(ItemImage.builder()
-                .imageUrl("image url")
-                .item(item)
-                .build());
-
-        itemOptionRepository.save(this.itemOption);
+        var item = saveItem();
+        var itemImage =  saveItemImage(item);
+        saveItemOption();
 
         // when
         var response = itemService.getOne(item.getItemId());
@@ -209,21 +171,9 @@ public class ItemServiceTest {
     @Test
     void getAll() {
         // given
-        var item = itemRepository.save(Item.builder()
-                .itemName("test item name")
-                .itemPrice(10000)
-                .itemDetail("test item detail")
-                .count(10000)
-                .itemState(ItemState.ON_SALE)
-                .category(this.category)
-                .itemOption(this.itemOption)
-                .member(this.member)
-                .build());
-
-        itemImageRepository.save(ItemImage.builder()
-                .imageUrl("image url")
-                .item(item)
-                .build());
+        var item = saveItem();
+        saveItemImage(item);
+        saveItemOption();
 
         itemOptionRepository.save(this.itemOption);
 
@@ -244,23 +194,10 @@ public class ItemServiceTest {
     @Test
     void getSellerAll() {
         // given
-        var item = itemRepository.save(Item.builder()
-                .itemName("test item name")
-                .itemPrice(10000)
-                .itemDetail("test item detail")
-                .count(10000)
-                .itemState(ItemState.ON_SALE)
-                .category(this.category)
-                .itemOption(this.itemOption)
-                .member(this.member)
-                .build());
+        var item = saveItem();
+        saveItemImage(item);
+        saveItemOption();
 
-        itemImageRepository.save(ItemImage.builder()
-                .imageUrl("image url")
-                .item(item)
-                .build());
-
-        itemOptionRepository.save(this.itemOption);
         var pageRequest = PageRequest.of(0, 15, Sort.Direction.DESC, "itemId");
 
         // when
@@ -300,6 +237,31 @@ public class ItemServiceTest {
         multipartFiles.add(multipartFile2);
         return multipartFiles;
     }
+
+    private Item saveItem() {
+        return itemRepository.save(Item.builder()
+                .itemName("test item name")
+                .itemPrice(10000)
+                .itemDetail("test item detail")
+                .count(10000)
+                .itemState(ItemState.ON_SALE)
+                .category(this.category)
+                .itemOption(this.itemOption)
+                .member(this.member)
+                .build());
+    }
+
+    private ItemImage saveItemImage(Item item) {
+        return itemImageRepository.save(ItemImage.builder()
+                .imageUrl("image url")
+                .item(item)
+                .build());
+    }
+
+    private ItemOption saveItemOption(){
+        return itemOptionRepository.save(this.itemOption);
+    }
+
 
 //    private Category createCategory() {
 //        Category category = Category.builder()
