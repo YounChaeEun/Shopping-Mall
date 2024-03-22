@@ -122,8 +122,8 @@ public class ItemServiceTest {
         List<UpdateItemRequest.Option> newOptions = new ArrayList<>(); // 이거 var로 바뀌면 오류남 왠지 파악하기!
         newOptions.add(new UpdateItemRequest.Option("색상", "초록"));
         newOptions.add(new UpdateItemRequest.Option("사이즈", "small"));
-        var images = createSuccessItemImage();
         var updateRequest = new UpdateItemRequest("new test item name", category.getCategoryId(), 20000, 20000, newOptions, ItemState.SOLD_OUT, "new test item description");
+        var images = createSuccessItemImage();
 
         // when
         itemService.update(item.getItemId(), updateRequest, images, user);
@@ -138,7 +138,7 @@ public class ItemServiceTest {
         //assertThat(foundOptions.get(1).value()).isEqualTo("small");
 
         var foundImages = itemImageRepository.findByItem(item);
-        assertThat(foundImages).isNotEqualTo(itemImage);
+        assertThat(foundImages.size()).isEqualTo(2);
     }
 
     @DisplayName("상품 상세 조회 성공 테스트")
