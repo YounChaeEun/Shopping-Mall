@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,6 +25,10 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -91,6 +96,14 @@ public class CartControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.cartItems.length()").value(pageResponse.cartItems().size()));
     }
 
+    @Test
+    @DisplayName("선택한 장바구니 다중 삭제 컨트롤러 테스트")
+    public void selectedDeleteCarts() throws Exception {
+        List<Long> cartIds = Arrays.asList(1L, 2L, 3L);
 
-
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/carts")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("cartIds", cartIds.stream().map(String::valueOf).collect(Collectors.joining(","))))
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
+        }
 }
