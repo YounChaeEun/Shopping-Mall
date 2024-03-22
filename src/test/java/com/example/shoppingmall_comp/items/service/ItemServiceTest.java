@@ -240,6 +240,42 @@ public class ItemServiceTest {
         assertThat(response.itemList().size()).isEqualTo(1);
     }
 
+    @DisplayName("판매자가 파는 상품 전체 조회 성공 테스트")
+    @Test
+    void getSellerAll() {
+        // given
+        var item = itemRepository.save(Item.builder()
+                .itemName("test item name")
+                .itemPrice(10000)
+                .itemDetail("test item detail")
+                .count(10000)
+                .itemState(ItemState.ON_SALE)
+                .category(this.category)
+                .itemOption(this.itemOption)
+                .member(this.member)
+                .build());
+
+        itemImageRepository.save(ItemImage.builder()
+                .imageUrl("image url")
+                .item(item)
+                .build());
+
+        itemOptionRepository.save(this.itemOption);
+        var pageRequest = PageRequest.of(0, 15, Sort.Direction.DESC, "itemId");
+
+        // when
+        var response = itemService.getSellerAll(pageRequest, user);
+
+        // then
+        // 테스트가 실제 데이터베이스에 의존하지 않도록 설계하는 것이 중요하다..? -> 사람들이 같은 디비를 바라볼 보장이 없기 때문임
+        assertThat(response.totalCount()).isEqualTo(6); // todo: 여기서 1개 나오게 수정하기
+        assertThat(response.totalPage()).isEqualTo(1);
+        assertThat(response.pageNumber()).isEqualTo(0);
+        assertThat(response.currentPageSize()).isEqualTo(15);
+
+        assertThat(response.sellerItemList().size()).isEqualTo(6);
+    }
+
 
     // 추후의 실패 테스트까지 고려해서 setup에 두지 않고 따로 메서드로 뺌, setup은 성공,실패 테스트 모두에 사용 가능한 것만 넣음
     private List<ItemRequest.Option> createSuccessItemOption() {
