@@ -158,30 +158,48 @@ class ReviewServiceTest {
     @DisplayName("상품의 리뷰 전체 조회 성공 테스트")
     @Test
     void getAllByItem() {
+        // given
+        Review savedReview = reviewRepository.save(Review.builder()
+                .reviewTitle("test review title")
+                .reviewContent("test review content")
+                .star(3)
+                .member(member)
+                .item(item)
+                .build());
+
         // when
-        var response = reviewService.getAllByItem(1L, pageable);
+        var response = reviewService.getAllByItem(item.getItemId(), pageable);
 
         // then
-        assertThat(response.responseList().size()).isEqualTo(8);
-        // 굳이 안해도 될 것 같긴 하지만.. pageable 검사 -> 해줘야 하나?
         assertThat(response.currentPageSize()).isEqualTo(15);
         assertThat(response.pageNumber()).isEqualTo(0);
-        assertThat(response.totalCount()).isEqualTo(8);
+        assertThat(response.totalCount()).isEqualTo(1);
         assertThat(response.totalPage()).isEqualTo(1);
+
+        assertThat(response.responseList().size()).isEqualTo(1);
     }
 
     @DisplayName("자신이 쓴 리뷰 전체 조회 성공 테스트")
     @Test
     void getAllByMember() {
+        // given
+        Review savedReview = reviewRepository.save(Review.builder()
+                .reviewTitle("test review title")
+                .reviewContent("test review content")
+                .star(3)
+                .member(member)
+                .item(item)
+                .build());
+
         // when
         var response = reviewService.getAllByMember(user, pageable);
 
         // then
-        assertThat(response.responseList().size()).isEqualTo(4);
-        // 굳이 안해도 될 것 같긴 하지만.. pageable 검사
         assertThat(response.currentPageSize()).isEqualTo(15);
         assertThat(response.pageNumber()).isEqualTo(0);
-        assertThat(response.totalCount()).isEqualTo(4);
+        assertThat(response.totalCount()).isEqualTo(1);
         assertThat(response.totalPage()).isEqualTo(1);
+
+        assertThat(response.responseList().size()).isEqualTo(1);
     }
 }
