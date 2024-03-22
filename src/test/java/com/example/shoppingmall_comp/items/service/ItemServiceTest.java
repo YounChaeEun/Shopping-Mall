@@ -15,6 +15,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.transaction.annotation.Transactional;
@@ -202,6 +204,42 @@ public class ItemServiceTest {
 
         assertThat(response.imgUrls().size()).isEqualTo(1);
     }
+
+    @DisplayName("상품 전체 조회 성공 테스트")
+    @Test
+    void getAll() {
+        // given
+        var item = itemRepository.save(Item.builder()
+                .itemName("test item name")
+                .itemPrice(10000)
+                .itemDetail("test item detail")
+                .count(10000)
+                .itemState(ItemState.ON_SALE)
+                .category(this.category)
+                .itemOption(this.itemOption)
+                .member(this.member)
+                .build());
+
+        itemImageRepository.save(ItemImage.builder()
+                .imageUrl("image url")
+                .item(item)
+                .build());
+
+        itemOptionRepository.save(this.itemOption);
+
+        var pageRequest = PageRequest.of(0, 15, Sort.Direction.DESC, "itemId");
+
+        // when
+        var response = itemService.getAll(pageRequest, category.getCategoryId());
+
+        // then
+        assertThat(response.totalCount()).isEqualTo(1);
+        assertThat(response.totalPage()).isEqualTo(1);
+        assertThat(response.pageNumber()).isEqualTo(0);
+
+        assertThat(response.itemList().size()).isEqualTo(1);
+    }
+
 
     // 추후의 실패 테스트까지 고려해서 setup에 두지 않고 따로 메서드로 뺌, setup은 성공,실패 테스트 모두에 사용 가능한 것만 넣음
     private List<ItemRequest.Option> createSuccessItemOption() {
