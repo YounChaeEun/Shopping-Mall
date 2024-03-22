@@ -75,8 +75,11 @@ public class ItemServiceTest {
     @Test
     void create() {
         // given
+        List<ItemRequest.Option> options = new ArrayList<>(); // 이거 var로 바뀌면 오류남 왠지 파악하기!
+        options.add(new ItemRequest.Option("색상", "빨강"));
+        options.add(new ItemRequest.Option("사이즈", "large"));
+
         var images = createSuccessItemImage();
-        var options = createSuccessItemOption();
         var itemRequest = new ItemRequest("test item name ", category.getCategoryId(), 10000, 10000, options, "test item description");
 
         // when
@@ -124,7 +127,9 @@ public class ItemServiceTest {
         var itemImage =  saveItemImage(item);
         saveItemOption();
 
-        var newOptions = createUpdateItemOption();
+        List<UpdateItemRequest.Option> newOptions = new ArrayList<>(); // 이거 var로 바뀌면 오류남 왠지 파악하기!
+        newOptions.add(new UpdateItemRequest.Option("색상", "초록"));
+        newOptions.add(new UpdateItemRequest.Option("사이즈", "small"));
         var images = createSuccessItemImage();
         var updateRequest = new UpdateItemRequest("new test item name", category.getCategoryId(), 20000, 20000, newOptions, ItemState.SOLD_OUT, "new test item description");
 
@@ -215,20 +220,6 @@ public class ItemServiceTest {
 
 
     // 추후의 실패 테스트까지 고려해서 setup에 두지 않고 따로 메서드로 뺌, setup은 성공,실패 테스트 모두에 사용 가능한 것만 넣음
-    private List<ItemRequest.Option> createSuccessItemOption() {
-        List<ItemRequest.Option> options = new ArrayList<>(); // 이거 var로 바뀌면 오류남 왠지 파악하기!
-        options.add(new ItemRequest.Option("색상", "빨강"));
-        options.add(new ItemRequest.Option("사이즈", "large"));
-        return options;
-    }
-
-    private List<UpdateItemRequest.Option> createUpdateItemOption() {
-        List<UpdateItemRequest.Option> options = new ArrayList<>(); // 이거 var로 바뀌면 오류남 왠지 파악하기!
-        options.add(new UpdateItemRequest.Option("색상", "초록"));
-        options.add(new UpdateItemRequest.Option("사이즈", "small"));
-        return options;
-    }
-
     private List<MultipartFile> createSuccessItemImage() {
         List<MultipartFile> multipartFiles = new ArrayList<>();
         MockMultipartFile multipartFile1 = new MockMultipartFile("file.jpg", "file.jpg", "text/plain", "test file".getBytes(StandardCharsets.UTF_8));
