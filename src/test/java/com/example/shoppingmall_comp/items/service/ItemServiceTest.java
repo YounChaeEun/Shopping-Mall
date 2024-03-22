@@ -22,8 +22,6 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,9 +45,6 @@ public class ItemServiceTest {
     @Autowired
     MemberRepository memberRepository;
 
-//    @PersistenceContext
-//    EntityManager em;
-
     private User user;
     private Category category;
     private Member member;
@@ -61,7 +56,6 @@ public class ItemServiceTest {
         this.category = categoryRepository.save(Category.builder()
                 .categoryName("test category")
                 .build());
-        //this.category = createCategory();
     }
 
     @DisplayName("상품 생성 성공 테스트")
@@ -94,9 +88,9 @@ public class ItemServiceTest {
     @Test
     void delete() {
         // given
-        var itemOption = saveItemOption();
-        var item = saveItem(itemOption);
-        saveItemImage(item);
+        var itemOption = saveSuccessItemOption();
+        var item = saveSuccessItem(itemOption);
+        saveSuccessItemImage(item);
 
         // when
         itemService.delete(item.getItemId(), user);
@@ -115,9 +109,9 @@ public class ItemServiceTest {
     @Test
     void update() {
         // given
-        var itemOption = saveItemOption();
-        var item = saveItem(itemOption);
-        var itemImage = saveItemImage(item);
+        var itemOption = saveSuccessItemOption();
+        var item = saveSuccessItem(itemOption);
+        var itemImage = saveSuccessItemImage(item);
 
         List<UpdateItemRequest.Option> newOptions = new ArrayList<>(); // 이거 var로 바뀌면 오류남 왠지 파악하기!
         newOptions.add(new UpdateItemRequest.Option("색상", "초록"));
@@ -145,9 +139,9 @@ public class ItemServiceTest {
     @Test
     void getOne() {
         // given
-        var itemOption = saveItemOption();
-        var item = saveItem(itemOption);
-        saveItemImage(item);
+        var itemOption = saveSuccessItemOption();
+        var item = saveSuccessItem(itemOption);
+        saveSuccessItemImage(item);
 
         // when
         var response = itemService.getOne(item.getItemId());
@@ -168,9 +162,9 @@ public class ItemServiceTest {
     @Test
     void getAll() {
         // given
-        var itemOption = saveItemOption();
-        var item = saveItem(itemOption);
-        saveItemImage(item);
+        var itemOption = saveSuccessItemOption();
+        var item = saveSuccessItem(itemOption);
+        saveSuccessItemImage(item);
 
         var pageRequest = PageRequest.of(0, 15, Sort.Direction.DESC, "itemId");
 
@@ -189,9 +183,9 @@ public class ItemServiceTest {
     @Test
     void getSellerAll() {
         // given
-        var itemOption = saveItemOption();
-        var item = saveItem(itemOption);
-        saveItemImage(item);
+        var itemOption = saveSuccessItemOption();
+        var item = saveSuccessItem(itemOption);
+        saveSuccessItemImage(item);
 
         var pageRequest = PageRequest.of(0, 15, Sort.Direction.DESC, "itemId");
 
@@ -219,7 +213,7 @@ public class ItemServiceTest {
         return multipartFiles;
     }
 
-    private ItemOption saveItemOption(){
+    private ItemOption saveSuccessItemOption(){
         List<ItemOption.Option> options = new ArrayList<>();
         options.add(new ItemOption.Option("색상", "빨강"));
         options.add(new ItemOption.Option("사이즈", "large"));
@@ -228,7 +222,7 @@ public class ItemServiceTest {
                 .build());
     }
 
-    private Item saveItem(ItemOption itemOption) {
+    private Item saveSuccessItem(ItemOption itemOption) {
         return itemRepository.save(Item.builder()
                 .itemName("test item name")
                 .itemPrice(10000)
@@ -241,19 +235,11 @@ public class ItemServiceTest {
                 .build());
     }
 
-    private ItemImage saveItemImage(Item item) {
+    private ItemImage saveSuccessItemImage(Item item) {
         return itemImageRepository.save(ItemImage.builder()
                 .imageUrl("image url")
                 .item(item)
                 .build());
     }
-
-//    private Category createCategory() {
-//        Category category = Category.builder()
-//                .categoryName("test category")
-//                .build();
-//        em.persist(category);
-//        return category;
-//    }
 }
 
