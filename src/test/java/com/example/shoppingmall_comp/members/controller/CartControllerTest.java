@@ -1,5 +1,6 @@
 package com.example.shoppingmall_comp.members.controller;
 
+import com.example.shoppingmall_comp.domain.members.dto.CartPageResponse;
 import com.example.shoppingmall_comp.domain.members.dto.CartResponse;
 import com.example.shoppingmall_comp.domain.members.dto.CreateCartRequest;
 
@@ -14,6 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -69,5 +73,24 @@ public class CartControllerTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
     }
+
+    @Test
+    @DisplayName("장바구니 목록 조회 컨트롤러 테스트")
+    public void getAllCarts() throws Exception {
+        CartPageResponse pageResponse = CartFactory.createMockCartPageResponse();
+
+        when(cartService.getAll(any(Pageable.class), any())).thenReturn(pageResponse);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/carts")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.totalPage").value(pageResponse.totalPage()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.totalCount").value(pageResponse.totalCount()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.pageNumber").value(pageResponse.pageNumber()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.currentPageSize").value(pageResponse.currentPageSize()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.cartItems.length()").value(pageResponse.cartItems().size()));
+    }
+
+
 
 }
