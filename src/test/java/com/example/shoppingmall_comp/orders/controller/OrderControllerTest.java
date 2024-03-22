@@ -73,12 +73,27 @@ public class OrderControllerTest {
     @Test
     @WithMockUser
     @DisplayName("결제 취소 컨트롤러 테스트")
-    public void testDeleteOrder() throws Exception {
+    public void deleteOrder() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/orders")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createMockPayCancelRequest())))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
     }
+
+    @Test
+    @WithMockUser
+    @DisplayName("주문 상세 조회 컨트롤러 테스트")
+    public void getOneOrder() throws Exception {
+        OrderResponse mockOrderResponse = createMockOrderResponse();
+        when(orderService.getOne(any(), any())).thenReturn(mockOrderResponse);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/orders/1"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.orderId").value(mockOrderResponse.orderId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(mockOrderResponse.name()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.orderState").value(mockOrderResponse.orderState().toString()));
+    }
+
 
     private OrderRequest createMockOrderRequest() {
         List<OrderRequest.OrderedItem> orderedItems = Arrays.asList(
