@@ -12,7 +12,11 @@ import com.example.shoppingmall_comp.domain.members.entity.Member;
 import com.example.shoppingmall_comp.domain.members.entity.Review;
 import com.example.shoppingmall_comp.domain.members.repository.MemberRepository;
 import com.example.shoppingmall_comp.domain.members.repository.ReviewRepository;
-import com.example.shoppingmall_comp.domain.members.service.implement.ReviewServiceImpl;
+import com.example.shoppingmall_comp.domain.members.service.ReviewService;
+import com.example.shoppingmall_comp.domain.orders.entity.Order;
+import com.example.shoppingmall_comp.domain.orders.entity.OrderItem;
+import com.example.shoppingmall_comp.domain.orders.repository.OrderItemRepository;
+import com.example.shoppingmall_comp.domain.orders.repository.OrderRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -35,7 +40,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ReviewServiceTest {
 
     @Autowired
-    ReviewServiceImpl reviewService;
+    ReviewService reviewService;
     @Autowired
     ReviewRepository reviewRepository;
     @Autowired
@@ -46,6 +51,10 @@ class ReviewServiceTest {
     CategoryRepository categoryRepository;
     @Autowired
     ItemOptionRepository itemOptionRepository;
+    @Autowired
+    OrderRepository orderRepository;
+    @Autowired
+    OrderItemRepository orderItemRepository;
 
     private User user;
     private Pageable pageable;
@@ -69,7 +78,26 @@ class ReviewServiceTest {
     @Test
     void create() {
         // given
-        var request = new ReviewRequest("test review title", "test review content", 3, 5L);
+        Order order = orderRepository.save(Order.builder()
+                .receiverName("test receiver name")
+                .receiverPhone("test receiver phone")
+                .zipcode("test zipcode")
+                .address("test address")
+                .totalPrice(10000)
+                .member(this.member)
+                .merchantId(UUID.randomUUID())
+                .build());
+
+        OrderItem orderItem = orderItemRepository.save(OrderItem.builder()
+                .memberId(this.member.getMemberId())
+                .orderItemName("test order item name")
+                .orderItemCount(10000)
+                .orderItemPrice(10000)
+                .order(order)
+                .item(this.item)
+                .build());
+
+        var request = new ReviewRequest("test review title", "test review content", 3, orderItem.getOrderItemId());
 
         // when
         var response = reviewService.create(request, user);
