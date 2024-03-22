@@ -112,14 +112,7 @@ class ReviewServiceTest {
     @Test
     void update() {
         // given
-        Review savedReview = reviewRepository.save(Review.builder()
-                .reviewTitle("test review title")
-                .reviewContent("test review content")
-                .star(3)
-                .member(member)
-                .item(item)
-                .build());
-
+        Review savedReview = saveSuccessReview();
         var newRequest = new ReviewRequest("test review new title", "test review new content", 5, 5L);
 
         // when
@@ -136,13 +129,7 @@ class ReviewServiceTest {
     @Test
     void delete() {
         // given
-        Review savedReview = reviewRepository.save(Review.builder()
-                .reviewTitle("test review title")
-                .reviewContent("test review content")
-                .star(3)
-                .member(member)
-                .item(item)
-                .build());
+        Review savedReview = saveSuccessReview();
 
         // when
         reviewService.delete(savedReview.getReviewId(), user);
@@ -159,13 +146,7 @@ class ReviewServiceTest {
     @Test
     void getAllByItem() {
         // given
-        Review savedReview = reviewRepository.save(Review.builder()
-                .reviewTitle("test review title")
-                .reviewContent("test review content")
-                .star(3)
-                .member(member)
-                .item(item)
-                .build());
+        Review savedReview = saveSuccessReview();
 
         // when
         var response = reviewService.getAllByItem(item.getItemId(), pageable);
@@ -183,13 +164,7 @@ class ReviewServiceTest {
     @Test
     void getAllByMember() {
         // given
-        Review savedReview = reviewRepository.save(Review.builder()
-                .reviewTitle("test review title")
-                .reviewContent("test review content")
-                .star(3)
-                .member(member)
-                .item(item)
-                .build());
+        Review savedReview = saveSuccessReview();
 
         // when
         var response = reviewService.getAllByMember(user, pageable);
@@ -201,5 +176,15 @@ class ReviewServiceTest {
         assertThat(response.totalPage()).isEqualTo(1);
 
         assertThat(response.responseList().size()).isEqualTo(1);
+    }
+
+    private Review saveSuccessReview() {
+        return reviewRepository.save(Review.builder()
+                .reviewTitle("test review title")
+                .reviewContent("test review content")
+                .star(3)
+                .member(member)
+                .item(item)
+                .build());
     }
 }
