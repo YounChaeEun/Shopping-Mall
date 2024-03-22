@@ -1,5 +1,6 @@
 package com.example.shoppingmall_comp.orders.controller;
 
+import com.example.shoppingmall_comp.domain.orders.dto.OrderPageResponse;
 import com.example.shoppingmall_comp.domain.orders.dto.OrderRequest;
 import com.example.shoppingmall_comp.domain.orders.dto.OrderResponse;
 import com.example.shoppingmall_comp.domain.orders.dto.PayCancelRequest;
@@ -22,6 +23,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -65,9 +68,9 @@ public class OrderControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/orders")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(createMockOrderRequest())))
+                        .content(objectMapper.writeValueAsString(createMockOrderRequest()))) //요청 객체를 JSON 형식으로 변환.
                 .andExpect(MockMvcResultMatchers.status().isCreated())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.orderId").value(mockOrderResponse.orderId()));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.orderId").value(mockOrderResponse.orderId())); //OrderResponse Mock 객체의 orderId와 일치하는지
     }
 
     @Test
@@ -94,24 +97,58 @@ public class OrderControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.orderState").value(mockOrderResponse.orderState().toString()));
     }
 
+    @Test
+    @WithMockUser
+    @DisplayName("주문목록 전체 조회 컨트롤러 테스트")
+    public void getAllOrders() throws Exception {
+        OrderPageResponse mockOrderPageResponse = createMockOrderPageResponse();
+        when(orderService.getAll(any(), any())).thenReturn(mockOrderPageResponse);
 
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/orders"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.OrderList").isArray())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.OrderList.length()").value(mockOrderPageResponse.OrderList().size()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.OrderList[0].orderId").value(mockOrderPageResponse.OrderList().get(0).orderId()));
+    }
+
+    //OrderRequest Mock 객체 생성 메소드
     private OrderRequest createMockOrderRequest() {
         List<OrderRequest.OrderedItem> orderedItems = Arrays.asList(
                 new OrderRequest.OrderedItem(1L, "노트북", 1, 897000, null)
         );
-        return new OrderRequest("홍길동", "01012345678", "12345", "주소", "요청메시지", 897000, "카드사", "카드번호", orderedItems);
+        return new OrderRequest("이름", "01012345678", "12345", "주소", "요청메시지", 897000, "카드사", "카드번호", orderedItems);
     }
 
+    //PayCancelRequest Mock 객체 생성 메소드
     private PayCancelRequest createMockPayCancelRequest() {
         return new PayCancelRequest(UUID.randomUUID(), 1L, "취소사유");
     }
 
+    //OrderResponse Mock 객체 생성 메소드
     private OrderResponse createMockOrderResponse() {
         List<OrderResponse.OrderedItem> orderedItems = Arrays.asList(
                 new OrderResponse.OrderedItem(1L, "노트북", 1, 897000, null)
         );
         return new OrderResponse(1L, "name", "01012345678", "12345", "주소", "요청메시지", 897000,
                 UUID.randomUUID(), OrderState.COMPLETE, "카드사", "카드번호", orderedItems);
+    }
+
+    //OrderPageResponse Mock 객체 생성 메소드
+    private OrderPageResponse createMockOrderPageResponse() {
+        OrderState orderState = OrderState.COMPLETE;
+        LocalDateTime orderTime = LocalDateTime.of(2024, 3, 22, 0, 0);
+
+        // 주문 상품 정보
+        List<OrderResponse.OrderedItem> orderedItems = List.of(
+                new OrderResponse.OrderedItem(1L, "노트북", 10, 897000, null),
+                new OrderResponse.OrderedItem(2L, "키보드", 20, 67000, null)
+        );
+
+        // 주문 리스트
+        List<OrderPageResponse.OrderList> orderLists = new ArrayList<>();
+        orderLists.add(new OrderPageResponse.OrderList(1L, orderState, orderTime, orderedItems)); //노트북 10개, 키보드 20개를 주문한 1개의 주문
+
+        return new OrderPageResponse(10, 50, 1, 5, orderLists);
     }
 
 }
