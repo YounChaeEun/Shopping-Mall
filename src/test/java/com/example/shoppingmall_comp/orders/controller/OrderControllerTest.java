@@ -56,5 +56,37 @@ public class OrderControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.orderKey").exists());
     }
+    @Test
+    @WithMockUser
+    @DisplayName("주문 생성 컨트롤러 테스트")
+    public void createOrder() throws Exception {
+        OrderResponse mockOrderResponse = createMockOrderResponse();
+        when(orderService.create(any(OrderRequest.class), any())).thenReturn(mockOrderResponse);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/orders")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(createMockOrderRequest())))
+                .andExpect(MockMvcResultMatchers.status().isCreated())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.orderId").value(mockOrderResponse.orderId()));
+    }
+
+    private OrderRequest createMockOrderRequest() {
+        List<OrderRequest.OrderedItem> orderedItems = Arrays.asList(
+                new OrderRequest.OrderedItem(1L, "노트북", 1, 897000, null)
+        );
+        return new OrderRequest("홍길동", "01012345678", "12345", "주소", "요청메시지", 897000, "카드사", "카드번호", orderedItems);
+    }
+
+    private PayCancelRequest createMockPayCancelRequest() {
+        return new PayCancelRequest(UUID.randomUUID(), 1L, "취소사유");
+    }
+
+    private OrderResponse createMockOrderResponse() {
+        List<OrderResponse.OrderedItem> orderedItems = Arrays.asList(
+                new OrderResponse.OrderedItem(1L, "노트북", 1, 897000, null)
+        );
+        return new OrderResponse(1L, "name", "01012345678", "12345", "주소", "요청메시지", 897000,
+                UUID.randomUUID(), OrderState.COMPLETE, "카드사", "카드번호", orderedItems);
+    }
 
 }
