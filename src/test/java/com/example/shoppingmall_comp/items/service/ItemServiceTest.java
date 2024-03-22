@@ -53,7 +53,6 @@ public class ItemServiceTest {
     private User user;
     private Category category;
     private Member member;
-    private ItemOption itemOption;
 
     @BeforeEach
     void setup() {
@@ -61,12 +60,6 @@ public class ItemServiceTest {
         this.member = memberRepository.findByEmail(this.user.getUsername()).orElseThrow();
         this.category = categoryRepository.save(Category.builder()
                 .categoryName("test category")
-                .build());
-        List<ItemOption.Option> options = new ArrayList<>();
-        options.add(new ItemOption.Option("색상", "빨강"));
-        options.add(new ItemOption.Option("사이즈", "large"));
-        this.itemOption = itemOptionRepository.save(ItemOption.builder()
-                .optionValues(options)
                 .build());
         //this.category = createCategory();
     }
@@ -78,9 +71,8 @@ public class ItemServiceTest {
         List<ItemRequest.Option> options = new ArrayList<>(); // 이거 var로 바뀌면 오류남 왠지 파악하기!
         options.add(new ItemRequest.Option("색상", "빨강"));
         options.add(new ItemRequest.Option("사이즈", "large"));
-
-        var images = createSuccessItemImage();
         var itemRequest = new ItemRequest("test item name ", category.getCategoryId(), 10000, 10000, options, "test item description");
+        var images = createSuccessItemImage();
 
         // when
         var response = itemService.create(itemRequest, images, user);
@@ -102,9 +94,9 @@ public class ItemServiceTest {
     @Test
     void delete() {
         // given
-        var item = saveItem();
-        var itemImage =  saveItemImage(item);
-        saveItemOption();
+        var itemOption = saveItemOption();
+        var item = saveItem(itemOption);
+        saveItemImage(item);
 
         // when
         itemService.delete(item.getItemId(), user);
@@ -123,9 +115,9 @@ public class ItemServiceTest {
     @Test
     void update() {
         // given
-        var item = saveItem();
-        var itemImage =  saveItemImage(item);
-        saveItemOption();
+        var itemOption = saveItemOption();
+        var item = saveItem(itemOption);
+        var itemImage = saveItemImage(item);
 
         List<UpdateItemRequest.Option> newOptions = new ArrayList<>(); // 이거 var로 바뀌면 오류남 왠지 파악하기!
         newOptions.add(new UpdateItemRequest.Option("색상", "초록"));
@@ -153,9 +145,9 @@ public class ItemServiceTest {
     @Test
     void getOne() {
         // given
-        var item = saveItem();
-        var itemImage =  saveItemImage(item);
-        saveItemOption();
+        var itemOption = saveItemOption();
+        var item = saveItem(itemOption);
+        saveItemImage(item);
 
         // when
         var response = itemService.getOne(item.getItemId());
@@ -176,11 +168,9 @@ public class ItemServiceTest {
     @Test
     void getAll() {
         // given
-        var item = saveItem();
+        var itemOption = saveItemOption();
+        var item = saveItem(itemOption);
         saveItemImage(item);
-        saveItemOption();
-
-        itemOptionRepository.save(this.itemOption);
 
         var pageRequest = PageRequest.of(0, 15, Sort.Direction.DESC, "itemId");
 
@@ -199,9 +189,9 @@ public class ItemServiceTest {
     @Test
     void getSellerAll() {
         // given
-        var item = saveItem();
+        var itemOption = saveItemOption();
+        var item = saveItem(itemOption);
         saveItemImage(item);
-        saveItemOption();
 
         var pageRequest = PageRequest.of(0, 15, Sort.Direction.DESC, "itemId");
 
@@ -229,7 +219,16 @@ public class ItemServiceTest {
         return multipartFiles;
     }
 
-    private Item saveItem() {
+    private ItemOption saveItemOption(){
+        List<ItemOption.Option> options = new ArrayList<>();
+        options.add(new ItemOption.Option("색상", "빨강"));
+        options.add(new ItemOption.Option("사이즈", "large"));
+        return itemOptionRepository.save(ItemOption.builder()
+                .optionValues(options)
+                .build());
+    }
+
+    private Item saveItem(ItemOption itemOption) {
         return itemRepository.save(Item.builder()
                 .itemName("test item name")
                 .itemPrice(10000)
@@ -237,7 +236,7 @@ public class ItemServiceTest {
                 .count(10000)
                 .itemState(ItemState.ON_SALE)
                 .category(this.category)
-                .itemOption(this.itemOption)
+                .itemOption(itemOption)
                 .member(this.member)
                 .build());
     }
@@ -248,11 +247,6 @@ public class ItemServiceTest {
                 .item(item)
                 .build());
     }
-
-    private ItemOption saveItemOption(){
-        return itemOptionRepository.save(this.itemOption);
-    }
-
 
 //    private Category createCategory() {
 //        Category category = Category.builder()
