@@ -63,7 +63,7 @@ class ReviewServiceTest {
 
     @BeforeEach
     void setUp() {
-        this.user = new User("amy1234@naver.com", "Amy4021*", new ArrayList<>()); // username은 디비에 잇는 거 쓰기
+        this.user = new User("amy4021@naver.com", "Amy4021*", new ArrayList<>()); // username은 디비에 잇는 거 쓰기
         this.pageable = PageRequest.of(0, 15, Sort.Direction.DESC, "reviewId");
         this.member = memberRepository.findByEmail(user.getUsername()).get();
 
@@ -148,8 +148,8 @@ class ReviewServiceTest {
         reviewService.delete(savedReview.getReviewId(), user);
 
         // then
-        List<Review> reviews = reviewRepository.findAll();
-        assertThat(reviews.size()).isEqualTo(8);
+        List<Review> reviews = reviewRepository.findAllByMember(this.member);
+        assertThat(reviews).isEmpty();
 
         Optional<Review> deletedReview = reviewRepository.findById(savedReview.getReviewId());
         assertThat(deletedReview.isPresent()).isFalse();
