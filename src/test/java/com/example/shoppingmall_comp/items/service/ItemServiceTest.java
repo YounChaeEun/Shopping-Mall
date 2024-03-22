@@ -166,6 +166,43 @@ public class ItemServiceTest {
         assertThat(foundImages).isNotEqualTo(itemImage);
     }
 
+    @DisplayName("상품 상세 조회 성공 테스트")
+    @Test
+    void getOne() {
+        // given
+        var item = itemRepository.save(Item.builder()
+                .itemName("test item name")
+                .itemPrice(10000)
+                .itemDetail("test item detail")
+                .count(10000)
+                .itemState(ItemState.ON_SALE)
+                .category(this.category)
+                .itemOption(this.itemOption)
+                .member(this.member)
+                .build());
+
+        var itemImage = itemImageRepository.save(ItemImage.builder()
+                .imageUrl("image url")
+                .item(item)
+                .build());
+
+        itemOptionRepository.save(this.itemOption);
+
+        // when
+        var response = itemService.getOne(item.getItemId());
+
+        // then
+        assertThat(response.itemName()).isEqualTo("test item name");
+        assertThat(response.description()).isEqualTo("test item detail");
+        assertThat(response.price()).isEqualTo(10000);
+
+        assertThat(response.optionValue().size()).isEqualTo(2);
+        assertThat(response.optionValue().get(0).value()).isEqualTo("빨강");
+        assertThat(response.optionValue().get(1).value()).isEqualTo("large");
+
+        assertThat(response.imgUrls().size()).isEqualTo(1);
+    }
+
     // 추후의 실패 테스트까지 고려해서 setup에 두지 않고 따로 메서드로 뺌, setup은 성공,실패 테스트 모두에 사용 가능한 것만 넣음
     private List<ItemRequest.Option> createSuccessItemOption() {
         List<ItemRequest.Option> options = new ArrayList<>(); // 이거 var로 바뀌면 오류남 왠지 파악하기!
