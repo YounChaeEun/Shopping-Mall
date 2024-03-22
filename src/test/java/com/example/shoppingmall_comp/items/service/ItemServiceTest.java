@@ -1,6 +1,7 @@
 package com.example.shoppingmall_comp.items.service;
 
 import com.example.shoppingmall_comp.domain.items.dto.ItemRequest;
+import com.example.shoppingmall_comp.domain.items.dto.UpdateItemRequest;
 import com.example.shoppingmall_comp.domain.items.entity.*;
 import com.example.shoppingmall_comp.domain.items.repository.CategoryRepository;
 import com.example.shoppingmall_comp.domain.items.repository.ItemImageRepository;
@@ -125,11 +126,58 @@ public class ItemServiceTest {
         // 옵션 부분
     }
 
+    @DisplayName("상품 수정 성공 테스트")
+    @Test
+    void update() {
+        // given
+        var item = itemRepository.save(Item.builder()
+                .itemName("test item name")
+                .itemPrice(10000)
+                .itemDetail("test item detail")
+                .count(10000)
+                .itemState(ItemState.ON_SALE)
+                .category(this.category)
+                .itemOption(this.itemOption)
+                .member(this.member)
+                .build());
+
+        var itemImage = itemImageRepository.save(ItemImage.builder()
+                .imageUrl("image url")
+                .item(item)
+                .build());
+
+        var newOptions = createUpdateItemOption();
+        var images = createSuccessItemImage();
+        var updateRequest = new UpdateItemRequest("new test item name", category.getCategoryId(), 20000, 20000, newOptions, ItemState.SOLD_OUT, "new test item description");
+
+        // when
+        itemService.update(item.getItemId(), updateRequest, images, user);
+
+        // then
+        assertThat(item.getItemName()).isEqualTo("new test item name");
+        assertThat(item.getCount()).isEqualTo(20000);
+        assertThat(item.getItemState()).isEqualTo(ItemState.SOLD_OUT);
+
+        var foundOptions = item.getItemOption().getOptionValues();
+        //assertThat(foundOptions.get(0).value()).isEqualTo("초록");
+        //assertThat(foundOptions.get(1).value()).isEqualTo("small");
+
+        var foundImages = itemImageRepository.findByItem(item);
+        assertThat(foundImages).isNotEqualTo(itemImage);
+    }
+
     // 추후의 실패 테스트까지 고려해서 setup에 두지 않고 따로 메서드로 뺌, setup은 성공,실패 테스트 모두에 사용 가능한 것만 넣음
     private List<ItemRequest.Option> createSuccessItemOption() {
         List<ItemRequest.Option> options = new ArrayList<>(); // 이거 var로 바뀌면 오류남 왠지 파악하기!
         options.add(new ItemRequest.Option("색상", "빨강"));
         options.add(new ItemRequest.Option("사이즈", "large"));
+        return options;
+    }
+
+    private List<UpdateItemRequest.Option> createUpdateItemOption() {
+        List<UpdateItemRequest.Option> options = new ArrayList<>(); // 이거 var로 바뀌면 오류남 왠지 파악하기!
+        options.add(new UpdateItemRequest.Option("색상", "초록"));
+        options.add(new UpdateItemRequest.Option("사이즈", "small"));
         return options;
     }
 
