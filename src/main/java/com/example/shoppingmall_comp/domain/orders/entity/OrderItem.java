@@ -23,7 +23,7 @@ public class OrderItem extends BaseEntity {
     @Column(name = "order_item_id")
     private Long orderItemId;
 
-    @Column(nullable = false)
+    @Column(name = "member_id", nullable = false)
     private Long memberId; // 회원 id
 
     @Column(name = "order_item_name", nullable = false)

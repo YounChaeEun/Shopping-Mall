@@ -18,7 +18,7 @@ public class Pay extends BaseEntity {
     @Column(name = "pay_id")
     private Long payId;
 
-    @Column(name = "member_id")
+    @Column(name = "member_id", nullable = false)
     private Long memberId;
 
     @Column(name = "company", nullable = false)
@@ -39,7 +39,8 @@ public class Pay extends BaseEntity {
     private Order order;
 
     @Builder
-    public Pay(String cardCompany, String cardNum, int payPrice, Order order) {
+    public Pay(Long memberId, String cardCompany, String cardNum, int payPrice, Order order) {
+        this.memberId = memberId;
         this.cardCompany = cardCompany;
         this.cardNum = cardNum;
         this.payPrice = payPrice;
