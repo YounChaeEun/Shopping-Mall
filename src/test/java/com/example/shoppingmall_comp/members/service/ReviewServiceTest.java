@@ -63,14 +63,23 @@ class ReviewServiceTest {
     // 질문: EntityManager persist
     @BeforeEach
     void setUp() {
-        this.user = new User("amy4021@naver.com", "Amy4021*", new ArrayList<>()); // username은 디비에 잇는 거 쓰기
+        // User 생성
+        this.user = new User("amy4021@naver.com", "Amy4021*", new ArrayList<>());
+
+        // 멤버 생성
         this.member = memberRepository.findByEmail(user.getUsername()).orElseThrow();
+
+        // 카테고리 생성
         Category category = categoryRepository.save(Category.builder()
                 .categoryName("test category name")
                 .build());
+
+        // 상품 옵션 생성
         ItemOption itemOption = itemOptionRepository.save(ItemOption.builder()
                 .optionValues(List.of(new ItemOption.Option("색상", "빨강")))
                 .build());
+
+        // 상품 생성
         this.item = itemRepository.save(Item.builder()
                 .itemName("test item name")
                 .itemPrice(10000)
