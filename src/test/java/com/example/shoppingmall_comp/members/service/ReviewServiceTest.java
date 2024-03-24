@@ -78,25 +78,8 @@ class ReviewServiceTest {
     @Test
     void create() {
         // given
-        Order order = orderRepository.save(Order.builder()
-                .receiverName("test receiver name")
-                .receiverPhone("test receiver phone")
-                .zipcode("test zipcode")
-                .address("test address")
-                .totalPrice(10000)
-                .member(this.member)
-                .merchantId(UUID.randomUUID())
-                .build());
-
-        OrderItem orderItem = orderItemRepository.save(OrderItem.builder()
-                .memberId(this.member.getMemberId())
-                .orderItemName("test order item name")
-                .orderItemCount(10000)
-                .orderItemPrice(10000)
-                .order(order)
-                .item(this.item)
-                .build());
-
+        Order order = saveSuccessOrder();
+        OrderItem orderItem = saveSuccessOrderItem(order);
         var request = new ReviewRequest("test review title", "test review content", 3, orderItem.getOrderItemId());
 
         // when
@@ -112,8 +95,10 @@ class ReviewServiceTest {
     @Test
     void update() {
         // given
+        Order order = saveSuccessOrder();
+        OrderItem orderItem = saveSuccessOrderItem(order);
         Review savedReview = saveSuccessReview();
-        var newRequest = new ReviewRequest("test review new title", "test review new content", 5, 5L);
+        var newRequest = new ReviewRequest("test review new title", "test review new content", 5, orderItem.getOrderItemId());
 
         // when
         reviewService.update(savedReview.getReviewId(), newRequest, user);
@@ -146,7 +131,7 @@ class ReviewServiceTest {
     @Test
     void getAllByItem() {
         // given
-        Review savedReview = saveSuccessReview();
+        saveSuccessReview();
 
         // when
         var response = reviewService.getAllByItem(item.getItemId(), pageable);
@@ -164,7 +149,7 @@ class ReviewServiceTest {
     @Test
     void getAllByMember() {
         // given
-        Review savedReview = saveSuccessReview();
+        saveSuccessReview();
 
         // when
         var response = reviewService.getAllByMember(user, pageable);
@@ -187,4 +172,29 @@ class ReviewServiceTest {
                 .item(item)
                 .build());
     }
+
+    private Order saveSuccessOrder() {
+        return orderRepository.save(Order.builder()
+                .receiverName("test receiver name")
+                .receiverPhone("test receiver phone")
+                .zipcode("test zipcode")
+                .address("test address")
+                .totalPrice(10000)
+                .member(this.member)
+                .merchantId(UUID.randomUUID())
+                .build());
+    }
+
+    private OrderItem saveSuccessOrderItem(Order order) {
+        return orderItemRepository.save(OrderItem.builder()
+                .memberId(this.member.getMemberId())
+                .orderItemName("test order item name")
+                .orderItemCount(10000)
+                .orderItemPrice(10000)
+                .order(order)
+                .item(this.item)
+                .build());
+    }
 }
+// todo: var로 통일
+// todo: orElse()로 통일
