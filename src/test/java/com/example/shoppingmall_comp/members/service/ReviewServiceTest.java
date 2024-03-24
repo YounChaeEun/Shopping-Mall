@@ -57,21 +57,29 @@ class ReviewServiceTest {
     OrderItemRepository orderItemRepository;
 
     private User user;
-    private Pageable pageable;
     private Member member;
     private Item item;
 
     @BeforeEach
     void setUp() {
         this.user = new User("amy4021@naver.com", "Amy4021*", new ArrayList<>()); // username은 디비에 잇는 거 쓰기
-        this.pageable = PageRequest.of(0, 15, Sort.Direction.DESC, "reviewId");
         this.member = memberRepository.findByEmail(user.getUsername()).get();
-
-        Category category = categoryRepository.save(Category.builder().categoryName("test category name").build());
-        List<ItemOption.Option> options = new ArrayList<>();
-        options.add(new ItemOption.Option("색상", "빨강"));
-        ItemOption itemOption = itemOptionRepository.save(ItemOption.builder().optionValues(options).build());
-        this.item = itemRepository.save(Item.builder().itemName("test item name").itemPrice(10000).itemDetail("test item detail").count(1000).category(category).itemOption(itemOption).member(member).itemState(ItemState.ON_SALE).build());
+        Category category = categoryRepository.save(Category.builder()
+                .categoryName("test category name")
+                .build());
+        ItemOption itemOption = itemOptionRepository.save(ItemOption.builder()
+                .optionValues(List.of(new ItemOption.Option("색상", "빨강")))
+                .build());
+        this.item = itemRepository.save(Item.builder()
+                .itemName("test item name")
+                .itemPrice(10000)
+                .itemDetail("test item detail")
+                .count(1000)
+                .category(category)
+                .itemOption(itemOption)
+                .member(member)
+                .itemState(ItemState.ON_SALE)
+                .build());
     }
 
     @DisplayName("리뷰 생성 성공 테스트")
@@ -132,6 +140,7 @@ class ReviewServiceTest {
     void getAllByItem() {
         // given
         saveSuccessReview();
+        Pageable pageable = PageRequest.of(0, 15, Sort.Direction.DESC, "reviewId");
 
         // when
         var response = reviewService.getAllByItem(item.getItemId(), pageable);
@@ -150,6 +159,7 @@ class ReviewServiceTest {
     void getAllByMember() {
         // given
         saveSuccessReview();
+        Pageable pageable = PageRequest.of(0, 15, Sort.Direction.DESC, "reviewId");
 
         // when
         var response = reviewService.getAllByMember(user, pageable);
