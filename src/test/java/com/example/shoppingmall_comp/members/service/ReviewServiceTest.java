@@ -60,10 +60,11 @@ class ReviewServiceTest {
     private Member member;
     private Item item;
 
+    // 질문: EntityManager persist
     @BeforeEach
     void setUp() {
         this.user = new User("amy4021@naver.com", "Amy4021*", new ArrayList<>()); // username은 디비에 잇는 거 쓰기
-        this.member = memberRepository.findByEmail(user.getUsername()).get();
+        this.member = memberRepository.findByEmail(user.getUsername()).orElseThrow();
         Category category = categoryRepository.save(Category.builder()
                 .categoryName("test category name")
                 .build());
@@ -86,8 +87,8 @@ class ReviewServiceTest {
     @Test
     void create() {
         // given
-        Order order = saveSuccessOrder();
-        OrderItem orderItem = saveSuccessOrderItem(order);
+        var order = saveSuccessOrder();
+        var orderItem = saveSuccessOrderItem(order);
         var request = new ReviewRequest("test review title", "test review content", 3, orderItem.getOrderItemId());
 
         // when
@@ -103,14 +104,14 @@ class ReviewServiceTest {
     @Test
     void update() {
         // given
-        Order order = saveSuccessOrder();
-        OrderItem orderItem = saveSuccessOrderItem(order);
-        Review savedReview = saveSuccessReview();
+        var order = saveSuccessOrder();
+        var orderItem = saveSuccessOrderItem(order);
+        var savedReview = saveSuccessReview();
         var newRequest = new ReviewRequest("test review new title", "test review new content", 5, orderItem.getOrderItemId());
 
         // when
         reviewService.update(savedReview.getReviewId(), newRequest, user);
-        var review = reviewRepository.findById(savedReview.getReviewId()).get();
+        var review = reviewRepository.findById(savedReview.getReviewId()).orElseThrow();
 
         //then
         assertThat(review.getReviewTitle()).isEqualTo("test review new title");
@@ -122,7 +123,7 @@ class ReviewServiceTest {
     @Test
     void delete() {
         // given
-        Review savedReview = saveSuccessReview();
+        var savedReview = saveSuccessReview();
 
         // when
         reviewService.delete(savedReview.getReviewId(), user);
@@ -131,7 +132,7 @@ class ReviewServiceTest {
         List<Review> reviews = reviewRepository.findAllByMember(this.member);
         assertThat(reviews).isEmpty();
 
-        Optional<Review> deletedReview = reviewRepository.findById(savedReview.getReviewId());
+        var deletedReview = reviewRepository.findById(savedReview.getReviewId());
         assertThat(deletedReview.isPresent()).isFalse();
     }
 
@@ -140,7 +141,7 @@ class ReviewServiceTest {
     void getAllByItem() {
         // given
         saveSuccessReview();
-        Pageable pageable = PageRequest.of(0, 15, Sort.Direction.DESC, "reviewId");
+        var pageable = PageRequest.of(0, 15, Sort.Direction.DESC, "reviewId");
 
         // when
         var response = reviewService.getAllByItem(item.getItemId(), pageable);
@@ -159,7 +160,7 @@ class ReviewServiceTest {
     void getAllByMember() {
         // given
         saveSuccessReview();
-        Pageable pageable = PageRequest.of(0, 15, Sort.Direction.DESC, "reviewId");
+        var pageable = PageRequest.of(0, 15, Sort.Direction.DESC, "reviewId");
 
         // when
         var response = reviewService.getAllByMember(user, pageable);
@@ -206,5 +207,3 @@ class ReviewServiceTest {
                 .build());
     }
 }
-// todo: var로 통일
-// todo: orElse()로 통일
