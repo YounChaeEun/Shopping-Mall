@@ -9,6 +9,8 @@ import com.example.shoppingmall_comp.domain.items.repository.ItemOptionRepositor
 import com.example.shoppingmall_comp.domain.items.repository.ItemRepository;
 import com.example.shoppingmall_comp.domain.items.service.ItemService;
 import com.example.shoppingmall_comp.domain.members.entity.Member;
+import com.example.shoppingmall_comp.domain.members.entity.Role;
+import com.example.shoppingmall_comp.domain.members.entity.RoleName;
 import com.example.shoppingmall_comp.domain.members.repository.MemberRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -62,9 +64,7 @@ public class ItemServiceTest {
     @Test
     void create() {
         // given
-        List<ItemRequest.Option> options = new ArrayList<>(); // 이거 var로 바뀌면 오류남 왠지 파악하기!
-        options.add(new ItemRequest.Option("색상", "빨강"));
-        options.add(new ItemRequest.Option("사이즈", "large"));
+        var options = List.of(new ItemRequest.Option("색상", "빨강"), new ItemRequest.Option("사이즈", "large"));
         var itemRequest = new ItemRequest("test item name ", category.getCategoryId(), 10000, 10000, options, "test item description");
         var images = createSuccessItemImage();
 
@@ -113,9 +113,7 @@ public class ItemServiceTest {
         var item = saveSuccessItem(itemOption);
         var itemImage = saveSuccessItemImage(item);
 
-        List<UpdateItemRequest.Option> newOptions = new ArrayList<>(); // 이거 var로 바뀌면 오류남 왠지 파악하기!
-        newOptions.add(new UpdateItemRequest.Option("색상", "초록"));
-        newOptions.add(new UpdateItemRequest.Option("사이즈", "small"));
+        var newOptions = List.of(new UpdateItemRequest.Option("색상", "빨강"), new UpdateItemRequest.Option("사이즈", "large"));
         var updateRequest = new UpdateItemRequest("new test item name", category.getCategoryId(), 20000, 20000, newOptions, ItemState.SOLD_OUT, "new test item description");
         var images = createSuccessItemImage();
 
