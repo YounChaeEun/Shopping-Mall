@@ -1,7 +1,6 @@
 package com.example.shoppingmall_comp.items.controller;
 
 
-import com.amazonaws.HttpMethod;
 import com.example.shoppingmall_comp.domain.items.dto.ItemRequest;
 import com.example.shoppingmall_comp.domain.items.dto.UpdateItemRequest;
 import com.example.shoppingmall_comp.domain.items.entity.Category;
@@ -30,16 +29,14 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.springframework.http.HttpMethod.*;
+import static org.springframework.http.HttpMethod.PATCH;
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -155,6 +152,23 @@ public class ItemControllerTest {
         result.andExpect(status().isNoContent());
     }
 
+    @Test
+    @DisplayName("판매자의 상품 전체 조회 컨트롤러 성공 테스트")
+    @WithMockUser(username = "amy4021123@naver.com")
+    void getSellerItems() throws Exception {
+        // given
+        var url = "/api/seller/items";
+
+        // when
+        ResultActions result = mockMvc.perform(get(url)
+                .param("size","15")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON));
+
+        // then
+        result.andExpect(status().isOk());
+    }
+
     private List<ItemRequest.Option> createItemOption() {
         List<ItemRequest.Option> options = new ArrayList<>(); // 이거 var로 바뀌면 오류남 왠지 파악하기!
         options.add(new ItemRequest.Option("색상", "빨강"));
@@ -169,7 +183,7 @@ public class ItemControllerTest {
         return options;
     }
 
-    private ItemOption saveSuccessItemOption(){
+    private ItemOption saveSuccessItemOption() {
         List<ItemOption.Option> options = new ArrayList<>();
         options.add(new ItemOption.Option("색상", "빨강"));
         options.add(new ItemOption.Option("사이즈", "large"));
