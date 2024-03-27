@@ -129,6 +129,29 @@ public class ReviewControllerTest {
                 .andExpect(jsonPath("$.star").value(request.star()));
     }
 
+    @Test
+    @DisplayName("리뷰 수정 성공 테스트")
+    @WithMockUser
+    public void updateReview() throws Exception {
+        //  given
+        String url = "/api/reviews/{reviewId}";
+
+        var order = saveSuccessOrder();
+        var orderItem = saveSuccessOrderItem(order);
+        ReviewRequest request = new ReviewRequest("test review title", "test review content", 5, orderItem.getOrderItemId());
+        String requestBody = objectMapper.writeValueAsString(request);
+
+        var savedReview = saveSuccessReview();
+
+        // when
+        ResultActions result = mockMvc.perform(patch(url, savedReview.getReviewId())
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(requestBody));
+
+        // then
+        result.andExpect(status().isNoContent());
+    }
+
 
     private Review saveSuccessReview() {
         return reviewRepository.save(Review.builder()
