@@ -167,6 +167,34 @@ public class ReviewControllerTest {
         result.andExpect(status().isNoContent());
     }
 
+    @Test
+    @DisplayName("마이페이지에서 리뷰 전체 조회 성공 테스트")
+    @WithMockUser
+    public void findAllByMember() throws Exception {
+        //  given
+        String url = "/api/members/reviews";
+        var savedReview = saveSuccessReview();
+
+        // when
+        ResultActions result = mockMvc.perform(get(url)
+                .param("page", "0")
+                .param("size", "15")
+                .param("direction", "Sort.Direction.DESC")
+                .contentType(MediaType.APPLICATION_JSON_VALUE));
+
+        // then
+        result.andExpect(status().isOk())
+                // 페이징 테스트
+                .andExpect(jsonPath("$.totalPage").value(1))
+                .andExpect(jsonPath("$.totalCount").value(1))
+                .andExpect(jsonPath("$.pageNumber").value(0))
+                .andExpect(jsonPath("$.currentPageSize").value(15))
+                // 리뷰 테스트
+                .andExpect(jsonPath("$.responseList[0].title").value(savedReview.getReviewTitle()))
+                .andExpect(jsonPath("$.responseList[0].content").value(savedReview.getReviewContent()))
+                .andExpect(jsonPath("$.responseList[0].star").value(savedReview.getStar()));
+    }
+
     private Review saveSuccessReview() {
         return reviewRepository.save(Review.builder()
                 .reviewTitle("test review title")
