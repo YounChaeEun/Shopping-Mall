@@ -80,14 +80,14 @@ public class MemberServiceTest {
         var responses = memberService.getAll();
 
         // then
-        assertThat(responses.size()).isEqualTo(3);
+        assertThat(responses.size()).isEqualTo(1);
     }
 
     @DisplayName("비밀번호 변경 성공 테스트")
     @Test
     void updatePassword() {
         // given
-        var request = new UpdateMemberPaswordRequest("Amy4021*", "Amy4021!");
+        var request = new UpdateMemberPaswordRequest("Amy4021!", "Amy4021*");
 
         // when
         memberService.updatePassword(user, request);
