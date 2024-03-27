@@ -3,6 +3,9 @@ package com.example.shoppingmall_comp.members.service;
 import com.example.shoppingmall_comp.domain.items.repository.ItemRepository;
 import com.example.shoppingmall_comp.domain.members.dto.UpdateMemberPaswordRequest;
 import com.example.shoppingmall_comp.domain.members.entity.Cart;
+import com.example.shoppingmall_comp.domain.members.entity.Member;
+import com.example.shoppingmall_comp.domain.members.entity.Role;
+import com.example.shoppingmall_comp.domain.members.entity.RoleName;
 import com.example.shoppingmall_comp.domain.members.repository.CartRepository;
 import com.example.shoppingmall_comp.domain.members.repository.MemberRepository;
 import com.example.shoppingmall_comp.domain.members.repository.RefreshTokenRepository;
@@ -48,7 +51,14 @@ public class MemberServiceTest {
 
     @BeforeEach
     void setUp() {
-        this.user = new User("amy12345seller@naver.com", "Amy4021*", new ArrayList<>());
+        Member member = memberRepository.save(Member.builder()
+                .email("amy111234@naver.com")
+                .password("Amy4021!")
+                .role(Role.builder()
+                        .roleName(RoleName.USER)
+                        .build())
+                .build());
+        this.user = new User(member.getUsername(), member.getPassword(), new ArrayList<>());
     }
 
     @DisplayName("회원 상세 조회 성공 테스트")
