@@ -26,6 +26,8 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.ResultMatcher;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
@@ -37,6 +39,8 @@ import java.util.List;
 import static org.springframework.http.HttpMethod.PATCH;
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -186,6 +190,28 @@ public class ItemControllerTest {
 
         // then
         result.andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("상품 상세 조회 컨트롤러 성공 테스트")
+    @WithMockUser(username = "amy4021123@naver.com")
+    void getItemDetail() throws Exception {
+        // given
+        var url = "/api/items/{itemId}";
+        var itemOption = saveSuccessItemOption();
+        var item = saveSuccessItem(itemOption);
+
+        // when
+        ResultActions result = mockMvc.perform(get(url, item.getItemId())
+                .contentType(MediaType.APPLICATION_JSON));
+
+        // then
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.itemName").value(item.getItemName()))
+                .andExpect(jsonPath("$.price").value(item.getItemPrice()))
+                .andExpect(jsonPath("$.description").value(item.getItemDetail()))
+                .andExpect(jsonPath("$.itemState").value(item.getItemState()))
+                .andExpect(jsonPath("$.optionValue").value(item.getItemOption()));
     }
 
     private List<ItemRequest.Option> createItemOption() {
