@@ -38,6 +38,7 @@ import java.util.List;
 
 import static org.springframework.http.HttpMethod.*;
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -94,7 +95,6 @@ public class ItemControllerTest {
     @DisplayName("상품 생성 컨트롤러 성공 테스트")
     @WithMockUser(username = "amy4021123@naver.com")
     void addItem() throws Exception {
-
         // given
         var url = "/api/seller/items";
         var options = createItemOption();
@@ -117,18 +117,17 @@ public class ItemControllerTest {
     @DisplayName("상품 수정 컨트롤러 성공 테스트")
     @WithMockUser(username = "amy4021123@naver.com")
     void updateItem() throws Exception {
-
         // given
+        var url = "/api/seller/items/{itemId}";
         var itemOption = saveSuccessItemOption();
         var item = saveSuccessItem(itemOption);
-
         var options = createUpdateItemOption();
         var itemRequest = new UpdateItemRequest("test updated item name", category.getCategoryId(), 10000, 10000, options, ItemState.ON_SALE, "test updated item description");
         var request = new MockMultipartFile("itemRequest", "itemRequest", "application/json", objectMapper.writeValueAsString(itemRequest).getBytes(StandardCharsets.UTF_8));
         var file = new MockMultipartFile("file", "file.jpg", "multipart/form-data", "test file".getBytes(StandardCharsets.UTF_8));
 
         // when
-        ResultActions result = mockMvc.perform(multipart(PATCH, "/api/seller/items/" + item.getItemId())
+        ResultActions result = mockMvc.perform(multipart(PATCH, url, item.getItemId())
                 .file(file)
                 .file(request)
                 .contentType(MULTIPART_FORM_DATA_VALUE)
