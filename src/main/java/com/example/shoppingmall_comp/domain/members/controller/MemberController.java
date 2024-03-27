@@ -37,7 +37,7 @@ public class MemberController {
     @PatchMapping("/password")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "회원 비밀번호 변경 api", description = "사용자가 자신의 비밀번호를 변경하는 api 입니다.")
-    public void updateMemberEmail(@AuthenticationPrincipal User user, @Valid @RequestBody UpdateMemberPaswordRequest request) {
+    public void updateMemberPassword(@AuthenticationPrincipal User user, @Valid @RequestBody UpdateMemberPaswordRequest request) {
         memberService.updatePassword(user, request);
     }
 }
