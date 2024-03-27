@@ -1,16 +1,19 @@
 package com.example.shoppingmall_comp.members.service;
 
+import com.example.shoppingmall_comp.domain.items.entity.Category;
+import com.example.shoppingmall_comp.domain.items.entity.Item;
+import com.example.shoppingmall_comp.domain.items.entity.ItemOption;
+import com.example.shoppingmall_comp.domain.items.entity.ItemState;
+import com.example.shoppingmall_comp.domain.items.repository.CategoryRepository;
 import com.example.shoppingmall_comp.domain.items.repository.ItemRepository;
 import com.example.shoppingmall_comp.domain.members.dto.UpdateMemberPaswordRequest;
-import com.example.shoppingmall_comp.domain.members.entity.Cart;
-import com.example.shoppingmall_comp.domain.members.entity.Member;
-import com.example.shoppingmall_comp.domain.members.entity.Role;
-import com.example.shoppingmall_comp.domain.members.entity.RoleName;
+import com.example.shoppingmall_comp.domain.members.entity.*;
 import com.example.shoppingmall_comp.domain.members.repository.CartRepository;
 import com.example.shoppingmall_comp.domain.members.repository.MemberRepository;
 import com.example.shoppingmall_comp.domain.members.repository.RefreshTokenRepository;
 import com.example.shoppingmall_comp.domain.members.repository.ReviewRepository;
 import com.example.shoppingmall_comp.domain.members.service.implement.MemberServiceImpl;
+import com.example.shoppingmall_comp.domain.orders.entity.Order;
 import com.example.shoppingmall_comp.domain.orders.repository.OrderRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -23,8 +26,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @Transactional
@@ -46,12 +50,15 @@ public class MemberServiceTest {
     private ReviewRepository reviewRepository;
     @Autowired
     private ItemRepository itemRepository;
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     private User user;
+    private Member member;
 
     @BeforeEach
     void setUp() {
-        Member member = memberRepository.save(Member.builder()
+        this.member = memberRepository.save(Member.builder()
                 .email("amy111234@naver.com")
                 .password(passwordEncoder.encode("Amy4021!"))
                 .role(Role.builder()
@@ -102,46 +109,78 @@ public class MemberServiceTest {
     @Test
     void deleteUser() {
         // given
-        var member = memberRepository.findByEmail(user.getUsername()).orElseThrow();
+        Category category = categoryRepository.save(Category.builder()
+                .categoryName("test category name")
+                .build());
+
+        Member seller = memberRepository.save(Member.builder()
+                .email("seller@naver.com")
+                .password("1234")
+                .role(Role.builder()
+                        .roleName(RoleName.SELLER)
+                        .build())
+                .build());
+
+        Item item = itemRepository.save(Item.builder()
+                .itemState(ItemState.ON_SALE)
+                .itemPrice(10000)
+                .itemDetail("test item detail")
+                .itemName("test item name")
+                .category(category)
+                .count(10000)
+                .itemOption(ItemOption.builder()
+                        .optionValues(List.of())
+                        .build())
+                .member(seller)
+                .build());
+
+        refreshTokenRepository.save(RefreshToken.builder()
+                .member(this.member)
+                .refreshToken("test refresh token")
+                .build());
+
+        reviewRepository.save(Review.builder()
+                .reviewTitle("test review title")
+                .reviewContent("test review content")
+                .star(3)
+                .item(item)
+                .build());
+
+        cartRepository.save(Cart.builder()
+                .member(this.member)
+                .count(10)
+                .item(item)
+                .itemState(ItemState.ON_SALE)
+                .build());
+
+        orderRepository.save(Order.builder()
+                .receiverName("test name")
+                .receiverPhone("test phone num")
+                .zipcode("test zipcode")
+                .address("test address")
+                .totalPrice(1000)
+                .member(this.member)
+                .merchantId(UUID.randomUUID())
+                .build());
 
         // when
         memberService.deleteUser(user);
 
         // then
-        // 질문 -> 멤버와 관련된 객체들이 너무 많다.. 여기있는 모든 객체들을 다 사용해야한다.. 그래서 이번만큼만 테스트용 데이터를 디비에 미리 넣어두고, 그걸 삭제하는 방식으로 해도 되는지 (여기서 객체들을 다 만들지 않고 review, cart .. )
         var deletedMember = memberRepository.findByEmail(user.getUsername());
         assertThat(deletedMember.isPresent()).isFalse();
 
-        var refreshToken = refreshTokenRepository.findByMember(member);
+        var refreshToken = refreshTokenRepository.findByMember(this.member);
         assertThat(refreshToken.isPresent()).isFalse();
 
-        var cartList = cartRepository.findAllByMember(member);
+        var cartList = cartRepository.findAllByMember(this.member);
         assertThat(cartList).isEmpty();
 
         // 아래 두 개는 삭제하지는 않지만, member 부분을 null로 바꾼다.
-        var orderList = orderRepository.findAllByMember(member);
+        var orderList = orderRepository.findAllByMember(this.member);
         assertThat(orderList).isEmpty();
 
-        var reviewList = reviewRepository.findAllByMember(member);
+        var reviewList = reviewRepository.findAllByMember(this.member);
         assertThat(reviewList).isEmpty();
-    }
-
-    @DisplayName("판매자 회원 삭제 성공 테스트")
-    @Test
-    void deleteSeller() {
-        // given
-        var member = memberRepository.findByEmail(user.getUsername()).orElseThrow();
-
-        // when
-         memberService.deleteSeller(user);
-
-        // then
-        List<Cart> cartList = new ArrayList<>();
-        itemRepository.findAllByMember(member).forEach(item -> {
-            List<Cart> carts = cartRepository.findAllByItem(item);
-            cartList.addAll(carts);
-        });
-         assertThat(cartList).isEmpty();
-        // 질문 -> 위의 메서드도 실행하는게 이것도 확인해야 하나? 위에서 했으니까 안해도 되지 않을까?
     }
 }
