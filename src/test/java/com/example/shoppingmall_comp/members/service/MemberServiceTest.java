@@ -53,7 +53,7 @@ public class MemberServiceTest {
     void setUp() {
         Member member = memberRepository.save(Member.builder()
                 .email("amy111234@naver.com")
-                .password("Amy4021!")
+                .password(passwordEncoder.encode("Amy4021!"))
                 .role(Role.builder()
                         .roleName(RoleName.USER)
                         .build())
