@@ -152,6 +152,20 @@ public class ReviewControllerTest {
         result.andExpect(status().isNoContent());
     }
 
+    @Test
+    @DisplayName("리뷰 삭제 성공 테스트")
+    @WithMockUser
+    public void deleteReview() throws Exception {
+        //  given
+        String url = "/api/reviews/{reviewId}";
+        var savedReview = saveSuccessReview();
+
+        // when
+        ResultActions result = mockMvc.perform(delete(url, savedReview.getReviewId())
+                .contentType(MediaType.APPLICATION_JSON_VALUE));
+
+        result.andExpect(status().isNoContent());
+    }
 
     private Review saveSuccessReview() {
         return reviewRepository.save(Review.builder()
