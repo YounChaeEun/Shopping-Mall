@@ -155,38 +155,49 @@ class ReviewServiceTest {
     @Test
     void getAllByItem() {
         // given
-        saveSuccessReview();
+        var savedReview = saveSuccessReview();
         var pageable = PageRequest.of(0, 15, Sort.Direction.DESC, "reviewId");
 
         // when
         var response = reviewService.getAllByItem(item.getItemId(), pageable);
 
         // then
+        // 페이징 테스트
         assertThat(response.currentPageSize()).isEqualTo(15);
         assertThat(response.pageNumber()).isEqualTo(0);
         assertThat(response.totalCount()).isEqualTo(1);
         assertThat(response.totalPage()).isEqualTo(1);
 
+        // 리뷰 테스트
         assertThat(response.responseList().size()).isEqualTo(1);
+        var firstReview = response.responseList().get(0);
+        assertThat(firstReview.title()).isEqualTo(savedReview.getReviewTitle());
+        assertThat(firstReview.content()).isEqualTo(savedReview.getReviewContent());
     }
 
     @DisplayName("자신이 쓴 리뷰 전체 조회 성공 테스트")
     @Test
     void getAllByMember() {
         // given
-        saveSuccessReview();
+        var savedReview = saveSuccessReview();
         var pageable = PageRequest.of(0, 15, Sort.Direction.DESC, "reviewId");
 
         // when
         var response = reviewService.getAllByMember(user, pageable);
 
         // then
+        // 페이징 테스트
         assertThat(response.currentPageSize()).isEqualTo(15);
         assertThat(response.pageNumber()).isEqualTo(0);
         assertThat(response.totalCount()).isEqualTo(1);
         assertThat(response.totalPage()).isEqualTo(1);
 
+        // 리뷰 테스트
         assertThat(response.responseList().size()).isEqualTo(1);
+        var firstReview = response.responseList().get(0);
+        assertThat(firstReview.title()).isEqualTo(savedReview.getReviewTitle());
+        assertThat(firstReview.content()).isEqualTo(savedReview.getReviewContent());
+
     }
 
     private Review saveSuccessReview() {
