@@ -121,7 +121,7 @@ public class ItemServiceTest {
         // given
         var itemOption = saveSuccessItemOption();
         var item = saveSuccessItem(itemOption);
-        var itemImage = saveSuccessItemImage(item);
+        saveSuccessItemImage(item);
 
         var newOptions = List.of(new UpdateItemRequest.Option("색상", "빨강"), new UpdateItemRequest.Option("사이즈", "large"));
         var updateRequest = new UpdateItemRequest("new test item name", category.getCategoryId(), 20000, 20000, newOptions, ItemState.SOLD_OUT, "new test item description");
@@ -214,8 +214,8 @@ public class ItemServiceTest {
     // 추후의 실패 테스트까지 고려해서 setup에 두지 않고 따로 메서드로 뺌, setup은 성공,실패 테스트 모두에 사용 가능한 것만 넣음
     private List<MultipartFile> createSuccessItemImage() {
         List<MultipartFile> multipartFiles = new ArrayList<>();
-        MockMultipartFile multipartFile1 = new MockMultipartFile("file.jpg", "file.jpg", "text/plain", "test file".getBytes(StandardCharsets.UTF_8));
-        MockMultipartFile multipartFile2 = new MockMultipartFile("file.jpg", "file.jpg", "text/plain", "test file".getBytes(StandardCharsets.UTF_8));
+        MockMultipartFile multipartFile1 = new MockMultipartFile("file.jpg", "file.jpg", "multipart/form-data", "test file".getBytes(StandardCharsets.UTF_8));
+        MockMultipartFile multipartFile2 = new MockMultipartFile("file.jpg", "file.jpg", "multipart/form-data", "test file".getBytes(StandardCharsets.UTF_8));
         multipartFiles.add(multipartFile1);
         multipartFiles.add(multipartFile2);
         return multipartFiles;
