@@ -75,4 +75,31 @@ public class AuthControllerTest {
         assertThat(member.isPresent()).isTrue();
     }
 
+    @Test
+    @DisplayName("로그인 컨트롤러 성공 테스트")
+    @WithMockUser
+    public void signInMember() throws Exception {
+        // given
+        String url = "/api/signin";
+
+        Member savedMember = memberRepository.save(Member.builder()
+                .email("amy11234@naver.com")
+                .password(bCryptPasswordEncoder.encode("Amy4021!"))
+                .role(Role.builder()
+                        .roleName(RoleName.USER)
+                        .build())
+                .build());
+        var request = new MemberSignInRequest("amy11234@naver.com", "Amy4021!");
+        String requestBody = objectMapper.writeValueAsString(request);
+
+        // when
+        ResultActions result = mockMvc.perform(post(url)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(requestBody));
+
+        // when
+        var refreshToken = refreshTokenRepository.findByMember(savedMember).orElseThrow();
+        result.andExpect(status().isCreated())
+                .andExpect(jsonPath("$.refreshToken").value(refreshToken.getRefreshToken()));
+    }
 }
