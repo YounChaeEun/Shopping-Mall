@@ -68,8 +68,9 @@ public class MemberServiceTest {
         var response = memberService.getOne(user);
 
         // then
-        assertThat(response.email()).isEqualTo("amy1234@naver.com");
-        // 질문: Point, TotalConsumePrice 같은 나머지것들도 확인하는 게 맞나? 근데 이거 확인하려면, 여기서 직접 설정하는 게 아니라서 디비 들어가서 확인해야하는데..
+        assertThat(response.email()).isEqualTo("amy111234@naver.com");
+        assertThat(response.roleName()).isEqualTo(RoleName.USER);
+        assertThat(response.point()).isEqualTo(0);
     }
 
     @DisplayName("회원 전체 조회 성공 테스트")
