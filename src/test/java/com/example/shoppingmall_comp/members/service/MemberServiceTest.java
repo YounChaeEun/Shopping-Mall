@@ -93,7 +93,7 @@ public class MemberServiceTest {
         memberService.updatePassword(user, request);
 
         // then
-        var member = memberRepository.findByEmail(user.getUsername()).get();
+        var member = memberRepository.findByEmail(user.getUsername()).orElseThrow();
         var result = passwordEncoder.matches(request.newPassword(), member.getPassword());
         assertThat(result).isTrue();
     }
@@ -102,7 +102,7 @@ public class MemberServiceTest {
     @Test
     void deleteUser() {
         // given
-        var member = memberRepository.findByEmail(user.getUsername()).get();
+        var member = memberRepository.findByEmail(user.getUsername()).orElseThrow();
 
         // when
         memberService.deleteUser(user);
@@ -130,7 +130,7 @@ public class MemberServiceTest {
     @Test
     void deleteSeller() {
         // given
-        var member = memberRepository.findByEmail(user.getUsername()).get();
+        var member = memberRepository.findByEmail(user.getUsername()).orElseThrow();
 
         // when
          memberService.deleteSeller(user);
