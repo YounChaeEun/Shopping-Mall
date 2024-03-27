@@ -1,5 +1,6 @@
 package com.example.shoppingmall_comp.members.controller;
 
+import com.example.shoppingmall_comp.domain.members.dto.UpdateMemberPaswordRequest;
 import com.example.shoppingmall_comp.domain.members.entity.Member;
 import com.example.shoppingmall_comp.domain.members.entity.Role;
 import com.example.shoppingmall_comp.domain.members.entity.RoleName;
@@ -21,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -46,7 +47,7 @@ public class MemberControllerTest {
     void mockMvcSetUp() {
         this.member = memberRepository.save(Member.builder()
                 .email("user")
-                .password("1234")
+                .password(passwordEncoder.encode("Amy4021!"))
                 .role(Role.builder()
                         .roleName(RoleName.USER)
                         .build())
@@ -60,7 +61,7 @@ public class MemberControllerTest {
     @WithMockUser
     void getOneMember() throws Exception {
         // given
-        String url = "/api/members";
+        var url = "/api/members";
 
         // when
         ResultActions result = mockMvc.perform(get(url)
@@ -71,5 +72,23 @@ public class MemberControllerTest {
                 .andExpect(jsonPath("$.email").value(this.member.getEmail()))
                 .andExpect(jsonPath("$.roleName").value(String.valueOf(this.member.getRole().getRoleName())))
                 .andExpect(jsonPath("$.point").value(0));
+    }
+
+    @Test
+    @DisplayName("회원 비밀번호 변경 컨트롤러 성공 테스트")
+    @WithMockUser
+    void updateMemberPassword() throws Exception {
+        // given
+        var url = "/api/members/password";
+        var request = new UpdateMemberPaswordRequest("Amy4021!", "Amy4021*");
+        var requestBody = objectMapper.writeValueAsString(request);
+
+        // when
+        ResultActions result = mockMvc.perform(patch(url)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(requestBody));
+
+        // when
+        result.andExpect(status().isNoContent());
     }
 }
