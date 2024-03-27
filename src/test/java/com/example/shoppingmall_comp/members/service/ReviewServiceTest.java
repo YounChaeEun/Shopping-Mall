@@ -10,6 +10,8 @@ import com.example.shoppingmall_comp.domain.items.repository.ItemRepository;
 import com.example.shoppingmall_comp.domain.members.dto.ReviewRequest;
 import com.example.shoppingmall_comp.domain.members.entity.Member;
 import com.example.shoppingmall_comp.domain.members.entity.Review;
+import com.example.shoppingmall_comp.domain.members.entity.Role;
+import com.example.shoppingmall_comp.domain.members.entity.RoleName;
 import com.example.shoppingmall_comp.domain.members.repository.MemberRepository;
 import com.example.shoppingmall_comp.domain.members.repository.ReviewRepository;
 import com.example.shoppingmall_comp.domain.members.service.ReviewService;
@@ -23,14 +25,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -63,11 +63,17 @@ class ReviewServiceTest {
     // 질문: EntityManager persist
     @BeforeEach
     void setUp() {
-        // User 생성
-        this.user = new User("amy4021@naver.com", "Amy4021*", new ArrayList<>());
-
         // 멤버 생성
-        this.member = memberRepository.findByEmail(user.getUsername()).orElseThrow();
+        this.member = memberRepository.save(Member.builder()
+                .email("amy4021123@naver.com")
+                .password("1234")
+                .role(Role.builder()
+                        .roleName(RoleName.USER)
+                        .build())
+                .build());
+
+        // User 생성
+        this.user = new User("amy4021123@naver.com", "1234", new ArrayList<>());
 
         // 카테고리 생성
         Category category = categoryRepository.save(Category.builder()
