@@ -41,6 +41,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -96,26 +99,25 @@ public class CartControllerTest {
     @Test
     @DisplayName("장바구니 담기 컨트롤러 테스트")
     public void addCartTest() throws Exception {
+        createCart(3, item, member, ItemState.ON_SALE, null);
         CreateCartRequest cartRequest = CartFactory.createMockCreateCartRequest();
 
-        createCart(3, item, member, ItemState.ON_SALE, null);
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/carts")
+        mockMvc.perform(post("/api/carts")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(cartRequest)))
-                .andExpect(MockMvcResultMatchers.status().isCreated());
+                .andExpect(status().isCreated());
     }
 
     @Test
     @DisplayName("장바구니 수정 컨트롤러 테스트")
     public void updateCart() throws Exception {
-        Long cartId = 1L;
+        Cart cart = createCart(3, item, member, ItemState.ON_SALE, null);
         UpdateCartRequest cartRequest = CartFactory.createMockUpdateRequest();
 
-        mockMvc.perform(MockMvcRequestBuilders.patch("/api/carts/{cartId}", cartId)
+        mockMvc.perform(patch("/api/carts/{cartId}", cart.getCartId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(cartRequest)))
-                .andExpect(MockMvcResultMatchers.status().isNoContent());
+                .andExpect(status().isNoContent());
     }
 
     @Test
@@ -124,6 +126,7 @@ public class CartControllerTest {
         //given
         Item item2 = createItem("키보드", 37000, "상품 상세설명2 test", 2000, category, member, null, ItemState.ON_SALE);
         createCart(3, item, member, ItemState.ON_SALE, null);
+        createCart(2, item2, member, ItemState.ON_SALE, null);
 
         List<CartResponse> cartItems = Arrays.asList(
                 new CartResponse(1L, 1, 1L, "니트", 38000, ItemState.ON_SALE, null),
@@ -135,7 +138,6 @@ public class CartControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/carts")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk());
-
         //then
         assertThat(pageResponse.totalCount()).isEqualTo(2);
 
@@ -146,10 +148,10 @@ public class CartControllerTest {
     public void selectedDeleteCarts() throws Exception {
         List<Long> cartIds = Arrays.asList(1L, 2L, 3L);
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/api/carts")
+        mockMvc.perform(delete("/api/carts")
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("cartIds", cartIds.stream().map(String::valueOf).collect(Collectors.joining(","))))
-                .andExpect(MockMvcResultMatchers.status().isNoContent());
+                .andExpect(status().isNoContent());
     }
 
     //상품 옵션 생성 메소드
