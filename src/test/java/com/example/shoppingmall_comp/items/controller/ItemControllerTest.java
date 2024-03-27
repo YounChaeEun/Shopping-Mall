@@ -137,6 +137,24 @@ public class ItemControllerTest {
         result.andExpect(status().isOk());
     }
 
+    @Test
+    @DisplayName("상품 삭제 컨트롤러 성공 테스트")
+    @WithMockUser(username = "amy4021123@naver.com")
+    void deleteItem() throws Exception {
+        // given
+        var url = "/api/seller/items/{itemId}";
+        var itemOption = saveSuccessItemOption();
+        var item = saveSuccessItem(itemOption);
+
+        // when
+        ResultActions result = mockMvc.perform(delete(url, item.getItemId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON));
+
+        // then
+        result.andExpect(status().isNoContent());
+    }
+
     private List<ItemRequest.Option> createItemOption() {
         List<ItemRequest.Option> options = new ArrayList<>(); // 이거 var로 바뀌면 오류남 왠지 파악하기!
         options.add(new ItemRequest.Option("색상", "빨강"));
