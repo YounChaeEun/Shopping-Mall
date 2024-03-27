@@ -96,7 +96,8 @@ public class ItemControllerTest {
     void addItem() throws Exception {
         // given
         var url = "/api/seller/items";
-        var options = createItemOption();
+
+        var options = List.of(new ItemRequest.Option("색상", "빨강"), new ItemRequest.Option("사이즈", "large"));
         var itemRequest = new ItemRequest("test item name2", category.getCategoryId(), 10000, 10000, options, "test item description");
         var request = new MockMultipartFile("itemRequest", "itemRequest", "application/json", objectMapper.writeValueAsString(itemRequest).getBytes(StandardCharsets.UTF_8));
         var file = new MockMultipartFile("file", "file.jpg", "multipart/form-data", "test file".getBytes(StandardCharsets.UTF_8));
@@ -124,11 +125,14 @@ public class ItemControllerTest {
     void updateItem() throws Exception {
         // given
         var url = "/api/seller/items/{itemId}";
-        var itemOption = saveSuccessItemOption();
-        var item = saveSuccessItem(itemOption);
-        var itemRequest = new UpdateItemRequest("test updated item name", category.getCategoryId(), 10000, 10000, createUpdateItemOption(), ItemState.ON_SALE, "test updated item description");
+
+        List<UpdateItemRequest.Option> options = List.of(new UpdateItemRequest.Option("색상", "빨강"), new UpdateItemRequest.Option("사이즈", "large"));
+        var itemRequest = new UpdateItemRequest("test updated item name", category.getCategoryId(), 10000, 10000, options, ItemState.ON_SALE, "test updated item description");
         var request = new MockMultipartFile("itemRequest", "itemRequest", "application/json", objectMapper.writeValueAsString(itemRequest).getBytes(StandardCharsets.UTF_8));
         var file = new MockMultipartFile("file", "file.jpg", "multipart/form-data", "test file".getBytes(StandardCharsets.UTF_8));
+
+        var itemOption = saveSuccessItemOption();
+        var item = saveSuccessItem(itemOption);
 
         // when
         ResultActions result = mockMvc.perform(multipart(PATCH, url, item.getItemId())
@@ -150,6 +154,7 @@ public class ItemControllerTest {
     void deleteItem() throws Exception {
         // given
         var url = "/api/seller/items/{itemId}";
+
         var itemOption = saveSuccessItemOption();
         var item = saveSuccessItem(itemOption);
 
@@ -167,6 +172,7 @@ public class ItemControllerTest {
     void getSellerItems() throws Exception {
         // given
         var url = "/api/seller/items";
+
         var itemOption = saveSuccessItemOption();
         var item = saveSuccessItem(itemOption);
 
@@ -191,6 +197,7 @@ public class ItemControllerTest {
     void getAllItems() throws Exception {
         // given
         var url = "/api/items";
+
         // 카테고리에 속한 상품이 없으면 에러가 남, 그걸 위해 카테고리에 상품 하나 만들어준다.
         var itemOption = saveSuccessItemOption();
         var item = saveSuccessItem(itemOption);
@@ -216,6 +223,7 @@ public class ItemControllerTest {
     void getItemDetail() throws Exception {
         // given
         var url = "/api/items/{itemId}";
+
         var itemOption = saveSuccessItemOption();
         var item = saveSuccessItem(itemOption);
 
@@ -229,20 +237,6 @@ public class ItemControllerTest {
                 .andExpect(jsonPath("$.price").value(item.getItemPrice()))
                 .andExpect(jsonPath("$.description").value(item.getItemDetail()))
                 .andExpect(jsonPath("$.optionValue[0].value").value("빨강"));
-    }
-
-    private List<ItemRequest.Option> createItemOption() {
-        List<ItemRequest.Option> options = new ArrayList<>(); // 이거 var로 바뀌면 오류남 왠지 파악하기!
-        options.add(new ItemRequest.Option("색상", "빨강"));
-        options.add(new ItemRequest.Option("사이즈", "large"));
-        return options;
-    }
-
-    private List<UpdateItemRequest.Option> createUpdateItemOption() {
-        List<UpdateItemRequest.Option> options = new ArrayList<>(); // 이거 var로 바뀌면 오류남 왠지 파악하기!
-        options.add(new UpdateItemRequest.Option("색상", "빨강"));
-        options.add(new UpdateItemRequest.Option("사이즈", "large"));
-        return options;
     }
 
     private ItemOption saveSuccessItemOption() {
