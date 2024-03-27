@@ -51,8 +51,13 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional
     public void delete(Long categoryId) {
-        categoryRepository.findById(categoryId)
+        Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_CATEGORY));
+
+        if (itemRepository.findFirstByCategory(category).isPresent()) {
+            throw new BusinessException(ErrorCode.CATEGORY_EXIST_GOODS);
+        }
+
         categoryRepository.deleteById(categoryId);
     }
 
