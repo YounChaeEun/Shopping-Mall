@@ -26,8 +26,6 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.ResultMatcher;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
@@ -111,7 +109,13 @@ public class ItemControllerTest {
                 .accept(MediaType.APPLICATION_JSON));
 
         // then
-        result.andExpect(status().isCreated());
+        result.andExpect(status().isCreated())
+                .andExpect(jsonPath("$.itemName").value(itemRequest.itemName()))
+                .andExpect(jsonPath("$.price").value(itemRequest.price()))
+                .andExpect(jsonPath("$.count").value(itemRequest.count()))
+                .andExpect(jsonPath("$.description").value(itemRequest.description()))
+                .andExpect(jsonPath("$.imgUrls").isNotEmpty())
+                .andExpect(jsonPath("$.optionValue[0].value").value("빨강"));
     }
 
     @Test
@@ -122,8 +126,7 @@ public class ItemControllerTest {
         var url = "/api/seller/items/{itemId}";
         var itemOption = saveSuccessItemOption();
         var item = saveSuccessItem(itemOption);
-        var options = createUpdateItemOption();
-        var itemRequest = new UpdateItemRequest("test updated item name", category.getCategoryId(), 10000, 10000, options, ItemState.ON_SALE, "test updated item description");
+        var itemRequest = new UpdateItemRequest("test updated item name", category.getCategoryId(), 10000, 10000, createUpdateItemOption(), ItemState.ON_SALE, "test updated item description");
         var request = new MockMultipartFile("itemRequest", "itemRequest", "application/json", objectMapper.writeValueAsString(itemRequest).getBytes(StandardCharsets.UTF_8));
         var file = new MockMultipartFile("file", "file.jpg", "multipart/form-data", "test file".getBytes(StandardCharsets.UTF_8));
 
@@ -135,7 +138,10 @@ public class ItemControllerTest {
                 .accept(MediaType.APPLICATION_JSON));
 
         // then
-        result.andExpect(status().isOk());
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.itemImageId").isNotEmpty())
+                .andExpect(jsonPath("$.itemUrls").isNotEmpty())
+                .andDo(print());
     }
 
     @Test
@@ -161,15 +167,22 @@ public class ItemControllerTest {
     void getSellerItems() throws Exception {
         // given
         var url = "/api/seller/items";
+        var itemOption = saveSuccessItemOption();
+        var item = saveSuccessItem(itemOption);
 
         // when
         ResultActions result = mockMvc.perform(get(url)
                 .param("size", "15")
-                .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON));
 
         // then
-        result.andExpect(status().isOk());
+        result.andExpect(status().isOk())
+                // 상품 테스트
+                .andExpect(jsonPath("$.sellerItemList[0].itemName").value(item.getItemName()))
+                .andExpect(jsonPath("$.sellerItemList[0].price").value(item.getItemPrice()))
+                .andExpect(jsonPath("$.sellerItemList[0].count").value(item.getCount()))
+                // 페이징 테스트
+                .andExpect(jsonPath("$.currentPageSize").value("15"));
     }
 
     @Test
@@ -186,10 +199,15 @@ public class ItemControllerTest {
         ResultActions result = mockMvc.perform(get(url)
                 .param("size", "15")
                 .param("categoryId", String.valueOf(this.category.getCategoryId()))
-                .contentType(MediaType.APPLICATION_JSON));
+                .accept(MediaType.APPLICATION_JSON));
 
         // then
-        result.andExpect(status().isOk());
+        result.andExpect(status().isOk())
+                // 상품 검사
+                .andExpect(jsonPath("$.itemList[0].itemName").value(item.getItemName()))
+                .andExpect(jsonPath("$.itemList[0].price").value(item.getItemPrice()))
+                // 페이징 테스트
+                .andExpect(jsonPath("$.currentPageSize").value("15"));
     }
 
     @Test
@@ -203,15 +221,14 @@ public class ItemControllerTest {
 
         // when
         ResultActions result = mockMvc.perform(get(url, item.getItemId())
-                .contentType(MediaType.APPLICATION_JSON));
+                .accept(MediaType.APPLICATION_JSON));
 
         // then
         result.andExpect(status().isOk())
                 .andExpect(jsonPath("$.itemName").value(item.getItemName()))
                 .andExpect(jsonPath("$.price").value(item.getItemPrice()))
                 .andExpect(jsonPath("$.description").value(item.getItemDetail()))
-                .andExpect(jsonPath("$.itemState").value(item.getItemState()))
-                .andExpect(jsonPath("$.optionValue").value(item.getItemOption()));
+                .andExpect(jsonPath("$.optionValue[0].value").value("빨강"));
     }
 
     private List<ItemRequest.Option> createItemOption() {
