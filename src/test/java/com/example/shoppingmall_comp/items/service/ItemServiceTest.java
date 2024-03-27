@@ -53,8 +53,18 @@ public class ItemServiceTest {
 
     @BeforeEach
     void setup() {
-        this.user = new User("amy12345seller@naver.com", "Amy4021*", new ArrayList<>());
-        this.member = memberRepository.findByEmail(this.user.getUsername()).orElseThrow();
+        this.member = memberRepository.save(Member.builder()
+                .email("amy4021123@naver.com")
+                .password("1234")
+                .role(Role.builder()
+                        .roleName(RoleName.SELLER)
+                        .build())
+                .build());
+
+        // User 생성
+        this.user = new User("amy4021123@naver.com", "1234", new ArrayList<>());
+
+        // 카테고리 생성
         this.category = categoryRepository.save(Category.builder()
                 .categoryName("test category")
                 .build());
@@ -96,8 +106,8 @@ public class ItemServiceTest {
         itemService.delete(item.getItemId(), user);
 
         // then
-        var items = itemRepository.findAll();
-        assertThat(items.size()).isEqualTo(5);
+        var items = itemRepository.findAllByMember(this.member);
+        assertThat(items).isEmpty();
 
         var foundImages = itemImageRepository.findByItem(item); // 질문: 이게 맞는지? 디비에서는 삭제되었지만 자바의 메모리에서는 여전히 남아있어서 이 로직을 수행할 수 있다고 하는데..
         assertThat(foundImages).isEmpty();
@@ -192,12 +202,12 @@ public class ItemServiceTest {
 
         // then
         // 테스트가 실제 데이터베이스에 의존하지 않도록 설계하는 것이 중요하다..? -> 사람들이 같은 디비를 바라볼 보장이 없기 때문임
-        assertThat(response.totalCount()).isEqualTo(6); // todo: 여기서 1개 나오게 수정하기
+        assertThat(response.totalCount()).isEqualTo(1);
         assertThat(response.totalPage()).isEqualTo(1);
         assertThat(response.pageNumber()).isEqualTo(0);
         assertThat(response.currentPageSize()).isEqualTo(15);
 
-        assertThat(response.sellerItemList().size()).isEqualTo(6);
+        assertThat(response.sellerItemList().size()).isEqualTo(1);
     }
 
 
