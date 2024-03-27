@@ -145,8 +145,7 @@ public class ItemControllerTest {
 
         // when
         ResultActions result = mockMvc.perform(delete(url, item.getItemId())
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON));
+                .contentType(MediaType.APPLICATION_JSON));
 
         // then
         result.andExpect(status().isNoContent());
@@ -161,9 +160,29 @@ public class ItemControllerTest {
 
         // when
         ResultActions result = mockMvc.perform(get(url)
-                .param("size","15")
+                .param("size", "15")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON));
+
+        // then
+        result.andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("상품 전체 조회 컨트롤러 성공 테스트")
+    @WithMockUser(username = "amy4021123@naver.com")
+    void getAllItems() throws Exception {
+        // given
+        var url = "/api/items";
+        // 카테고리에 속한 상품이 없으면 에러가 남, 그걸 위해 카테고리에 상품 하나 만들어준다.
+        var itemOption = saveSuccessItemOption();
+        var item = saveSuccessItem(itemOption);
+
+        // when
+        ResultActions result = mockMvc.perform(get(url)
+                .param("size", "15")
+                .param("categoryId", String.valueOf(this.category.getCategoryId()))
+                .contentType(MediaType.APPLICATION_JSON));
 
         // then
         result.andExpect(status().isOk());
