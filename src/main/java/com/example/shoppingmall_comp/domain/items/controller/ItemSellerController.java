@@ -39,7 +39,7 @@ public class ItemSellerController {
     @Operation(summary = "상품 수정 api", description = "상품을 수정하는 api 입니다.")
     public UpdateItemResponse updateItem(@PathVariable Long itemId,
                                          @Valid @RequestPart(value = "itemRequest", required = false) UpdateItemRequest itemRequest,
-                                         @RequestPart(required = false) List<MultipartFile> multipartFiles,
+                                         @RequestPart(value = "file", required = false)  List<MultipartFile> multipartFiles,
                                          @AuthenticationPrincipal User user) {
         return itemService.update(itemId, itemRequest, multipartFiles, user);
     }
