@@ -103,7 +103,7 @@ public class ItemControllerTest {
         var file = new MockMultipartFile("file", "file.jpg", "multipart/form-data", "test file".getBytes(StandardCharsets.UTF_8));
 
         // when
-        ResultActions result = mockMvc.perform(multipart(url)
+        var result = mockMvc.perform(multipart(url)
                 .file(file)
                 .file(request)
                 .contentType(MULTIPART_FORM_DATA_VALUE)
@@ -126,7 +126,7 @@ public class ItemControllerTest {
         // given
         var url = "/api/seller/items/{itemId}";
 
-        List<UpdateItemRequest.Option> options = List.of(new UpdateItemRequest.Option("색상", "빨강"), new UpdateItemRequest.Option("사이즈", "large"));
+        var options = List.of(new UpdateItemRequest.Option("색상", "빨강"), new UpdateItemRequest.Option("사이즈", "large"));
         var itemRequest = new UpdateItemRequest("test updated item name", category.getCategoryId(), 10000, 10000, options, ItemState.ON_SALE, "test updated item description");
         var request = new MockMultipartFile("itemRequest", "itemRequest", "application/json", objectMapper.writeValueAsString(itemRequest).getBytes(StandardCharsets.UTF_8));
         var file = new MockMultipartFile("file", "file.jpg", "multipart/form-data", "test file".getBytes(StandardCharsets.UTF_8));
@@ -135,7 +135,7 @@ public class ItemControllerTest {
         var item = saveSuccessItem(itemOption);
 
         // when
-        ResultActions result = mockMvc.perform(multipart(PATCH, url, item.getItemId())
+        var result = mockMvc.perform(multipart(PATCH, url, item.getItemId())
                 .file(file)
                 .file(request)
                 .contentType(MULTIPART_FORM_DATA_VALUE)
@@ -159,8 +159,7 @@ public class ItemControllerTest {
         var item = saveSuccessItem(itemOption);
 
         // when
-        ResultActions result = mockMvc.perform(delete(url, item.getItemId())
-                .contentType(MediaType.APPLICATION_JSON));
+        var result = mockMvc.perform(delete(url, item.getItemId()));
 
         // then
         result.andExpect(status().isNoContent());
@@ -177,9 +176,8 @@ public class ItemControllerTest {
         var item = saveSuccessItem(itemOption);
 
         // when
-        ResultActions result = mockMvc.perform(get(url)
-                .param("size", "15")
-                .accept(MediaType.APPLICATION_JSON));
+        var result = mockMvc.perform(get(url)
+                .param("size", "15"));
 
         // then
         result.andExpect(status().isOk())
@@ -203,10 +201,9 @@ public class ItemControllerTest {
         var item = saveSuccessItem(itemOption);
 
         // when
-        ResultActions result = mockMvc.perform(get(url)
+        var result = mockMvc.perform(get(url)
                 .param("size", "15")
-                .param("categoryId", String.valueOf(this.category.getCategoryId()))
-                .accept(MediaType.APPLICATION_JSON));
+                .param("categoryId", String.valueOf(this.category.getCategoryId())));
 
         // then
         result.andExpect(status().isOk())
@@ -228,8 +225,7 @@ public class ItemControllerTest {
         var item = saveSuccessItem(itemOption);
 
         // when
-        ResultActions result = mockMvc.perform(get(url, item.getItemId())
-                .accept(MediaType.APPLICATION_JSON));
+        var result = mockMvc.perform(get(url, item.getItemId()));
 
         // then
         result.andExpect(status().isOk())
