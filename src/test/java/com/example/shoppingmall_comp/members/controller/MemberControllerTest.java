@@ -35,7 +35,6 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -89,7 +88,7 @@ public class MemberControllerTest {
         var url = "/api/members";
 
         // when
-        ResultActions result = mockMvc.perform(get(url));
+        var result = mockMvc.perform(get(url));
 
         // when
         result.andExpect(status().isOk())
@@ -108,7 +107,7 @@ public class MemberControllerTest {
         var requestBody = objectMapper.writeValueAsString(request);
 
         // when
-        ResultActions result = mockMvc.perform(patch(url)
+        var result = mockMvc.perform(patch(url)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(requestBody));
 
@@ -121,11 +120,11 @@ public class MemberControllerTest {
     @WithMockUser
     void deleteUser() throws Exception {
         // given
-        Category category = categoryRepository.save(Category.builder()
+        var category = categoryRepository.save(Category.builder()
                 .categoryName("test category name")
                 .build());
 
-        Member seller = memberRepository.save(Member.builder()
+        var seller = memberRepository.save(Member.builder()
                 .email("seller@naver.com")
                 .password("1234")
                 .role(Role.builder()
@@ -133,7 +132,7 @@ public class MemberControllerTest {
                         .build())
                 .build());
 
-        Item item = itemRepository.save(Item.builder()
+        var item = itemRepository.save(Item.builder()
                 .itemState(ItemState.ON_SALE)
                 .itemPrice(10000)
                 .itemDetail("test item detail")
@@ -179,7 +178,7 @@ public class MemberControllerTest {
         var url = "/api/members";
 
         // when
-        ResultActions result = mockMvc.perform(delete(url));
+        var result = mockMvc.perform(delete(url));
 
         // when
         result.andExpect(status().isNoContent());
@@ -192,7 +191,7 @@ public class MemberControllerTest {
         var url = "/api/admin/members";
 
         // when
-        ResultActions result = mockMvc.perform(get(url));
+        var result = mockMvc.perform(get(url));
 
         // when
         result.andExpect(status().isOk())
