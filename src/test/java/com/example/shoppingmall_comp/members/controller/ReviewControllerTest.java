@@ -72,7 +72,7 @@ public class ReviewControllerTest {
     private Item item;
 
     @BeforeEach
-    void mockMvcSetUp() {
+    void setUp() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(context)
                 .build();
 
