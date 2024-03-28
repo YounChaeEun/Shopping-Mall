@@ -69,7 +69,7 @@ public class MemberControllerTest {
     private Member member;
 
     @BeforeEach
-    void mockMvcSetUp() {
+    void setUp() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(context)
                 .build();
         this.member = memberRepository.save(Member.builder()
