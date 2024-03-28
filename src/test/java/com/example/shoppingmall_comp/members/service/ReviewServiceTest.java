@@ -144,7 +144,7 @@ class ReviewServiceTest {
         reviewService.delete(savedReview.getReviewId(), user);
 
         // then
-        List<Review> reviews = reviewRepository.findAllByMember(this.member);
+        var reviews = reviewRepository.findAllByMember(this.member);
         assertThat(reviews).isEmpty();
 
         var deletedReview = reviewRepository.findById(savedReview.getReviewId());

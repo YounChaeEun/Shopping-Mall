@@ -110,15 +110,15 @@ public class ReviewControllerTest {
     @WithMockUser
     public void addReview() throws Exception {
         // given
-        String url = "/api/reviews";
+        var url = "/api/reviews";
 
         var order = saveSuccessOrder();
         var orderItem = saveSuccessOrderItem(order);
-        ReviewRequest request = new ReviewRequest("test review title", "test review content", 5, orderItem.getOrderItemId());
-        String requestBody = objectMapper.writeValueAsString(request);
+        var request = new ReviewRequest("test review title", "test review content", 5, orderItem.getOrderItemId());
+        var requestBody = objectMapper.writeValueAsString(request);
 
         // when
-        ResultActions result = mockMvc.perform(post(url)
+        var result = mockMvc.perform(post(url)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(requestBody));
 
@@ -134,17 +134,17 @@ public class ReviewControllerTest {
     @WithMockUser
     public void updateReview() throws Exception {
         //  given
-        String url = "/api/reviews/{reviewId}";
+        var url = "/api/reviews/{reviewId}";
 
         var order = saveSuccessOrder();
         var orderItem = saveSuccessOrderItem(order);
-        ReviewRequest request = new ReviewRequest("test review title", "test review content", 5, orderItem.getOrderItemId());
-        String requestBody = objectMapper.writeValueAsString(request);
+        var request = new ReviewRequest("test review title", "test review content", 5, orderItem.getOrderItemId());
+        var requestBody = objectMapper.writeValueAsString(request);
 
         var savedReview = saveSuccessReview();
 
         // when
-        ResultActions result = mockMvc.perform(patch(url, savedReview.getReviewId())
+        var result = mockMvc.perform(patch(url, savedReview.getReviewId())
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(requestBody));
 
@@ -157,12 +157,11 @@ public class ReviewControllerTest {
     @WithMockUser
     public void deleteReview() throws Exception {
         //  given
-        String url = "/api/reviews/{reviewId}";
+        var url = "/api/reviews/{reviewId}";
         var savedReview = saveSuccessReview();
 
         // when
-        ResultActions result = mockMvc.perform(delete(url, savedReview.getReviewId())
-                .contentType(MediaType.APPLICATION_JSON_VALUE));
+        var result = mockMvc.perform(delete(url, savedReview.getReviewId()));
 
         result.andExpect(status().isNoContent());
     }
@@ -172,15 +171,14 @@ public class ReviewControllerTest {
     @WithMockUser
     public void findAllByMember() throws Exception {
         //  given
-        String url = "/api/members/reviews";
+        var url = "/api/members/reviews";
         var savedReview = saveSuccessReview();
 
         // when
-        ResultActions result = mockMvc.perform(get(url)
+        var result = mockMvc.perform(get(url)
                 .param("page", "0")
                 .param("size", "15")
-                .param("direction", "Sort.Direction.DESC")
-                .contentType(MediaType.APPLICATION_JSON_VALUE));
+                .param("direction", "Sort.Direction.DESC"));
 
         // then
         result.andExpect(status().isOk())
@@ -200,15 +198,14 @@ public class ReviewControllerTest {
     @WithMockUser
     public void findAllByItem() throws Exception {
         //  given
-        String url = "/api/items/{itemId}/reviews";
+        var url = "/api/items/{itemId}/reviews";
         var savedReview = saveSuccessReview();
 
         // when
-        ResultActions result = mockMvc.perform(get(url, this.item.getItemId())
+        var result = mockMvc.perform(get(url, this.item.getItemId())
                 .param("page", "0")
                 .param("size", "15")
-                .param("direction", "Sort.Direction.DESC")
-                .contentType(MediaType.APPLICATION_JSON_VALUE));
+                .param("direction", "Sort.Direction.DESC"));
 
         // then
         result.andExpect(status().isOk())
