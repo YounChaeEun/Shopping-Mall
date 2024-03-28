@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -90,5 +91,26 @@ public class MemberControllerTest {
 
         // when
         result.andExpect(status().isNoContent());
+    }
+
+    // 일반 회원 삭제 컨트롤러 성공 테스트 추가하기
+
+    @Test
+    @DisplayName("관리자의 회원 전체 조회 컨트롤러 성공 테스트")
+    @WithMockUser
+    void getAllMembers() throws Exception {
+        // given
+        var url = "/api/admin/members";
+
+        // when
+        ResultActions result = mockMvc.perform(get(url)
+                .accept(MediaType.APPLICATION_JSON_VALUE));
+
+        // when
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$[0]").isNotEmpty());
+
+        var memberList = memberRepository.findAll();
+        assertThat(memberList.size()).isGreaterThanOrEqualTo(1);
     }
 }
