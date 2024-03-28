@@ -195,7 +195,6 @@ public class ReviewControllerTest {
 
     @Test
     @DisplayName("아이템 상세페이지에서 리뷰 전체 조회 성공 테스트")
-    @WithMockUser
     public void findAllByItem() throws Exception {
         //  given
         var url = "/api/items/{itemId}/reviews";
