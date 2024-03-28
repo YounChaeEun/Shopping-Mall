@@ -58,13 +58,13 @@ public class AuthControllerTest {
     @WithMockUser
     public void saveMember() throws Exception {
         // given
-        String url = "/api/signup";
+        var url = "/api/signup";
 
         var request = new MemberSignUpRequest("amy11234@naver.com", "Amy4021!", RoleName.USER);
-        String requestBody = objectMapper.writeValueAsString(request);
+        var requestBody = objectMapper.writeValueAsString(request);
 
         // when
-        ResultActions result = mockMvc.perform(post(url)
+        var result = mockMvc.perform(post(url)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(requestBody));
 
@@ -80,9 +80,9 @@ public class AuthControllerTest {
     @WithMockUser
     public void signInMember() throws Exception {
         // given
-        String url = "/api/signin";
+        var url = "/api/signin";
 
-        Member savedMember = memberRepository.save(Member.builder()
+        var savedMember = memberRepository.save(Member.builder()
                 .email("amy11234@naver.com")
                 .password(bCryptPasswordEncoder.encode("Amy4021!"))
                 .role(Role.builder()
@@ -90,10 +90,10 @@ public class AuthControllerTest {
                         .build())
                 .build());
         var request = new MemberSignInRequest("amy11234@naver.com", "Amy4021!");
-        String requestBody = objectMapper.writeValueAsString(request);
+        var requestBody = objectMapper.writeValueAsString(request);
 
         // when
-        ResultActions result = mockMvc.perform(post(url)
+        var result = mockMvc.perform(post(url)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(requestBody));
 
