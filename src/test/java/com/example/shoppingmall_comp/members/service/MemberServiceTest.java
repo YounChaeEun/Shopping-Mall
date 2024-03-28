@@ -109,11 +109,11 @@ public class MemberServiceTest {
     @Test
     void deleteUser() {
         // given
-        Category category = categoryRepository.save(Category.builder()
+        var category = categoryRepository.save(Category.builder()
                 .categoryName("test category name")
                 .build());
 
-        Member seller = memberRepository.save(Member.builder()
+        var seller = memberRepository.save(Member.builder()
                 .email("seller@naver.com")
                 .password("1234")
                 .role(Role.builder()
@@ -121,7 +121,7 @@ public class MemberServiceTest {
                         .build())
                 .build());
 
-        Item item = itemRepository.save(Item.builder()
+        var item = itemRepository.save(Item.builder()
                 .itemState(ItemState.ON_SALE)
                 .itemPrice(10000)
                 .itemDetail("test item detail")
