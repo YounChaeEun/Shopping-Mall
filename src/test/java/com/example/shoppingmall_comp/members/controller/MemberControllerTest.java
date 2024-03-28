@@ -35,6 +35,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -65,10 +66,19 @@ public class MemberControllerTest {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    private Member member;
+
     @BeforeEach
     void mockMvcSetUp() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(context)
                 .build();
+        this.member = memberRepository.save(Member.builder()
+                .email("user")
+                .password(passwordEncoder.encode("Amy4021!"))
+                .role(Role.builder()
+                        .roleName(RoleName.USER)
+                        .build())
+                .build());
     }
 
     @Test
@@ -76,7 +86,6 @@ public class MemberControllerTest {
     @WithMockUser
     void getOneMember() throws Exception {
         // given
-        var member = saveMember("user", RoleName.USER);
         var url = "/api/members";
 
         // when
@@ -95,7 +104,6 @@ public class MemberControllerTest {
     @WithMockUser
     void updateMemberPassword() throws Exception {
         // given
-        saveMember("user", RoleName.USER);
         var url = "/api/members/password";
         var request = new UpdateMemberPaswordRequest("Amy4021!", "Amy4021*");
         var requestBody = objectMapper.writeValueAsString(request);
@@ -114,11 +122,16 @@ public class MemberControllerTest {
     @WithMockUser
     void deleteUser() throws Exception {
         // given
-        var user = saveMember("user", RoleName.USER);
-        var seller = saveMember("seller", RoleName.SELLER);
-
         Category category = categoryRepository.save(Category.builder()
                 .categoryName("test category name")
+                .build());
+
+        Member seller = memberRepository.save(Member.builder()
+                .email("seller@naver.com")
+                .password("1234")
+                .role(Role.builder()
+                        .roleName(RoleName.SELLER)
+                        .build())
                 .build());
 
         Item item = itemRepository.save(Item.builder()
@@ -139,17 +152,18 @@ public class MemberControllerTest {
                 .reviewContent("test review content")
                 .star(3)
                 .item(item)
+                .member(member)
                 .build());
 
         cartRepository.save(Cart.builder()
-                .member(user)
+                .member(member)
                 .count(10)
                 .item(item)
                 .itemState(ItemState.ON_SALE)
                 .build());
 
         refreshTokenRepository.save(RefreshToken.builder()
-                .member(user)
+                .member(member)
                 .refreshToken("test refresh token")
                 .build());
 
@@ -159,7 +173,7 @@ public class MemberControllerTest {
                 .zipcode("test zipcode")
                 .address("test address")
                 .totalPrice(1000)
-                .member(user)
+                .member(member)
                 .merchantId(UUID.randomUUID())
                 .build());
 
@@ -174,10 +188,8 @@ public class MemberControllerTest {
 
     @Test
     @DisplayName("관리자의 회원 전체 조회 컨트롤러 성공 테스트")
-    @WithMockUser
     void getAllMembers() throws Exception {
         // given
-        saveMember("user", RoleName.USER);
         var url = "/api/admin/members";
 
         // when
@@ -190,15 +202,5 @@ public class MemberControllerTest {
 
         var memberList = memberRepository.findAll();
         assertThat(memberList.size()).isGreaterThanOrEqualTo(1);
-    }
-
-    private Member saveMember(String email, RoleName roleName) {
-        return memberRepository.save(Member.builder()
-                .email(email)
-                .password(passwordEncoder.encode("Amy4021!"))
-                .role(Role.builder()
-                        .roleName(roleName)
-                        .build())
-                .build());
     }
 }
