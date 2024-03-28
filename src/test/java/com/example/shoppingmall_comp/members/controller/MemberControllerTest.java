@@ -89,8 +89,7 @@ public class MemberControllerTest {
         var url = "/api/members";
 
         // when
-        ResultActions result = mockMvc.perform(get(url)
-                .accept(MediaType.APPLICATION_JSON_VALUE));
+        ResultActions result = mockMvc.perform(get(url));
 
         // when
         result.andExpect(status().isOk())
@@ -193,8 +192,7 @@ public class MemberControllerTest {
         var url = "/api/admin/members";
 
         // when
-        ResultActions result = mockMvc.perform(get(url)
-                .accept(MediaType.APPLICATION_JSON_VALUE));
+        ResultActions result = mockMvc.perform(get(url));
 
         // when
         result.andExpect(status().isOk())
