@@ -191,7 +191,6 @@ public class ItemControllerTest {
 
     @Test
     @DisplayName("상품 전체 조회 컨트롤러 성공 테스트")
-    @WithMockUser(username = "amy4021123@naver.com")
     void getAllItems() throws Exception {
         // given
         var url = "/api/items";
