@@ -48,7 +48,7 @@ public class AuthControllerTest {
     BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @BeforeEach
-    void mockMvcSetUp() {
+    void setUp() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(context)
                 .build();
     }
