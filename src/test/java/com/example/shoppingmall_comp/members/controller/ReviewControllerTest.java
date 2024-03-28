@@ -178,7 +178,8 @@ public class ReviewControllerTest {
         var result = mockMvc.perform(get(url)
                 .param("page", "0")
                 .param("size", "15")
-                .param("direction", "Sort.Direction.DESC"));
+                .param("direction", "Sort.Direction.DESC")
+                .accept(MediaType.APPLICATION_JSON_VALUE));
 
         // then
         result.andExpect(status().isOk())
@@ -204,7 +205,8 @@ public class ReviewControllerTest {
         var result = mockMvc.perform(get(url, this.item.getItemId())
                 .param("page", "0")
                 .param("size", "15")
-                .param("direction", "Sort.Direction.DESC"));
+                .param("direction", "Sort.Direction.DESC")
+                .accept(MediaType.APPLICATION_JSON_VALUE));
 
         // then
         result.andExpect(status().isOk())
