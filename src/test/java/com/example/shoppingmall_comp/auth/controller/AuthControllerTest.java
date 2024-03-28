@@ -77,7 +77,6 @@ public class AuthControllerTest {
 
     @Test
     @DisplayName("로그인 컨트롤러 성공 테스트")
-    @WithMockUser
     public void signInMember() throws Exception {
         // given
         var url = "/api/signin";
