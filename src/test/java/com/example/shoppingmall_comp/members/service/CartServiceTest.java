@@ -124,7 +124,7 @@ public class CartServiceTest {
         //장바구니의 상품 정보 확인
         CartResponse cartItem = cartItems.get(0);
         Assertions.assertEquals(createdCart.getCartId(), cartItem.cartId());
-        Assertions.assertEquals(createdCart.getCount(), cartItem.cartCount());
+        Assertions.assertEquals(createdCart.getCount(), cartItem.itemCount());
         Assertions.assertEquals(item.getItemId(), cartItem.itemId());
         Assertions.assertEquals(item.getItemName(), cartItem.itemName());
         Assertions.assertTrue(cartItem.optionValue().stream()

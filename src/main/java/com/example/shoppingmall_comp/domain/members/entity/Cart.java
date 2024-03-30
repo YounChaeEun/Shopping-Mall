@@ -27,7 +27,7 @@ public class Cart extends BaseEntity {
     private Long cartId;
 
     @Column(name = "count", nullable = false)
-    private int count;
+    private int count; //장바구니에 담긴 상품 수량 예)노트북 2개 담음
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id", nullable = false)
