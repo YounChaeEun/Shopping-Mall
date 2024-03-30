@@ -19,7 +19,7 @@ public record CreateCartRequest(
 
         @NotNull
         @Schema(description = "상품 수량", example = "1")
-        int count,
+        int itemCount,
 
         @NotNull
         @Schema(description = "상품 가격", example = "38000")

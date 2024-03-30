@@ -11,22 +11,22 @@ public record CartResponse(
         @Schema(description = "장바구니 id", example = "1")
         Long cartId,
 
-        @Schema(description = "장바구니 수량", example = "1")
-        int cartCount,
-
-        @Schema(description = "상품 id", example = "1")
+        @Schema(description = "장바구니의 상품 id", example = "1")
         Long itemId,
 
-        @Schema(description = "상품명", example = "니트")
+        @Schema(description = "장바구니의 상품명", example = "니트")
         String itemName,
 
-        @Schema(description = "상품 가격", example = "38000")
+        @Schema(description = "장바구니의 상품 가격", example = "38000")
         int itemPrice,
 
-        @Schema(description = "상품 판매 상태", example = "판매중")
+        @Schema(description = "장바구니에 담긴 상품 수량", example = "1")
+        int itemCount,
+
+        @Schema(description = "장바구니의 상품 판매 상태", example = "판매중")
         ItemState itemState,
 
-        @Schema(description = "상품 옵션", example = "{색상: WHITE}")
+        @Schema(description = "장바구니의 상품 옵션", example = "{색상: WHITE}")
         List<Option> optionValue
 ) {
     public record Option (
