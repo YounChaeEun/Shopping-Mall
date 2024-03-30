@@ -1,10 +1,7 @@
 package com.example.shoppingmall_comp.domain.items.service.implement;
 
 import com.example.shoppingmall_comp.domain.items.dto.*;
-import com.example.shoppingmall_comp.domain.items.entity.Category;
-import com.example.shoppingmall_comp.domain.items.entity.Item;
-import com.example.shoppingmall_comp.domain.items.entity.ItemImage;
-import com.example.shoppingmall_comp.domain.items.entity.ItemOption;
+import com.example.shoppingmall_comp.domain.items.entity.*;
 import com.example.shoppingmall_comp.domain.items.repository.CategoryRepository;
 import com.example.shoppingmall_comp.domain.items.repository.ItemImageRepository;
 import com.example.shoppingmall_comp.domain.items.repository.ItemOptionRepository;
@@ -74,6 +71,7 @@ public class ItemServiceImpl implements ItemService {
                 .count(itemRequest.count())
                 .member(member)
                 .itemOption(itemOption)
+                .itemState(ItemState.ON_SALE) // 따로 추가함
                 .build();
 
         Item savedItem = itemRepository.save(item);
