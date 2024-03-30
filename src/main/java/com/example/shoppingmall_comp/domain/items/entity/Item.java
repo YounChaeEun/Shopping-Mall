@@ -45,7 +45,7 @@ public class Item extends BaseEntity {
     private ItemOption itemOption;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
+    @JoinColumn(name = "member_id")
     private Member member;
 
     @Builder

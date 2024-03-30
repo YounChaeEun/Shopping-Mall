@@ -27,9 +27,9 @@ public class ItemSellerController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/items")
     @Operation(summary = "상품 등록 api", description = "상품을 등록하는 api 입니다.")
-    public CreateItemResponse addItem(@Valid @RequestPart ItemRequest itemRequest,
-                                @RequestPart List<MultipartFile> multipartFiles,
-                                @AuthenticationPrincipal User user) {
+    public CreateItemResponse addItem(@Valid @RequestPart(value = "itemRequest", required = false) ItemRequest itemRequest,
+                                      @RequestPart(value = "file", required = false) List<MultipartFile> multipartFiles,
+                                      @AuthenticationPrincipal User user) {
         return itemService.create(itemRequest, multipartFiles, user);
     }
 
@@ -38,10 +38,10 @@ public class ItemSellerController {
     @PatchMapping("/items/{itemId}")
     @Operation(summary = "상품 수정 api", description = "상품을 수정하는 api 입니다.")
     public UpdateItemResponse updateItem(@PathVariable Long itemId,
-                                         @Valid @RequestPart UpdateItemRequest itemRequest,
-                                         @RequestPart List<MultipartFile> multipartFiles,
+                                         @Valid @RequestPart(value = "itemRequest", required = false) UpdateItemRequest itemRequest,
+                                         @RequestPart(value = "file", required = false)  List<MultipartFile> multipartFiles,
                                          @AuthenticationPrincipal User user) {
-         return itemService.update(itemId, itemRequest, multipartFiles, user);
+        return itemService.update(itemId, itemRequest, multipartFiles, user);
     }
 
     //상품 삭제
