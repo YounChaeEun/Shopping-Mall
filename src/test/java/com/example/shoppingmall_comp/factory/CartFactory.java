@@ -11,22 +11,22 @@ import java.util.List;
 
 public class CartFactory {
 
-    public static CreateCartRequest createMockCreateCartRequest() {
+    public static CreateCartRequest createCartRequest() {
         CreateCartRequest.Option option = new CreateCartRequest.Option("색상", "WHITE");
         return new CreateCartRequest(1L, "노트북", 100, 897000, Arrays.asList(option));
     }
 
-    public static UpdateCartRequest createMockUpdateRequest() {
+    public static UpdateCartRequest createUpdateRequest() {
         return new UpdateCartRequest(1L, 200);
     }
 
-    public static CartResponse createMockCartResponse() {
+    public static CartResponse createCartResponse() {
         CartResponse.Option option = new CartResponse.Option("색상", "WHITE");
-        return new CartResponse(1L, 2, 1L, "노트북", 897000, ItemState.ON_SALE, Arrays.asList(option));
+        return new CartResponse(1L, 1L, "노트북", 897000, 1, ItemState.ON_SALE, Arrays.asList(option));
     }
 
-    public static CartPageResponse createMockCartPageResponse() {
-        List<CartResponse> cartItems = Arrays.asList(createMockCartResponse());
+    public static CartPageResponse createCartPageResponse() {
+        List<CartResponse> cartItems = Arrays.asList(createCartResponse());
         return new CartPageResponse(10, 50, 1, 5, cartItems);
     }
 
