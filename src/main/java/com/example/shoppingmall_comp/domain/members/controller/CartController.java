@@ -47,7 +47,7 @@ public class CartController {
     @GetMapping("/carts")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "장바구니 전체 조회 api", description = "장바구니를 전체 조회하는 api 입니다.")
-    public CartPageResponse getCart(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+    public CartPageResponse getCart(@PageableDefault(sort = "cartId", direction = Sort.Direction.DESC) Pageable pageable,
                                     @AuthenticationPrincipal User user) {
         return cartService.getAll(pageable, user);
     }
