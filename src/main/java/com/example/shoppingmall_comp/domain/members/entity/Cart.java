@@ -41,7 +41,7 @@ public class Cart extends BaseEntity {
     @Column(name = "sold_out_state")
     private ItemState itemState;
 
-    @Column(name = "option_values", columnDefinition = "longtext")
+    @Column(name = "option_values", columnDefinition = "longtext", nullable = false)
     @Type(type = "json")
     private List<Option> optionValues;
 
