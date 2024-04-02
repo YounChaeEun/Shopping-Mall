@@ -4,6 +4,7 @@ import com.example.shoppingmall_comp.domain.items.dto.CategoryRequest;
 import com.example.shoppingmall_comp.domain.items.dto.CategoryResponse;
 import com.example.shoppingmall_comp.domain.items.entity.Category;
 import com.example.shoppingmall_comp.domain.items.repository.CategoryRepository;
+import com.example.shoppingmall_comp.domain.items.repository.ItemRepository;
 import com.example.shoppingmall_comp.domain.items.service.CategoryService;
 import com.example.shoppingmall_comp.global.exception.BusinessException;
 import com.example.shoppingmall_comp.global.exception.ErrorCode;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,30 +22,42 @@ import java.util.stream.Collectors;
 public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
+    private final ItemRepository itemRepository;
 
     @Override
     public List<CategoryResponse> getAll() {
         List<Category> categories = categoryRepository.findAll();
         return categories.stream()
-                .map(category -> {return new CategoryResponse(category.getCategoryId(), category.getCategoryName());})
+                .map(category -> {
+                    return new CategoryResponse(category.getCategoryId(), category.getCategoryName());
+                })
                 .collect(Collectors.toList());
     }
 
     @Override
     @Transactional
     public CategoryResponse create(CategoryRequest request) {
-        Category category = Category.builder()
+        Optional<Category> foundCategory = categoryRepository.findByCategoryName(request.categoryName());
+        if (foundCategory.isPresent()) {
+            throw new BusinessException(ErrorCode.CATEGORY_EXIST_GOODS);
+        }
+
+        Category savedCategory = categoryRepository.save(Category.builder()
                 .categoryName(request.categoryName())
-                .build();
-        Category savedCategory = categoryRepository.save(category);
+                .build());
         return new CategoryResponse(savedCategory.getCategoryId(), savedCategory.getCategoryName());
     }
 
     @Override
     @Transactional
     public void delete(Long categoryId) {
-        categoryRepository.findById(categoryId)
+        Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_CATEGORY));
+
+        if (itemRepository.findFirstByCategory(category).isPresent()) {
+            throw new BusinessException(ErrorCode.CATEGORY_EXIST_GOODS);
+        }
+
         categoryRepository.deleteById(categoryId);
     }
 
