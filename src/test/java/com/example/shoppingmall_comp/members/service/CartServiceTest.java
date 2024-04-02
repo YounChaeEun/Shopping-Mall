@@ -98,42 +98,38 @@ public class CartServiceTest {
         cartService.update(createdCart.getCartId(), updateRequest, user);
 
         //then
-        //장바구니 id 다시 가져와서 수정 내용 확인
         Cart updatedCart = cartRepository.findById(createdCart.getCartId()).orElseThrow();
-        Assertions.assertEquals(updateRequest.count(), updatedCart.getCount());
-        Assertions.assertEquals(item, updatedCart.getItem());
+        assertThat(updatedCart.getCount()).isEqualTo(updateRequest.count());
     }
 
     @Test
     @DisplayName("장바구니 전체 조회")
     void getAllCart() {
         //given
-        // 장바구니에 상품 추가
-        Cart createdCart = createCart(100, item, member, ItemState.ON_SALE, List.of(new Cart.Option("색상", "WHITE")));
+        Cart cart = createCart(100, item, member, ItemState.ON_SALE, List.of(new Cart.Option("색상", "WHITE")));
 
         //when
         CartPageResponse cartPageResponse = cartService.getAll(PageRequest.of(0,10), user);
 
         //then
         //페이징 테스트
-        Assertions.assertNotNull(cartPageResponse);
-        Assertions.assertEquals(1,cartPageResponse.totalPage());
-        Assertions.assertEquals(1, cartPageResponse.totalCount());
-        Assertions.assertEquals(0, cartPageResponse.pageNumber());
-        Assertions.assertEquals(10, cartPageResponse.currentPageSize());
+        assertThat(cartPageResponse).isNotNull();
+        assertThat(cartPageResponse.totalPage()).isEqualTo(1);
+        assertThat(cartPageResponse.totalCount()).isEqualTo(1);
+        assertThat(cartPageResponse.pageNumber()).isEqualTo(0);
+        assertThat(cartPageResponse.currentPageSize()).isEqualTo(10);
 
         //장바구니 추가된 상품들 개수 확인
-        List<CartResponse> cartItems = cartPageResponse.cartItems();
-        Assertions.assertEquals(1, cartItems.size());
+        assertThat(cartPageResponse.cartItems()).hasSize(1);
 
         //장바구니의 상품 정보 확인
-        CartResponse cartItem = cartItems.get(0);
-        Assertions.assertEquals(createdCart.getCartId(), cartItem.cartId());
-        Assertions.assertEquals(createdCart.getCount(), cartItem.itemCount());
-        Assertions.assertEquals(item.getItemId(), cartItem.itemId());
-        Assertions.assertEquals(item.getItemName(), cartItem.itemName());
-        Assertions.assertTrue(cartItem.optionValue().stream()
-                .anyMatch(option -> option.key().equals("색상") && option.value().equals("WHITE")));
+        CartResponse cartItem = cartPageResponse.cartItems().get(0);
+        assertThat(cartItem.cartId()).isEqualTo(cart.getCartId());
+        assertThat(cartItem.itemCount()).isEqualTo(cart.getCount());
+        assertThat(cartItem.itemId()).isEqualTo(item.getItemId());
+        assertThat(cartItem.itemName()).isEqualTo(item.getItemName());
+        assertThat(cartItem.optionValue()).anyMatch(option ->
+                option.key().equals("색상") && option.value().equals("WHITE"));
     }
 
     @Test
@@ -153,20 +149,19 @@ public class CartServiceTest {
 
         //then
         //첫번째 장바구니 삭제 확인
-        Assertions.assertFalse(cartRepository.existsById(cart1.getCartId()));
+        assertThat(cartRepository.existsById(cart1.getCartId())).isFalse();
 
         //남은 장바구니들 몇개 있는지
         List<Cart> remainCarts = cartRepository.findAll();
-        Assertions.assertEquals(1, remainCarts.size());
+        assertThat(remainCarts).hasSize(1);
 
         //남은 장바구니 상품 맞는지 조회
         Cart remainCart = remainCarts.get(0);
-        Assertions.assertEquals(cart2.getCartId(), remainCart.getCartId());
-        Assertions.assertEquals(cart2.getCount(), remainCart.getCount());
-        Assertions.assertEquals(cart2.getItem().getItemName(), remainCart.getItem().getItemName());
-        Assertions.assertTrue(remainCart.getOptionValues().stream()
-                .anyMatch(option -> option.key().equals("색상") && option.value().equals("BLACK")));
-
+        assertThat(remainCart.getCartId()).isEqualTo(cart2.getCartId());
+        assertThat(remainCart.getCount()).isEqualTo(cart2.getCount());
+        assertThat(remainCart.getItem().getItemName()).isEqualTo(cart2.getItem().getItemName());
+        assertThat(remainCart.getOptionValues()).anyMatch(option ->
+                option.key().equals("색상") && option.value().equals("BLACK"));
     }
 
     //상품 생성 메소드
