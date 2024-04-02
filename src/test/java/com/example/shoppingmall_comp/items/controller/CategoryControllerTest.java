@@ -105,6 +105,24 @@ public class CategoryControllerTest {
                 .andExpect(status().isNoContent());
     }
 
+    @Test
+    @DisplayName("카테고리 전체 조회 컨트롤러 테스트")
+    public void getAllCategory() throws Exception {
+        //given
+        Category category1 = createCategory("전자제품");
+        Category category2 = createCategory("생활용품");
+
+        //when
+        mockMvc.perform(get("/api/categories")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+
+                .andExpect(jsonPath("$.[0].categoryName").value(category1.getCategoryName()))
+                .andExpect(jsonPath("$.[1].categoryName").value(category2.getCategoryName()))
+                .andExpect(jsonPath("$.length()").value(2));
+
+    }
+
     //카테고리 생성 메소드
     private Category createCategory(String categoryName) {
         return categoryRepository.save(Category.builder()
