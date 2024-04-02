@@ -96,8 +96,10 @@ public class OrderServiceImpl implements OrderService {
                 .cardCompany(orderRequest.cardCompany())
                 .cardNum(orderRequest.cardNum())
                 .order(order)
+                .memberId(member.getMemberId())
                 .payPrice(order.getTotalPrice())
                 .build();
+
         payRepository.save(pay);
 
         //일반 회원 결제하면 적립금 부여
