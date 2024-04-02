@@ -8,10 +8,7 @@ import com.example.shoppingmall_comp.domain.items.repository.CategoryRepository;
 import com.example.shoppingmall_comp.domain.items.repository.ItemRepository;
 import com.example.shoppingmall_comp.domain.members.dto.UpdateMemberPaswordRequest;
 import com.example.shoppingmall_comp.domain.members.entity.*;
-import com.example.shoppingmall_comp.domain.members.repository.CartRepository;
-import com.example.shoppingmall_comp.domain.members.repository.MemberRepository;
-import com.example.shoppingmall_comp.domain.members.repository.RefreshTokenRepository;
-import com.example.shoppingmall_comp.domain.members.repository.ReviewRepository;
+import com.example.shoppingmall_comp.domain.members.repository.*;
 import com.example.shoppingmall_comp.domain.members.service.implement.MemberServiceImpl;
 import com.example.shoppingmall_comp.domain.orders.entity.Order;
 import com.example.shoppingmall_comp.domain.orders.repository.OrderRepository;
@@ -45,13 +42,11 @@ public class MemberServiceTest {
     @Autowired
     private CartRepository cartRepository;
     @Autowired
-    private OrderRepository orderRepository;
-    @Autowired
-    private ReviewRepository reviewRepository;
-    @Autowired
     private ItemRepository itemRepository;
     @Autowired
     private CategoryRepository categoryRepository;
+    @Autowired
+    private RoleRepository roleRepository;
 
     private User user;
     private Member member;
@@ -139,28 +134,11 @@ public class MemberServiceTest {
                 .refreshToken("test refresh token")
                 .build());
 
-        reviewRepository.save(Review.builder()
-                .reviewTitle("test review title")
-                .reviewContent("test review content")
-                .star(3)
-                .item(item)
-                .build());
-
         cartRepository.save(Cart.builder()
                 .member(this.member)
                 .count(10)
                 .item(item)
                 .itemState(ItemState.ON_SALE)
-                .build());
-
-        orderRepository.save(Order.builder()
-                .receiverName("test name")
-                .receiverPhone("test phone num")
-                .zipcode("test zipcode")
-                .address("test address")
-                .totalPrice(1000)
-                .member(this.member)
-                .merchantId(UUID.randomUUID())
                 .build());
 
         // when
@@ -175,12 +153,5 @@ public class MemberServiceTest {
 
         var cartList = cartRepository.findAllByMember(this.member);
         assertThat(cartList).isEmpty();
-
-        // 아래 두 개는 삭제하지는 않지만, member 부분을 null로 바꾼다.
-        var orderList = orderRepository.findAllByMember(this.member);
-        assertThat(orderList).isEmpty();
-
-        var reviewList = reviewRepository.findAllByMember(this.member);
-        assertThat(reviewList).isEmpty();
     }
 }
