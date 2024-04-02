@@ -93,6 +93,18 @@ public class CategoryControllerTest {
                 .andExpect(status().isNoContent());
     }
 
+    @Test
+    @DisplayName("카테고리 삭제 컨트롤러 테스트")
+    public void deleteCategory() throws Exception {
+        //given
+        Category category = createCategory("전자제품");
+
+        //when
+        mockMvc.perform(delete("/api/admin/categories/{categoryId}", category.getCategoryId())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+    }
+
     //카테고리 생성 메소드
     private Category createCategory(String categoryName) {
         return categoryRepository.save(Category.builder()
