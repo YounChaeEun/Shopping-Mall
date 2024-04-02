@@ -4,13 +4,8 @@ import com.example.shoppingmall_comp.domain.items.repository.ItemRepository;
 import com.example.shoppingmall_comp.domain.members.dto.MemberResponse;
 import com.example.shoppingmall_comp.domain.members.dto.UpdateMemberPaswordRequest;
 import com.example.shoppingmall_comp.domain.members.entity.Member;
-import com.example.shoppingmall_comp.domain.members.entity.Review;
-import com.example.shoppingmall_comp.domain.members.repository.CartRepository;
-import com.example.shoppingmall_comp.domain.members.repository.MemberRepository;
-import com.example.shoppingmall_comp.domain.members.repository.RefreshTokenRepository;
-import com.example.shoppingmall_comp.domain.members.repository.ReviewRepository;
+import com.example.shoppingmall_comp.domain.members.repository.*;
 import com.example.shoppingmall_comp.domain.members.service.MemberService;
-import com.example.shoppingmall_comp.domain.orders.entity.Order;
 import com.example.shoppingmall_comp.domain.orders.repository.OrderRepository;
 import com.example.shoppingmall_comp.global.exception.BusinessException;
 import com.example.shoppingmall_comp.global.exception.ErrorCode;
@@ -35,6 +30,7 @@ public class MemberServiceImpl implements MemberService {
     private final OrderRepository orderRepository;
     private final CartRepository cartRepository;
     private final ItemRepository itemRepository;
+    private final RoleRepository roleRepository;
 
     @Override
     public MemberResponse getOne(User user) {
@@ -67,27 +63,20 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberRepository.findByEmail(user.getUsername())
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_MEMBER));
 
-        // 리뷰의 member를 null로 바꾼다. (member를 삭제할 것이기때문에 삭제할 member를 참조하고 있는 리뷰가 있으면 에러가 남)
-        reviewRepository.findAllByMember(member)
-                .forEach(Review::changeMemberToNull);
-
-        // 나중에 orderItem의 memberId 수정하기
-        // 주문의 member를 null로 바꾼다. (member를 삭제할 것이기때문에 삭제할 member를 참조하고 있는 주문이 있으면 에러가 남)
-        orderRepository.findAllByMember(member)
-                .forEach(Order::changeMemberToNull);
-
         // 구매자의 장바구니를 삭제한다.
         cartRepository.findAllByMember(member)
                 .forEach(cart -> cartRepository.deleteById(cart.getCartId()));
 
         // 구매자의 refresh token을 삭제한다. (refresh token도 casecade option으로 수정할 것!)
         refreshTokenRepository.findByMember(member)
-                        .ifPresentOrElse(
-                                refreshToken -> refreshTokenRepository.deleteById(refreshToken.getId()),
-                                () -> { throw new BusinessException(ErrorCode.NOT_FOUND_REFRESH_TOKEN); }
-                        );
+                .ifPresentOrElse(
+                        refreshToken -> refreshTokenRepository.deleteById(refreshToken.getId()),
+                        () -> { throw new BusinessException(ErrorCode.NOT_FOUND_REFRESH_TOKEN); });
 
-        // 구매자를 삭제한다. (role은 casecade option으로 같이 삭제된다.)
+        roleRepository.findById(member.getRole().getRoleId())
+                .ifPresentOrElse(role -> roleRepository.deleteById(role.getRoleId()),
+                        () -> { throw new BusinessException(ErrorCode.NOT_FOUND_ROLE);});
+
         memberRepository.deleteById(member.getMemberId());
     }
 
@@ -113,7 +102,7 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberRepository.findByEmail(user.getUsername())
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_MEMBER));
 
-        if(passwordEncoder.matches(request.oldPassword(), member.getPassword())) {
+        if (passwordEncoder.matches(request.oldPassword(), member.getPassword())) {
             member.updatePassword(passwordEncoder.encode(request.newPassword()));
         } else {
             throw new BusinessException(ErrorCode.NOT_EQUAL_PASSWORD);

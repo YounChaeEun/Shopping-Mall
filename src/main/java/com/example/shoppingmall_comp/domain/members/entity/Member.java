@@ -5,6 +5,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,6 +18,8 @@ import java.util.List;
 @Entity
 @Table(name = "member")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SQLDelete(sql = "UPDATE member SET deleted_state = 'DELETED' WHERE member_id = ?")
+@Where(clause = "deleted_state = 'NOT_DELETED'")
 public class Member extends BaseEntity implements UserDetails {
     // UserDetails는 사용자의 인증 정보를 담아두는 인터페이스로, UserDetails를 상속받아 Member를 인증 객체로 사용한다.
 
@@ -44,7 +48,7 @@ public class Member extends BaseEntity implements UserDetails {
     @Column(name = "deleted_state", nullable = false)
     private DeletedState deletedState;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "role_id")
     private Role role;
 

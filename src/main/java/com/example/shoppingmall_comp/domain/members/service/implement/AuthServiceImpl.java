@@ -39,12 +39,10 @@ public class AuthServiceImpl implements AuthService {
     public void saveMember(MemberSignUpRequest request) {
         checkIfIsDuplicated(request.email());
 
-        Role role = roleRepository.save(Role.builder().roleName(request.roleName()).build());
-
         Member member = Member.builder()
                 .email(request.email())
                 .password(bCryptPasswordEncoder.encode(request.password()))
-                .role(role)
+                .role(Role.builder().roleName(request.roleName()).build())
                 .build();
 
         memberRepository.save(member);
@@ -63,6 +61,7 @@ public class AuthServiceImpl implements AuthService {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(request.email(), request.password()); //// 1. username + password 를 기반으로 Authentication 객체 생성. 이때 authentication 은 인증 여부를 확인하는 authenticated 값이 false
         Authentication authentication;
 
+        // 탈퇴한 회원이면 어떻게 할것인지 로직 추가..
         try {
             authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken); //2. 실제 검증. authenticate() 메서드를 통해 요청된 Member 에 대한 검증 진행// authenticate 메서드가 실행될 때 CustomUserDetailsService 에서 만든 loadUserByUsername 메서드 실행
         } catch (AuthenticationException e) {
@@ -78,8 +77,7 @@ public class AuthServiceImpl implements AuthService {
         refreshTokenRepository.findByMember(member)
                 .ifPresentOrElse(
                         token -> token.updateRefreshToken(refreshToken),
-                        () -> refreshTokenRepository.save(RefreshToken.builder().refreshToken(refreshToken).member(member).build())
-                );
+                        () -> refreshTokenRepository.save(RefreshToken.builder().refreshToken(refreshToken).member(member).build()));
 
         return new MemberSignInResponse(accessToken, refreshToken);
     }
