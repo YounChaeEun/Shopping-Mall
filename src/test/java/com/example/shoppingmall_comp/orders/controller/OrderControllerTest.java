@@ -123,11 +123,8 @@ public class OrderControllerTest {
     @DisplayName("주문 생성 컨트롤러 테스트")
     public void createOrder() throws Exception {
         //given
-        List<OrderItem.Option> options = new ArrayList<>();
-        options.add(new OrderItem.Option("색상", "WHITE"));
-
-        List<OrderRequest.OrderedItem> orderedItems = new ArrayList<>();
-        orderedItems.add(new OrderRequest.OrderedItem(item.getItemId(), "상품명", 1, 897000, options));
+        List<OrderItem.Option> options = List.of(new OrderItem.Option("색상", "WHITE"));
+        List<OrderRequest.OrderedItem> orderedItems = List.of(new OrderRequest.OrderedItem(item.getItemId(), "상품명", 1, 897000, options));
         OrderRequest orderRequest = new OrderRequest("이름", "01012345678", "12345", "주소", "요청메시지", 897000, "카드사", "카드번호", orderedItems);
 
         //when
