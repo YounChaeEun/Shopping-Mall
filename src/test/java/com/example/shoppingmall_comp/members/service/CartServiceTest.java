@@ -9,6 +9,7 @@ import com.example.shoppingmall_comp.domain.items.repository.ItemOptionRepositor
 import com.example.shoppingmall_comp.domain.items.repository.ItemRepository;
 import com.example.shoppingmall_comp.domain.members.dto.CartPageResponse;
 import com.example.shoppingmall_comp.domain.members.dto.CartResponse;
+import com.example.shoppingmall_comp.domain.members.dto.CreateCartRequest;
 import com.example.shoppingmall_comp.domain.members.dto.UpdateCartRequest;
 import com.example.shoppingmall_comp.domain.members.entity.*;
 import com.example.shoppingmall_comp.domain.members.repository.CartRepository;
@@ -25,6 +26,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @Transactional
@@ -70,17 +72,20 @@ public class CartServiceTest {
     @Test
     @DisplayName("장바구니 생성 성공 테스트")
     void addCart() {
+        //given
+        CreateCartRequest cartRequest = new CreateCartRequest(item.getItemId(),item.getItemName(), 10, 897000, List.of(new CreateCartRequest.Option("색상", "WHITE")));
+
         //when
-        Cart createdCart = createCart(100, item, member, ItemState.ON_SALE, List.of(new Cart.Option("색상", "WHITE")));
+        CartResponse cart = cartService.create(cartRequest, user);
 
         //then
-        Assertions.assertNotNull(createdCart);
-        Assertions.assertEquals(createdCart.getCount(), 100);
-        Assertions.assertEquals(createdCart.getItem().getItemId(), item.getItemId());
-        Assertions.assertEquals(createdCart.getItem().getItemName(), item.getItemName());
-        Assertions.assertTrue(createdCart.getOptionValues().stream()
+        assertThat(cart).isNotNull();
+        assertThat(cart.itemCount()).isEqualTo(cartRequest.cartItemCount());
+        assertThat(cart.itemId()).isEqualTo(cartRequest.itemId());
+        assertThat(cart.itemName()).isEqualTo(cartRequest.itemName());
+        assertThat(cart.optionValue().stream()
                 .anyMatch(option -> option.key().equals("색상") && option.value().equals("WHITE")));
-    }
+        }
 
     @Test
     @DisplayName("장바구니 수정 성공 테스트")
