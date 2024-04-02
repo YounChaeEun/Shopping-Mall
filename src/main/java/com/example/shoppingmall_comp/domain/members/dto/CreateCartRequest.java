@@ -9,6 +9,7 @@ import java.util.List;
 @Schema(description = "장바구니 생성 요청 DTO")
 public record CreateCartRequest(
 
+        //todo: itemName, itemPrice 삭제
         @NotNull
         @Schema(description = "상품 id", example = "1")
         Long itemId,
@@ -19,7 +20,7 @@ public record CreateCartRequest(
 
         @NotNull
         @Schema(description = "상품 수량", example = "1")
-        int itemCount,
+        int cartItemCount,
 
         @NotNull
         @Schema(description = "상품 가격", example = "38000")

@@ -64,7 +64,7 @@ public class CartServiceTest {
         itemOption = itemOptionRepository.save(ItemOption.builder().optionValues(options).build());
 
         //상품 생성
-        this.item = createItem("노트북", 897000, "상품 상세설명 test", 1000, category, member,itemOption, ItemState.ON_SALE);
+        this.item = createItem("노트북", 897000, "상품 상세설명 test", 1000, category, member, itemOption, ItemState.ON_SALE);
     }
 
     @Test
