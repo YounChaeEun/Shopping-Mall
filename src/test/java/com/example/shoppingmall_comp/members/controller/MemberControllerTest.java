@@ -145,14 +145,6 @@ public class MemberControllerTest {
                 .member(seller)
                 .build());
 
-        reviewRepository.save(Review.builder()
-                .reviewTitle("test review title")
-                .reviewContent("test review content")
-                .star(3)
-                .item(item)
-                .member(member)
-                .build());
-
         cartRepository.save(Cart.builder()
                 .member(member)
                 .count(10)
@@ -163,16 +155,6 @@ public class MemberControllerTest {
         refreshTokenRepository.save(RefreshToken.builder()
                 .member(member)
                 .refreshToken("test refresh token")
-                .build());
-
-        orderRepository.save(Order.builder()
-                .receiverName("test name")
-                .receiverPhone("test phone num")
-                .zipcode("test zipcode")
-                .address("test address")
-                .totalPrice(1000)
-                .member(member)
-                .merchantId(UUID.randomUUID())
                 .build());
 
         var url = "/api/members";
