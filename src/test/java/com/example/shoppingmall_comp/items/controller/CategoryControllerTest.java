@@ -42,7 +42,7 @@ public class CategoryControllerTest {
     private MemberRepository memberRepository;
     @Autowired
     private CategoryRepository categoryRepository;
-    @MockBean
+    @Autowired
     CategoryServiceImpl categoryService;
 
     private Member member;
@@ -73,8 +73,24 @@ public class CategoryControllerTest {
         mockMvc.perform(post("/api/admin/categories")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(categoryRequest)))
-                .andExpect(status().isCreated());
-//                .andExpect(jsonPath("$.categoryName").value(categoryRequest.categoryName()));
+                .andExpect(status().isCreated())
+
+                //then
+                .andExpect(jsonPath("$.categoryName").value(categoryRequest.categoryName()));
+    }
+
+    @Test
+    @DisplayName("카테고리 수정 컨트롤러 테스트")
+    public void updateCategory() throws Exception {
+        //given
+        Category category = createCategory("전자제품");
+        CategoryRequest categoryRequest = new CategoryRequest("생활용품");
+
+        //when
+        mockMvc.perform(patch("/api/admin/categories/{categoryId}", category.getCategoryId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(categoryRequest)))
+                .andExpect(status().isNoContent());
     }
 
     //카테고리 생성 메소드
