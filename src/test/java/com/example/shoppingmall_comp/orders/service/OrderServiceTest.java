@@ -12,6 +12,7 @@ import com.example.shoppingmall_comp.domain.members.entity.Role;
 import com.example.shoppingmall_comp.domain.members.entity.RoleName;
 import com.example.shoppingmall_comp.domain.members.repository.MemberRepository;
 import com.example.shoppingmall_comp.domain.orders.dto.OrderPageResponse;
+import com.example.shoppingmall_comp.domain.orders.dto.OrderRequest;
 import com.example.shoppingmall_comp.domain.orders.dto.OrderResponse;
 import com.example.shoppingmall_comp.domain.orders.dto.PayCancelRequest;
 import com.example.shoppingmall_comp.domain.orders.entity.*;
@@ -79,17 +80,21 @@ public class OrderServiceTest {
     @Test
     @DisplayName("주문 생성 성공 테스트")
     void addOrder() {
+        //given
+        List<OrderItem.Option> options = List.of(new OrderItem.Option("색상", "WHITE"));
+        List<OrderRequest.OrderedItem> orderedItems = List.of(new OrderRequest.OrderedItem(item.getItemId(), "상품명", 1, 897000, options));
+        OrderRequest orderRequest = new OrderRequest("이름", "01012345678", "12345", "주소", "요청메시지", 897000, "카드사", "카드번호", orderedItems);
+
         //when
-        Order createdOrder = createOrder(member, "이다예", "01012345678", "Street 66", "상세주소", "요청메세지", OrderState.COMPLETE, 1000000, merchantId);
+        OrderResponse order = orderService.create(orderRequest, user);
 
         //then
-        assertThat(createdOrder.getReceiverName()).isEqualTo("이다예");
-        assertThat(createdOrder.getReceiverPhone()).isEqualTo("01012345678");
-        assertThat(createdOrder.getZipcode()).isEqualTo("Street 66");
-        assertThat(createdOrder.getAddress()).isEqualTo("상세주소");
-        assertThat(createdOrder.getRequestMessage()).isEqualTo("요청메세지");
-        assertThat(createdOrder.getMerchantId()).isEqualTo(merchantId);
-        assertThat(createdOrder.getTotalPrice()).isEqualTo(1000000);
+        assertThat(order.name()).isEqualTo(orderRequest.name());
+        assertThat(order.phone()).isEqualTo(orderRequest.phone());
+        assertThat(order.zipcode()).isEqualTo(orderRequest.zipcode());
+        assertThat(order.address()).isEqualTo(orderRequest.address());
+        assertThat(order.requestMessage()).isEqualTo(orderRequest.requestMessage());
+        assertThat(order.totalPrice()).isEqualTo(orderRequest.totalPrice());
     }
 
     @Test
