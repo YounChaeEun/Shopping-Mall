@@ -102,7 +102,7 @@ class ReviewServiceTest {
     @Test
     void create() {
         // given
-        var order = saveSuccessOrder();
+        var order = saveSuccessOrder("test receiver name", "test receiver phone", "test zipcode", "test address", 1000);
         var orderItem = saveSuccessOrderItem(order);
         var request = new ReviewRequest("test review title", "test review content", 3, orderItem.getOrderItemId());
 
@@ -119,9 +119,9 @@ class ReviewServiceTest {
     @Test
     void update() {
         // given
-        var order = saveSuccessOrder();
+        var order = saveSuccessOrder("test receiver name", "test receiver phone", "test zipcode", "test address", 1000);
         var orderItem = saveSuccessOrderItem(order);
-        var savedReview = saveSuccessReview();
+        var savedReview = saveSuccessReview("test review title", "test review content", 5);
         var newRequest = new ReviewRequest("test review new title", "test review new content", 5, orderItem.getOrderItemId());
 
         // when
@@ -138,7 +138,7 @@ class ReviewServiceTest {
     @Test
     void delete() {
         // given
-        var savedReview = saveSuccessReview();
+        var savedReview = saveSuccessReview("test review title", "test review content", 5);
 
         // when
         reviewService.delete(savedReview.getReviewId(), user);
@@ -155,7 +155,7 @@ class ReviewServiceTest {
     @Test
     void getAllByItem() {
         // given
-        var savedReview = saveSuccessReview();
+        var savedReview = saveSuccessReview("test review title", "test review content", 5);
         var pageable = PageRequest.of(0, 15, Sort.Direction.DESC, "reviewId");
 
         // when
@@ -179,7 +179,7 @@ class ReviewServiceTest {
     @Test
     void getAllByMember() {
         // given
-        var savedReview = saveSuccessReview();
+        var savedReview = saveSuccessReview("test review title", "test review content", 5);
         var pageable = PageRequest.of(0, 15, Sort.Direction.DESC, "reviewId");
 
         // when
@@ -200,23 +200,23 @@ class ReviewServiceTest {
 
     }
 
-    private Review saveSuccessReview() {
+    private Review saveSuccessReview(String title, String content, int star) {
         return reviewRepository.save(Review.builder()
-                .reviewTitle("test review title")
-                .reviewContent("test review content")
-                .star(3)
+                .reviewTitle(title)
+                .reviewContent(content)
+                .star(star)
                 .member(member)
                 .item(item)
                 .build());
     }
 
-    private Order saveSuccessOrder() {
+    private Order saveSuccessOrder(String receiverName, String receiverPhone, String zipcode, String address, int totalPrice) {
         return orderRepository.save(Order.builder()
-                .receiverName("test receiver name")
-                .receiverPhone("test receiver phone")
-                .zipcode("test zipcode")
-                .address("test address")
-                .totalPrice(10000)
+                .receiverName(receiverName)
+                .receiverPhone(receiverPhone)
+                .zipcode(zipcode)
+                .address(address)
+                .totalPrice(totalPrice)
                 .member(this.member)
                 .merchantId(UUID.randomUUID())
                 .build());
