@@ -155,8 +155,16 @@ public class CartControllerTest {
     @DisplayName("선택한 장바구니 다중 삭제 컨트롤러 테스트")
     public void selectedDeleteCarts() throws Exception {
         //given
-        List<Long> cartIds = Arrays.asList(1L, 2L, 3L);
+        var cartOption = createItemOption();
+        Item item2 = createItem("상품명2", 10000, "상세설명", 100, category, member);
+        Item item3 = createItem("상품명3", 10000, "상세설명", 100, category, member);
 
+        Cart cart1 = createCart(3, item, member, ItemState.ON_SALE, cartOption);
+        Cart cart2 = createCart(3, item2, member, ItemState.ON_SALE, cartOption);
+        Cart cart3 = createCart(3, item3, member, ItemState.ON_SALE, cartOption);
+        List<Long> cartIds = Arrays.asList(cart1.getCartId(), cart2.getCartId(), cart3.getCartId());
+
+        //when
         mockMvc.perform(delete("/api/carts")
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("cartIds", cartIds.stream().map(String::valueOf).collect(Collectors.joining(","))))
