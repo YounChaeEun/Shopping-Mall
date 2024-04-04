@@ -3,6 +3,9 @@ Spring Boot로 만든 쇼핑몰 프로젝트입니다. <br>
 어느 곳에서든 사용하며 접할 수 있는 인터넷 쇼핑몰들을 모티브하여 설계하였습니다.<br>
 사용자, 판매자, 관리자의 권한이 있는 쇼핑몰 API입니다.
 
+# 패키지 구조
+![KakaoTalk_20240403_161030699](https://github.com/LeeDaye7888/ShoppingMall/assets/102869025/b89fdfe7-426f-4abf-93b6-8584639487cd)
+
 # 기술 스택
 - Language: Java
 - JDK: 17
