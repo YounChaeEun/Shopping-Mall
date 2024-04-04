@@ -31,11 +31,11 @@ public record ItemRequest(
         @Schema(description = "상품 수량", example = "1000")
         int count,
 
-        @Nullable
-        @Schema(description = "상품 옵션", example = "{색상: WHITE}")
+        @NotNull
+        @Schema(description = "상품 옵션", example = "{key: 색상, value: WHITE}")
         List<Option> optionValue,
 
-        @Nullable
+        @NotBlank
         @Schema(description = "상품 상세 설명", example = "가볍고 화질이 선명해요.")
         String description
 
