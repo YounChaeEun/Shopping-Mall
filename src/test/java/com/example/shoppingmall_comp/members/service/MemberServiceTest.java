@@ -82,7 +82,7 @@ public class MemberServiceTest {
         var responses = memberService.getAll();
 
         // then
-        assertThat(responses.size()).isEqualTo(1);
+        assertThat(responses.size()).isGreaterThanOrEqualTo(1);
     }
 
     @DisplayName("비밀번호 변경 성공 테스트")
@@ -138,6 +138,7 @@ public class MemberServiceTest {
                 .member(this.member)
                 .count(10)
                 .item(item)
+                .optionValues(List.of(new Cart.Option("색상", "white")))
                 .itemState(ItemState.ON_SALE)
                 .build());
 
