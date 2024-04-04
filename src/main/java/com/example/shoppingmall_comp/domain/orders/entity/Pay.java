@@ -18,7 +18,7 @@ public class Pay extends BaseEntity {
     @Column(name = "pay_id")
     private Long payId;
 
-    @Column(name = "member_id")
+    @Column(name = "member_id", nullable = false)
     private Long memberId;
 
     @Column(name = "company", nullable = false)
@@ -39,14 +39,13 @@ public class Pay extends BaseEntity {
     private Order order;
 
     @Builder
-    public Pay(String cardCompany, String cardNum, int payPrice, Order order) {
-        this.memberId = order.getMember().getMemberId();
+    public Pay(Long memberId, String cardCompany, String cardNum, int payPrice, Order order) {
+        this.memberId = memberId;
         this.cardCompany = cardCompany;
         this.cardNum = cardNum;
         this.payPrice = payPrice;
-        this.order = order;
-        this.payState = PayState.COMPLETE;
-        //파라미터 안에 들어갈 것과 this.~에 들어갈 내용이 같아야 하나? -> 달라도 된다함
+        this.order = order; //order에 memberId 있기 때문에 memberId 추가할 필요 없음
+        this.payState = PayState.COMPLETE; //파라미터로 안 들어와도 되는지
     }
 
     //결제 상태 변경

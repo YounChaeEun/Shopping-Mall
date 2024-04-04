@@ -96,8 +96,10 @@ public class OrderServiceImpl implements OrderService {
                 .cardCompany(orderRequest.cardCompany())
                 .cardNum(orderRequest.cardNum())
                 .order(order)
+                .memberId(member.getMemberId())
                 .payPrice(order.getTotalPrice())
                 .build();
+
         payRepository.save(pay);
 
         //일반 회원 결제하면 적립금 부여
@@ -114,7 +116,7 @@ public class OrderServiceImpl implements OrderService {
     public void payCancel(PayCancelRequest payCancelRequest, User user) {
         Member member = getMember(user);
 
-        Order order = orderRepository.findByMerchantId(payCancelRequest.merchantId())
+        Order order = orderRepository.findById(payCancelRequest.orderId())
                 .orElseThrow(() -> new BusinessException(NOT_EQUAL_MERCHANT_ID, "주문 번호가 같지 않습니다."));
 
         Pay pay = payRepository.findByOrder(order)
@@ -135,6 +137,10 @@ public class OrderServiceImpl implements OrderService {
             throw new BusinessException(ALREADY_DELIVERY_STATUS, "현재 배송 중이라 결제 취소가 불가능합니다.");
         }
 
+        //주문 상품 DB에서 삭제
+        List<OrderItem> orderItems = orderItemRepository.findAllByOrder(pay.getOrder());
+        orderItemRepository.deleteAll(orderItems);
+
         PayCancel payCancel = PayCancel.builder()
                 .order(pay.getOrder())
                 .merchantId(payCancelRequest.merchantId())
@@ -144,10 +150,6 @@ public class OrderServiceImpl implements OrderService {
                 .cardNum(pay.getCardNum())
                 .build();
 
-        //주문 상품 DB에서 삭제
-        List<OrderItem> orderItems = orderItemRepository.findAllByOrder(pay.getOrder());
-        orderItemRepository.deleteAll(orderItems);
-
         //결제취소 DB 저장
         payCancelRepository.save(payCancel);
 
@@ -155,6 +157,15 @@ public class OrderServiceImpl implements OrderService {
         pay.PayStateToCancel();
         //주문 DB 상태 변경
         pay.getOrder().orderStateToCancel();
+
+        // 결제 취소 후 상품 재고 복구
+        for (OrderItem orderItem : orderItems) {
+            Item item = orderItem.getItem();
+            int orderedQuantity = orderItem.getOrderItemCount();
+            int newStock = item.getCount() + orderedQuantity;
+            item.updateStock(newStock);
+            itemRepository.save(item);
+        }
 
     }
 
