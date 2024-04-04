@@ -138,6 +138,7 @@ public class MemberServiceTest {
                 .member(this.member)
                 .count(10)
                 .item(item)
+                .optionValues(List.of(new Cart.Option("색상", "white")))
                 .itemState(ItemState.ON_SALE)
                 .build());
 
