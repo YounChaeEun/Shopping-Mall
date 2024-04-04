@@ -1,9 +1,9 @@
-# ShoppingMall
+# 🛒 ShoppingMall
 Spring Boot로 만든 쇼핑몰 프로젝트입니다. <br>
 어느 곳에서든 사용하며 접할 수 있는 인터넷 쇼핑몰들을 모티브하여 설계하였습니다.<br>
 사용자, 판매자, 관리자의 권한이 있는 쇼핑몰 API입니다.
 
-# 기술 스택
+# ⚙ 기술 스택
 - Language: Java
 - JDK: 17
 - Framework: Spring Boot 2.7.16
@@ -14,8 +14,8 @@ Spring Boot로 만든 쇼핑몰 프로젝트입니다. <br>
 - Test: JUnit5, AssertJ
 - Build Tool: Gradle
 
-# 기능 설명
-( ▶ 를 누르면 간략한 기능 리스트가 나옵니다. )
+# 💡 주요 기능
+( ▶ 를 누르면 간략한 기능 설명이 나옵니다. )
 <details>
 <summary>회원</summary>
   
@@ -105,22 +105,22 @@ Spring Boot로 만든 쇼핑몰 프로젝트입니다. <br>
 # 📂 패키지 구조
 ![KakaoTalk_20240403_161030699](https://github.com/LeeDaye7888/ShoppingMall/assets/102869025/b89fdfe7-426f-4abf-93b6-8584639487cd)
 <br><br>
-# REST API 문서
+# 🔗 REST API 문서
 - [ShoppingMall API 문서](https://github.com/LeeDaye7888/ShoppingMall/issues/26)
 
 ![309756971-d03823fb-505e-41af-8399-0ac4ae7fcd10](https://github.com/LeeDaye7888/ShoppingMall/assets/111855256/b8a0a948-9a18-4cfe-983e-d3f5fcf6b7f0)
 <br>
 
-# ERD
+# 🔗 ERD
 ![쇼핑몰_완성본 (1)](https://github.com/LeeDaye7888/ShoppingMall/assets/111855256/42bb69bc-905d-4b30-9aaf-8477ae1da1d7)
 ![image](https://github.com/LeeDaye7888/ShoppingMall/assets/111855256/63eb4040-7b8e-4668-a079-5e041f56ad59)
 <br><br>
  
-# Git 전략 - GitHub Flow
+# 📃 Git 전략 - GitHub Flow
 ![스크린샷 2024-04-04 184441](https://github.com/LeeDaye7888/ShoppingMall/assets/111855256/9f966cee-f07f-4b52-8a1c-a721b364156e)
 <br><br>
 
-# Commit Convention
+# ✏ Commit Convention
 - **[Feat]**: 새로운 기능 구현
 - **[Fix]**: 버그, 오류 해결, 코드 수정
 - **[Add]**: Feat 이외의 부수적인 코드 추가
@@ -135,5 +135,12 @@ Spring Boot로 만든 쇼핑몰 프로젝트입니다. <br>
 - **[Comment]**: 필요한 주석 추가 및 변경
 <br><br>
 
+# 🛠 구조도
+![image](https://github.com/LeeDaye7888/ShoppingMall/assets/102869025/38bdc7fd-ed72-4ac6-80bb-706489c12c3b)
 
-
+# ✍ 느낀점
+1. 많은 에러를 겪으며 시행착오를 통해 더 성장하고 배움을 얻었습니다.
+2. 프로젝트를 진행하며 새로운 기능의 추가 및 기존 코드의 수정이 빈번히 요구되었습니다. 이 과정에서 확장성과 유지보수를 고려한 코드의 중요성을 깨달았습니다.
+3. 원래는 빌드 테스트, DB 테스트, Postman으로만 테스트를 하였으나, 이것만으로는 코드 오류를 완벽히 잡을 수 없다고 생각하여 테스트 코드를 도입하였습니다. 각 브랜치 별로 테스트 코드를 작성하며 기존 코드에서 발견하지 못했던 문제점을 발견하였고, 그것을 개선해나가며 테스트 코드의 중요성을 깨달았습니다.
+4. 서로 코드를 보며 자신의 코드에 문제점을 알게 되었고, 그것을 고치는 과정에서 의사소통의 중요성을 알게 되었습니다. 또한 의사소통을 해가는 과정에서 누구나 이해하기 쉬운 코드가 좋은 코드라는 것을 깨달았습니다.
+5. 처음에는 개발 시작에 급급하여 규칙을 정하지 않고 개발을 하였습니다. 하지만 복잡한 코드 구조와 통일성 없는 프로젝트는 오히려 개발속도를 더뎌지게 하였고, 다시 처음부터 Git convention과 패키지 구조의 설계, 시퀀스 다이어그램, 요구사항 명세서, 각 api 당 요청/응답 규칙, 변수명 규칙 등을 작성하며 구현 전 상세한 설계와 문서화의 중요성을 깨달았습니다.
