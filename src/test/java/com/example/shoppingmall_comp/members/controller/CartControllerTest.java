@@ -72,7 +72,7 @@ public class CartControllerTest {
 
         //멤버 생성
         this.member = memberRepository.save(Member.builder()
-                .email("user@gmail.com")
+                .email("user")
                 .password("password")
                 .role(Role.builder()
                         .roleName(RoleName.USER)
@@ -101,9 +101,8 @@ public class CartControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(username = "user")
     @DisplayName("장바구니 담기 컨트롤러 테스트")
-
     public void addCartTest() throws Exception {
         //given
         var cartOption = List.of(new CreateCartRequest.Option("색상","WHITE"));
@@ -122,7 +121,7 @@ public class CartControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(username = "user")
     @DisplayName("장바구니 수정 컨트롤러 테스트")
     public void updateCart() throws Exception {
         //given
@@ -138,7 +137,7 @@ public class CartControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(username = "user")
     @DisplayName("장바구니 목록 조회 컨트롤러 테스트")
     public void getAllCarts() throws Exception {
         //given
@@ -164,7 +163,7 @@ public class CartControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(username = "user")
     @DisplayName("선택한 장바구니 다중 삭제 컨트롤러 테스트")
     public void selectedDeleteCarts() throws Exception {
         //given
