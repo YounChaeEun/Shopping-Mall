@@ -113,6 +113,8 @@ public class ItemServiceTest {
         assertThat(foundImages).isEmpty();
 
         // 옵션 부분
+        var foundOptions = itemOptionRepository.findByItem(item);
+        assertThat(foundOptions).isEmpty();
     }
 
     @DisplayName("상품 수정 성공 테스트")
