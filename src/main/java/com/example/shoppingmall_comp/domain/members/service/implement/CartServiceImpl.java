@@ -39,7 +39,7 @@ public class CartServiceImpl implements CartService {
         Item item = existItemCheck(cartRequest.itemId());
 
         //장바구니 넣으려는 상품 수량 > 실제 상품 재고
-        int cartItemCount = cartRequest.count();
+        int cartItemCount = cartRequest.cartItemCount();
         if (cartItemCount > item.getCount()) {
             throw new BusinessException(NOT_ENOUGH_STOCK);
         }
@@ -66,7 +66,7 @@ public class CartServiceImpl implements CartService {
 
         // 엔티티는 빌더로
         Cart cart = Cart.builder()
-                .count(cartRequest.count())
+                .count(cartRequest.cartItemCount())
                 .member(member)
                 .item(item)
                 .optionValues(options)
@@ -99,10 +99,10 @@ public class CartServiceImpl implements CartService {
         List<CartResponse> cartItems = cartList.getContent().stream()
                 .map(cart -> new CartResponse(
                         cart.getCartId(),
-                        cart.getCount(),
                         cart.getItem().getItemId(),
                         cart.getItem().getItemName(),
                         cart.getItem().getItemPrice(),
+                        cart.getCount(),
                         cart.getItemState(),
                         cart.getItem().getItemOption().getOptionValues().stream()
                                 .map(option -> new CartResponse.Option(option.key(), option.value()))
@@ -150,10 +150,10 @@ public class CartServiceImpl implements CartService {
     private CartResponse getCartResponse(Cart cart) {
         return new CartResponse(
                 cart.getCartId(),
-                cart.getCount(),
                 cart.getItem().getItemId(),
                 cart.getItem().getItemName(),
                 cart.getItem().getItemPrice(),
+                cart.getCount(),
                 cart.getItem().getItemState(),
                 cart.getItem().getItemOption().getOptionValues().stream()
                         .map(option -> new CartResponse.Option(option.key(), option.value()))

@@ -41,7 +41,7 @@ public class Item extends BaseEntity {
     private Category category;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "option_id")
+    @JoinColumn(name = "option_id", nullable = false)
     private ItemOption itemOption;
 
     @ManyToOne(fetch = FetchType.LAZY)
