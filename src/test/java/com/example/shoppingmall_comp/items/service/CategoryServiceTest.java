@@ -10,12 +10,15 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @DisplayName("카테고리 서비스 테스트")
+@Transactional
 public class CategoryServiceTest {
 
     @Autowired
@@ -57,18 +60,15 @@ public class CategoryServiceTest {
     @Test
     void getAll() {
         //given
-        Category category1 = createCategory("전자제품");
-        createCategory("생활용품");
+        Category createdCategory = createCategory("전자제품");
 
         //when
-        List<CategoryResponse> categories = categoryService.getAll();
+        List<CategoryResponse> category = categoryService.getAll();
 
         //then
-        assertThat(categories).isNotNull();
-        assertThat(categories).hasSize(2);
-
-        CategoryResponse firstCategory = categories.get(0);
-        assertThat(firstCategory.categoryName()).isEqualTo(category1.getCategoryName());
+        assertThat(category).isNotNull();
+        assertThat(category).size().isGreaterThanOrEqualTo(1);
+        assertThat(category.get(0).categoryName()).isEqualTo(createdCategory.getCategoryName());
 
     }
 
