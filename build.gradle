@@ -54,8 +54,7 @@ dependencies {
 	// oauth2
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
-	//MockUser
-	testImplementation("org.springframework.security:spring-security-test")
+	testImplementation 'org.springframework.security:spring-security-test'
 
 
 }
