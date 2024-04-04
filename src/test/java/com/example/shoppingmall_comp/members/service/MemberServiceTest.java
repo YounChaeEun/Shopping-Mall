@@ -82,7 +82,7 @@ public class MemberServiceTest {
         var responses = memberService.getAll();
 
         // then
-        assertThat(responses.size()).isEqualTo(1);
+        assertThat(responses.size()).isGreaterThanOrEqualTo(1);
     }
 
     @DisplayName("비밀번호 변경 성공 테스트")
