@@ -3,9 +3,6 @@ Spring Boot로 만든 쇼핑몰 프로젝트입니다. <br>
 어느 곳에서든 사용하며 접할 수 있는 인터넷 쇼핑몰들을 모티브하여 설계하였습니다.<br>
 사용자, 판매자, 관리자의 권한이 있는 쇼핑몰 API입니다.
 
-# 패키지 구조
-![KakaoTalk_20240403_161030699](https://github.com/LeeDaye7888/ShoppingMall/assets/102869025/b89fdfe7-426f-4abf-93b6-8584639487cd)
-
 # 기술 스택
 - Language: Java
 - JDK: 17
@@ -16,10 +13,6 @@ Spring Boot로 만든 쇼핑몰 프로젝트입니다. <br>
 - Server: AWS EC2
 - Test: JUnit5, AssertJ
 - Build Tool: Gradle
-
-# REST API 문서
-- [ShoppingMall API 문서](https://github.com/LeeDaye7888/ShoppingMall/issues/26)
-
 
 # 기능 설명
 ( ▶ 를 누르면 간략한 기능 리스트가 나옵니다. )
@@ -108,10 +101,38 @@ Spring Boot로 만든 쇼핑몰 프로젝트입니다. <br>
     + 카테고리내에 상품이 존재할 시 카테고리 삭제 불가
 </details>
 
+# 📂 패키지 구조
+![KakaoTalk_20240403_161030699](https://github.com/LeeDaye7888/ShoppingMall/assets/102869025/b89fdfe7-426f-4abf-93b6-8584639487cd)
+<br><br>
+# REST API 문서
+- [ShoppingMall API 문서](https://github.com/LeeDaye7888/ShoppingMall/issues/26)
 
-
-
+![309756971-d03823fb-505e-41af-8399-0ac4ae7fcd10](https://github.com/LeeDaye7888/ShoppingMall/assets/111855256/b8a0a948-9a18-4cfe-983e-d3f5fcf6b7f0)
+<br>
 
 # ERD
 ![쇼핑몰_완성본 (1)](https://github.com/LeeDaye7888/ShoppingMall/assets/111855256/42bb69bc-905d-4b30-9aaf-8477ae1da1d7)
+![image](https://github.com/LeeDaye7888/ShoppingMall/assets/111855256/63eb4040-7b8e-4668-a079-5e041f56ad59)
+<br><br>
+ 
+# Git 전략 - GitHub Flow
+![스크린샷 2024-04-04 184441](https://github.com/LeeDaye7888/ShoppingMall/assets/111855256/9f966cee-f07f-4b52-8a1c-a721b364156e)
+<br><br>
+
+# Commit Convention
+- **[Feat]**: 새로운 기능 구현
+- **[Fix]**: 버그, 오류 해결, 코드 수정
+- **[Add]**: Feat 이외의 부수적인 코드 추가
+- **[Test]**: 테스트 코드 작성
+- **[Refactor]**: 전면 수정이 있을 때 사용
+- **[Remove]**: 파일 삭제, 필요없는 코드 삭제
+- **[Move]**: 코드의 이동이 있는경우
+- **[Style]**: 코드 포맷 변경, 세미콜론 누락, 코드 수정이 없는 경우
+- **[Chore]**: 빌드 업무 수정, 패키지 매니저 수정
+- **[Docs]**: 문서 개정
+- **[Setting]**: 프로젝트 관련 세팅
+- **[Comment]**: 필요한 주석 추가 및 변경
+<br><br>
+
+
 
