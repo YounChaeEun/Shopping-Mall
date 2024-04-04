@@ -112,7 +112,7 @@ public class ReviewControllerTest {
         // given
         var url = "/api/reviews";
 
-        var order = saveSuccessOrder();
+        var order = saveSuccessOrder("test receiver name", "test receiver phone", "test zipcode", "test address", 1000);
         var orderItem = saveSuccessOrderItem(order);
         var request = new ReviewRequest("test review title", "test review content", 5, orderItem.getOrderItemId());
         var requestBody = objectMapper.writeValueAsString(request);
@@ -136,12 +136,12 @@ public class ReviewControllerTest {
         //  given
         var url = "/api/reviews/{reviewId}";
 
-        var order = saveSuccessOrder();
+        var order = saveSuccessOrder("test receiver name", "test receiver phone", "test zipcode", "test address", 1000);
         var orderItem = saveSuccessOrderItem(order);
         var request = new ReviewRequest("test review title", "test review content", 5, orderItem.getOrderItemId());
         var requestBody = objectMapper.writeValueAsString(request);
 
-        var savedReview = saveSuccessReview();
+        var savedReview = saveSuccessReview("test review title", "test review content", 5);
 
         // when
         var result = mockMvc.perform(patch(url, savedReview.getReviewId())
@@ -158,7 +158,7 @@ public class ReviewControllerTest {
     public void deleteReview() throws Exception {
         //  given
         var url = "/api/reviews/{reviewId}";
-        var savedReview = saveSuccessReview();
+        var savedReview = saveSuccessReview("test review title", "test review content", 5);
 
         // when
         var result = mockMvc.perform(delete(url, savedReview.getReviewId()));
@@ -172,7 +172,7 @@ public class ReviewControllerTest {
     public void findAllByMember() throws Exception {
         //  given
         var url = "/api/members/reviews";
-        var savedReview = saveSuccessReview();
+        var savedReview = saveSuccessReview("test review title", "test review content", 5);
 
         // when
         var result = mockMvc.perform(get(url)
@@ -199,7 +199,7 @@ public class ReviewControllerTest {
     public void findAllByItem() throws Exception {
         //  given
         var url = "/api/items/{itemId}/reviews";
-        var savedReview = saveSuccessReview();
+        var savedReview = saveSuccessReview("test review title", "test review content", 5);
 
         // when
         var result = mockMvc.perform(get(url, this.item.getItemId())
@@ -221,23 +221,23 @@ public class ReviewControllerTest {
                 .andExpect(jsonPath("$.responseList[0].star").value(savedReview.getStar()));
     }
 
-    private Review saveSuccessReview() {
+    private Review saveSuccessReview(String title, String content, int star) {
         return reviewRepository.save(Review.builder()
-                .reviewTitle("test review title")
-                .reviewContent("test review content")
-                .star(3)
+                .reviewTitle(title)
+                .reviewContent(content)
+                .star(star)
                 .member(member)
                 .item(item)
                 .build());
     }
 
-    private Order saveSuccessOrder() {
+    private Order saveSuccessOrder(String receiverName, String receiverPhone, String zipcode, String address, int totalPrice) {
         return orderRepository.save(Order.builder()
-                .receiverName("test receiver name")
-                .receiverPhone("test receiver phone")
-                .zipcode("test zipcode")
-                .address("test address")
-                .totalPrice(10000)
+                .receiverName(receiverName)
+                .receiverPhone(receiverPhone)
+                .zipcode(zipcode)
+                .address(address)
+                .totalPrice(totalPrice)
                 .member(this.member)
                 .merchantId(UUID.randomUUID())
                 .build());
