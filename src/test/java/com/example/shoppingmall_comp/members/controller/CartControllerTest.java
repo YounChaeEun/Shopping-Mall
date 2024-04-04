@@ -85,19 +85,7 @@ public class CartControllerTest {
                 .build());
 
         //상품 생성
-        this.item = itemRepository.save(Item.builder()
-                .itemName("상품명")
-                .itemPrice(897000)
-                .itemDetail("상세 설명")
-                .count(1000)
-                .category(category)
-                .itemOption(ItemOption.builder()
-                        .optionValues(List.of(new ItemOption.Option("색상", "WHITE")))
-                        .build())
-                .member(member)
-                .itemState(ItemState.ON_SALE)
-                .build()
-        );
+        this.item = createItem("상품명", 897000, "상세설명", 1000, category, member);
     }
 
     @Test
@@ -180,6 +168,23 @@ public class CartControllerTest {
         List<Cart.Option> option = new ArrayList<>();
         option.add(new Cart.Option("색상", "WHITE"));
         return option;
+    }
+
+    //상품 생성 메소드
+    private Item createItem(String itemName, int itemPrice, String itemDetail, int count, Category category, Member member) {
+        return itemRepository.save(Item.builder()
+                .itemName(itemName)
+                .itemPrice(itemPrice)
+                .itemDetail(itemDetail)
+                .count(count)
+                .category(category)
+                .itemOption(ItemOption.builder()
+                        .optionValues(List.of(new ItemOption.Option("색상", "WHITE")))
+                        .build())
+                .member(member)
+                .itemState(ItemState.ON_SALE)
+                .build()
+        );
     }
 
     //장바구니 생성 메소드
