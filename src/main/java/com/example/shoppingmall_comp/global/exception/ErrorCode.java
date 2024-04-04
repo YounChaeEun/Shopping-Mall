@@ -24,6 +24,7 @@ public enum ErrorCode {
     NOT_USER(HttpStatus.FORBIDDEN, "구매자가 아닙니다."),
     NOT_SELLER(HttpStatus.FORBIDDEN, "판매자가 아닙니다."),
     NOT_ADMIN(HttpStatus.FORBIDDEN, "관리자가 아닙니다."),
+    NOT_FOUND_ROLE(HttpStatus.BAD_REQUEST, "존재하는 권한이 아닙니다."),
 
     EXPIRED_JWT_ERROR(HttpStatus.UNAUTHORIZED, "토큰 만료 기한이 지났습니다."),
     INVALID_JWT_ERROR(HttpStatus.FORBIDDEN, "토큰 유효성 검사가 실패했습니다."),

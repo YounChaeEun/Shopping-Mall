@@ -39,12 +39,10 @@ public class AuthServiceImpl implements AuthService {
     public void saveMember(MemberSignUpRequest request) {
         checkIfIsDuplicated(request.email());
 
-        Role role = roleRepository.save(Role.builder().roleName(request.roleName()).build());
-
         Member member = Member.builder()
                 .email(request.email())
                 .password(bCryptPasswordEncoder.encode(request.password()))
-                .role(role)
+                .role(Role.builder().roleName(request.roleName()).build())
                 .build();
 
         memberRepository.save(member);
@@ -59,7 +57,6 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     @Override
     public MemberSignInResponse signIn(MemberSignInRequest request) {
-
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(request.email(), request.password()); //// 1. username + password 를 기반으로 Authentication 객체 생성. 이때 authentication 은 인증 여부를 확인하는 authenticated 값이 false
         Authentication authentication;
 
@@ -78,8 +75,7 @@ public class AuthServiceImpl implements AuthService {
         refreshTokenRepository.findByMember(member)
                 .ifPresentOrElse(
                         token -> token.updateRefreshToken(refreshToken),
-                        () -> refreshTokenRepository.save(RefreshToken.builder().refreshToken(refreshToken).member(member).build())
-                );
+                        () -> refreshTokenRepository.save(RefreshToken.builder().refreshToken(refreshToken).member(member).build()));
 
         return new MemberSignInResponse(accessToken, refreshToken);
     }
