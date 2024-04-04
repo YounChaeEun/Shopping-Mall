@@ -140,7 +140,7 @@ public class MemberControllerTest {
                 .category(category)
                 .count(10000)
                 .itemOption(ItemOption.builder()
-                        .optionValues(List.of())
+                        .optionValues(List.of(new ItemOption.Option("색상", "white")))
                         .build())
                 .member(seller)
                 .build());
