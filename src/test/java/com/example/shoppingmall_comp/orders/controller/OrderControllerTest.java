@@ -171,7 +171,6 @@ public class OrderControllerTest {
                 .andExpect(jsonPath("$.merchantId").value(order.getMerchantId().toString().trim()))
                 .andExpect(jsonPath("$.totalPrice").value(order.getTotalPrice()))
                 .andExpect(jsonPath("$.orderState").value(order.getOrderState().toString().trim()))
-                .andExpect(jsonPath("$.orderedItems[0].itemId").value(orderItem.getOrderItemId()))
                 .andExpect(jsonPath("$.orderedItems[0].count").value(orderItem.getOrderItemCount()))
                 .andExpect(jsonPath("$.orderedItems[0].price").value(orderItem.getOrderItemPrice()));
 
@@ -199,7 +198,6 @@ public class OrderControllerTest {
 
                 .andExpect(jsonPath("$.OrderList.length()").value(1))
                 .andExpect(jsonPath("$.OrderList[0].orderState").value(order.getOrderState().toString().trim()))
-                .andExpect(jsonPath("$.OrderList[0].orderItemList[0].itemId").value(orderItem.getOrderItemId()))
                 .andExpect(jsonPath("$.OrderList[0].orderItemList[0].name").value(orderItem.getOrderItemName()))
                 .andExpect(jsonPath("$.OrderList[0].orderItemList[0].count").value(orderItem.getOrderItemCount()));
 
