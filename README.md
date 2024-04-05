@@ -111,6 +111,11 @@ Spring Boot로 만든 쇼핑몰 프로젝트입니다. <br>
 ![309756971-d03823fb-505e-41af-8399-0ac4ae7fcd10](https://github.com/LeeDaye7888/ShoppingMall/assets/111855256/b8a0a948-9a18-4cfe-983e-d3f5fcf6b7f0)
 <br>
 
+# ✔ 테스트 진행도
+![image](https://github.com/LeeDaye7888/ShoppingMall/assets/102869025/c043bb79-d055-4383-bf4a-d787de50bd89)
+![image](https://github.com/LeeDaye7888/ShoppingMall/assets/102869025/7926145e-7bc8-4bc8-8615-ed1c9d1d3ad1)
+<br><br>
+
 # 🔗 ERD
 ![쇼핑몰_완성본 (1)](https://github.com/LeeDaye7888/ShoppingMall/assets/111855256/42bb69bc-905d-4b30-9aaf-8477ae1da1d7)
 ![image](https://github.com/LeeDaye7888/ShoppingMall/assets/111855256/63eb4040-7b8e-4668-a079-5e041f56ad59)
