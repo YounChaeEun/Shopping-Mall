@@ -177,6 +177,10 @@ public class ItemServiceImpl implements ItemService {
             throw new BusinessException(FORBIDDEN_ERROR, "삭제할 권한이 없습니다.");
         }
 
+        //상품 옵션 삭제
+        List<ItemOption> options = itemOptionRepository.findByItem(item);
+        itemOptionRepository.deleteAll(options);
+
         // S3, 이미지DB 삭제
         List<ItemImage> imageList = itemImageRepository.findByItem(item);
         for (ItemImage image : imageList) {
