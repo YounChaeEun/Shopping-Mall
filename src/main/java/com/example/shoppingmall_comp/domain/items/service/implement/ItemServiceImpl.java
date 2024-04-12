@@ -145,7 +145,7 @@ public class ItemServiceImpl implements ItemService {
         List<ItemImage> imageList = itemImageRepository.findByItem(item);
         for (ItemImage image : imageList) {
             String fileName = image.getImageUrl();
-            s3Service.deleteFile(fileName);
+            //s3Service.deleteFile(fileName);
             itemImageRepository.deleteById(image.getItemImageId());
         }
         // S3 이미지 저장
@@ -185,7 +185,7 @@ public class ItemServiceImpl implements ItemService {
         List<ItemImage> imageList = itemImageRepository.findByItem(item);
         for (ItemImage image : imageList) {
             String fileName = image.getImageUrl();
-            s3Service.deleteFile(fileName);
+            //s3Service.deleteFile(fileName);
             itemImageRepository.deleteById(image.getItemImageId());
         }
 
