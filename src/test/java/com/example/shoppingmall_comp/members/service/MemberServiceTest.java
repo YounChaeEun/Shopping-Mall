@@ -29,6 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @Transactional
+@DisplayName("회원 서비스 테스트")
 public class MemberServiceTest {
 
     @Autowired

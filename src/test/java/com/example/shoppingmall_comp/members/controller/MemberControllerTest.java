@@ -40,6 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
+@DisplayName("회원 컨트롤러 테스트")
 public class MemberControllerTest {
     @Autowired
     protected MockMvc mockMvc;

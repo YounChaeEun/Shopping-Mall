@@ -32,6 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @Transactional
+@DisplayName("상품 서비스 테스트")
 public class ItemServiceTest {
 
     @Autowired

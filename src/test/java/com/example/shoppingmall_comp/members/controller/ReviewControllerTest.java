@@ -44,6 +44,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
+@DisplayName("리뷰 컨트롤러 테스트")
 public class ReviewControllerTest {
 
     @Autowired

@@ -46,7 +46,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-@DisplayName("주문 컨트롤러 통합 테스트")
+@DisplayName("주문 컨트롤러 테스트")
 public class OrderControllerTest {
 
     @Autowired
@@ -55,18 +55,19 @@ public class OrderControllerTest {
     protected ObjectMapper objectMapper;
     @Autowired
     private WebApplicationContext context;
+
     @Autowired
-    private MemberRepository memberRepository;
+    MemberRepository memberRepository;
     @Autowired
-    private CategoryRepository categoryRepository;
+    CategoryRepository categoryRepository;
     @Autowired
-    private ItemRepository itemRepository;
+    ItemRepository itemRepository;
     @Autowired
-    private OrderRepository orderRepository;
+    OrderRepository orderRepository;
     @Autowired
-    private OrderItemRepository orderItemRepository;
+    OrderItemRepository orderItemRepository;
     @Autowired
-    private PayRepository payRepository;
+    PayRepository payRepository;
     @Autowired
     OrderServiceImpl orderService;
 

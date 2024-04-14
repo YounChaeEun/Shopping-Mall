@@ -41,6 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
+@DisplayName("장바구니 컨트롤러 테스트")
 public class CartControllerTest {
 
     @Autowired
@@ -53,11 +54,11 @@ public class CartControllerTest {
     @Autowired
     ItemRepository itemRepository;
     @Autowired
-    private CategoryRepository categoryRepository;
+    CategoryRepository categoryRepository;
     @Autowired
-    private MemberRepository memberRepository;
+    MemberRepository memberRepository;
     @Autowired
-    private CartRepository cartRepository;
+    CartRepository cartRepository;
     @Autowired
     CartServiceImpl cartService;
 
