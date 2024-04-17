@@ -10,7 +10,7 @@ public record MemberResponse(
         @Schema(description = "사용자 ID", example = "1")
         Long memberId,
 
-        @Schema(description = "사용자 이메일", example = "amy@naver.com")
+        @Schema(description = "사용자 이메일", example = "amy1234@naver.com")
         String email,
 
         @Schema(description = "사용자 보유 포인트", example = "1000")
