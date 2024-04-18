@@ -9,10 +9,11 @@ Spring Boot로 만든 쇼핑몰 프로젝트입니다. <br>
 - Framework: Spring Boot 2.7.16
 - ORM: Spring Data JPA
 - Security: Spring Security
-- DB: MySQL, AWS S3
+- DB: AWS RDS, AWS S3, MySQL
 - Server: AWS EC2
 - Test: JUnit5, AssertJ
 - Build Tool: Gradle
+- CI/CD: GitHub Actions, Docker
 
 # 💡 주요 기능
 ( ▶ 를 누르면 간략한 기능 설명이 나옵니다. )
@@ -141,7 +142,7 @@ Spring Boot로 만든 쇼핑몰 프로젝트입니다. <br>
 <br><br>
 
 # 🛠 구조도
-![image](https://github.com/LeeDaye7888/ShoppingMall/assets/102869025/38bdc7fd-ed72-4ac6-80bb-706489c12c3b)
+![KakaoTalk_20240418_203037482](https://github.com/LeeDaye7888/ShoppingMall/assets/102869025/42322eed-4757-4625-8873-a5ef7967acbb)
 
 # ✍ 느낀점
 1. 많은 에러를 겪으며 시행착오를 통해 더 성장하고 배움을 얻었습니다.
