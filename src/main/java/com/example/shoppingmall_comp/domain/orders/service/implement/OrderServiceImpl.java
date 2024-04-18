@@ -100,6 +100,7 @@ public class OrderServiceImpl implements OrderService {
                 .payPrice(order.getTotalPrice())
                 .build();
 
+        //결제 DB 저장
         payRepository.save(pay);
 
         //일반 회원 결제하면 적립금 부여

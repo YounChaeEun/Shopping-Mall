@@ -42,21 +42,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("주문 서비스 테스트")
 public class OrderServiceTest {
     @Autowired
-    private OrderService orderService;
+    OrderService orderService;
     @Autowired
-    private ItemRepository itemRepository;
+    ItemRepository itemRepository;
     @Autowired
-    private ItemOptionRepository itemOptionRepository;
+    ItemOptionRepository itemOptionRepository;
     @Autowired
-    private CategoryRepository categoryRepository;
+    CategoryRepository categoryRepository;
     @Autowired
-    private OrderRepository orderRepository;
+    OrderRepository orderRepository;
     @Autowired
-    private OrderItemRepository orderItemRepository;
+    OrderItemRepository orderItemRepository;
     @Autowired
-    private MemberRepository memberRepository;
+    MemberRepository memberRepository;
     @Autowired
-    private PayRepository payRepository;
+    PayRepository payRepository;
 
     private User user;
     private Item item;
