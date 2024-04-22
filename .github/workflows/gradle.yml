@@ -81,7 +81,7 @@ jobs:
             sudo docker rm -f $(docker ps -qa)
             sudo docker pull ${{ secrets.DOCKER_REPO }}
             sudo docker run -d -p 8080:8080 ${{ secrets.DOCKER_REPO }}
-            docker image prune -f
+            sudo docker image prune -f
 
     # NOTE: The Gradle Wrapper is the default and recommended way to run Gradle (https://docs.gradle.org/current/userguide/gradle_wrapper.html).
     # If your project does not have the Gradle Wrapper configured, you can use the following configuration to run Gradle with a specified version.
